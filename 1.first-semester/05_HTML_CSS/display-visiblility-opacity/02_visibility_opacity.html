@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        .visible {
+            visibility: visible;
+        }
+        .hidden {
+            visibility: hidden;
+        }
+        table, td {
+            border: 1px solid black;
+        }
+        .collapse {
+            /* hidden과 collapse의 차이 비교하기 */
+            /* collapse : table 에서만 사용하고, 행이나 열을 보이지 않게 한다. */
+            /* visibility: collapse; */
+            visibility: hidden;
+        }
+        div, img {
+            float: left;
+            width: 200px;
+            height: 200px;
+            margin: 30px;
+            background-color: darkblue;
+            color: white;
+            opacity: 0.5;
+            transition: opacity 1s;
+        }
+        div:hover, img:hover {
+            opacity: 1.0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visibility Opacity</h1>
+    <!-- visibility -->
+    <h2 class="visible">visibility: visible</h2>
+    <h2 class="hidden">visibility: hidden</h2>
+    <!-- 공간도 사라진다. -->
+    <h2 style="display:none">display: none</h2>
+
+    <table>
+        <tr>
+            <td>A</td>
+            <td>B</td>
+        </tr>
+        <tr class="collapse">
+            <td>A</td>
+            <td>B</td>
+        </tr>
+    </table>
+
+    <!-- Opacity -->
+    <div>Opacity: 0.5</div>
+    <img src="https://image.slidesharecdn.com/pythonadvanced-151127114045-lva1-app6891/95/python-advanced-building-on-the-foundation-12-638.jpg?cb=1448910770" alt="">
+
+</body>
+</html>

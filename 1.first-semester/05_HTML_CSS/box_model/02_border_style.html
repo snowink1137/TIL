@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        div {
+            background: crimson;
+            color: wheat;
+            display: inline-block;
+            width: 90px;
+            height: 90px;
+            line-height: 90px;
+            margin: 0 14px;
+            text-align: center;
+        }
+        .border-rounded {
+            /* 모서리 꼭지점 기준으로 가로방향 5px 세로방향 5px 떨어진 점에서 원을 그리고 그 곡선을 경계선으로 하는 것 */
+            border-radius: 5px;
+        }
+        .border-circle {
+            border-radius: 50%;
+        }
+        .border-football {
+            border-radius: 15px 75px;
+        }
+        p {
+            background: palegreen;
+            padding: 10px;
+        }
+        p.dotted {
+            border-style: dotted;
+        }
+        p.dashed {
+            border-style: dashed;
+        }
+        p.solid {
+            border-style: solid;
+        }
+    </style>
+</head>
+<body>
+    <div class="border-rounded">5px</div>
+    <div class="border-circle">50</div>
+    <div class="border-football"></div>
+</body>
+</html>
