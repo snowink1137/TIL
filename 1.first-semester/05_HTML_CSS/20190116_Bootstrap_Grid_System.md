@@ -59,9 +59,11 @@
     - static method는 반드시 넘겨야 하는 인자가 없다
       - 따라서 얘는 instance, class 둘 모두 쓸 method인 경우 만들면 된다.
       - 따라서 static method에는 인자를 기본으로 넘겨야 하는 instance method나 class method와는 다른 역할을 하는 (예를 들면 단순 조회 같은) 기능을 구현하면 된다.
-
   - 근데 어떻게든 instance가 class method를 사용할 수 있고, 반대의 경우도 가능하다. 하지만 그렇게는 사용하지 않는 것이 좋다. 권장되는 방법 및 설계가 아니다.
-  - 데코레이터 써놓는 이유는 명시적인 기능이 강하기 때문이다. 물론 다른 기능도 들어있지만.
+  - 데코레이터 써놓는 이유는 명시적인 기능이 강하기 때문이다. 물론 다른 기능도 들어있지만. OOP하는 이유와 비슷한 것으로 이해함.
+    - 왜 귀찮게 데코레이터 써가면서 method를 만드는 단계에서부터 명시해서 static, class, instance method를 나눠놔야 하나... 했는데 클래스를 만들다보니 이해됨.
+    - java에서는 parameter로 this를 명시하지 않았기 때문에 헷갈렸음. 왜 굳이 데코레이터를 써야하나 생각했었는데, 파이썬에서는 instance method 만들기 위해서는 parameter로 self를 꼭 쓰도록 설계되어 있으니까(인스턴스는 기본 parameter로 self를 넘기고, 클래스는 기본 parameter로 cls를 넘기기 때문에) 반드시 method를 만들때부터 데코레이터로 정의해줘야 parameter 오류가 안생긴다.
+  - instance는 그냥 class method 가져다 써도 문제 없는 것으로 보아서, instance는 instance method 쓸 때 self를 자동으로 넘기는 것처럼 class method를 쓸 때는 cls를 자동으로 넘기는 것으로 보인다. instance를 만드는 설계도가 class 인 것을 생각해보면 아주 어색한 것은 아닌 것 같다.
 
 - 함수 호출방식(call-by-value, call-by-reference, call-by-assignment)
 
@@ -134,7 +136,22 @@
   - 설치는 디스크에 기록 + 프로그램이 어디부터 어디까지 인지 가리키는 정보 기록 해야함.
   - 삭제는 가리키는 정보만 없애면 되기 때문에 빠른 것임.
   - 실제 데이터는 나중에 그 부분에 뭔가 데이터를 기록하면 정말 지워지는 것임.
+
 - [참고] 요즘 언어들은 가리키는 정보를 지우면 가비지 컬렉터가 알아서 참조했던 데이터도 메모리에서 지워줌. 근데 C 같은 언어들은 참조를 없애고 데이터도 메모리에서 직접 없애줘야 함.
+
+- 수업 교재 08_module.ipynb 의 마지막 부분 timedelta 부분 잊어버릴 것 같은 것들.
+
+  - timedelta 인스턴스 변수에 days, seconds, microseconds 밖에 없어서 hours, minutes, seconds 같은 것은 다 계산해줘야함..
+
+  - ```python
+    days = td.days
+    hours, remainder = divmod(td.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    # If you want to take into account fractions of a second
+    seconds += td.microseconds / 1e6
+    ```
+
+  - [출처] https://stackoverflow.com/questions/2119472/convert-a-timedelta-to-days-hours-and-minutes
 
 
 
@@ -145,3 +162,12 @@
 - jupyter notebook에서 class 선언하고 코드 실행한 이후에 커널 재시작 안한 상태로 class 재선언 및 코드 재실행하면 결과 꼬이는 이유가 뭘까?
   - \_\_del\_\_ 작동때문에 그렇다.
   - class 만들고 첫 코드 실행 때는 당연히 \_\_del\_\_ 실행될 일 없지만.. class 갈아 엎으면 첫 코드 실행 때부터 \_\_del\_\_ 실행되므로 꼬인다.
+
+- 파이썬에서 locale 문제 없도록 설정하는 코드
+
+  - ```python
+    import locale
+    locale.setlocale(locale.LC_ALL, '')
+    ```
+
+  - 1번째 인자는 모든 locale을 선택하는 변수인 것 같고 2번째 인자는 원래 명시적인 locale 입력해도 되는데 저렇게 쓰면 시스템의 locale로 설정해준다고 한다.
