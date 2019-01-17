@@ -14,7 +14,6 @@
 - width 옵션은 반응 없음. 브라우저가 작아도 안줄어듦.
   - max-width 옵션은 브라우저가 작으면 너비 줄여서 보여준다!
   - div 같은 박스 모델은 기본적으로 가로를 모두 차지하기 때문에 margin: auto 옵션은 max-width 옵션 하에서 의미가 있다.
-- 02_border_style.html 복사해오기!
 - bootstrap 사용하면 편하게 css 사용할 수 있다.
   - bootstrap css 링크를 사용해서 파일을 보면 클래스 정의로 가득차 있다.
   - 이 클래스들을 html 구성할 때 사용하면되는 것이다.
