@@ -19,6 +19,11 @@
   - 1회성으로 쓰는 경우에 익명으로 쓰려고. 편하게 한 줄로 쓰려고.
   - 물론 거기다 이름 붙이면 그냥 일반 함수처럼 됨.
 - comprehension 을 쓰면 코드가 짧기도 하지만 속도도 빠르다!
+
+
+
+### CSS
+
 - CSS에서 id 속성을 selector로 쓸 수 있지만.. 쓰지말자!  자바스크립트에서 많이 씀. 부트스트랩에서도 다 class로 select한다 하심.
 - css 파일에서 우선 순위?
   - ![img](20190115_CSS와_Selector.assets/css-specificity-02.jpg)
