@@ -7,7 +7,19 @@
 - float : block 요소들을 가로 정리할 때 쓰임.
 - https://flexboxfroggy.com/#ko
   - css 코드 게임
-- position, float 개념 정리 하기
+- position
+  - 크게 static, relative, absolute, fixed 옵션 있음
+  - 기본적인 block의 배열에 변화를 준다.
+  - static
+    - 기본 옵션
+    - top, bottom, left, right 옵션 안먹힌다. -> 다른 옵션들과 다른 점!
+    - 보통 static은 잘 사용하지 않지만 설정된 position을 무시할 때 사용되기도 한다고 한다.
+  - relative, absolute
+    - top, bottom, left, right 옵션줄 때 absolute와 차이점이 생긴다.
+    - absolute는 위치 옵션 기준을 자기 가장 가까운 상위 요소에만 맞춘다. 그리고 static은 무시한다.
+    - relative는 static을 기준 정할 때 무시하지 않고 static의 원래 위치도 포함해서 위치를 계산한다.
+  - https://thrillfighter.tistory.com/480
+  - 이거보면서 ㄱㄱ하기
 - 미디어 쿼리 개념 정리 하기
 
 
