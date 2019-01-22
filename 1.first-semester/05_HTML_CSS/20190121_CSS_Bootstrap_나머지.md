@@ -8,9 +8,11 @@
 
 - https://flexboxfroggy.com/#ko
 
-  - css 코드 게임
+  - css 코드 게임하며 연습할 수 있는 사이트.
+  - display: flex 옵션 연습할 수 있음.
+  - flex 옵션을 쓰면 편하지만.. 익스플로러에서 지원 안됨.. 그래도 알아두자.
 
-- position
+- display
   - 크게 static, relative, absolute, fixed 옵션 있음
   - 기본적인 block의 배열에 변화를 준다.
   - static
@@ -96,9 +98,35 @@
     </html>
     ```
 
-  - 
 
-- 미디어 쿼리 개념 정리 하기
+- 미디어 쿼리
+
+  - 반응형 웹을 구성할 수 있도록 하는 기능
+
+  - @media 를 붙여놓은 css 코드는 이를 구현하는 것이다.
+
+  - 디바이스의 크기에 따라 css를 다르게 적용할 수 있다.
+
+  - bootstrap의 grid 개념과 비슷한 것 같다.
+
+  - ex)
+
+    - ```css
+      @media screen and (min-width:600px) {
+        nav {
+          float: left;
+          width: 25%;
+        }
+        section {
+          margin-left: 25%;
+        }
+      }
+      @media screen and (max-width:599px) {
+        nav li {
+          display: inline;
+        }
+      }
+      ```
 
 
 
