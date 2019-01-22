@@ -5,8 +5,11 @@
 ### CSS, html
 
 - float : block 요소들을 가로 정리할 때 쓰임.
+
 - https://flexboxfroggy.com/#ko
+
   - css 코드 게임
+
 - position
   - 크게 static, relative, absolute, fixed 옵션 있음
   - 기본적인 block의 배열에 변화를 준다.
@@ -20,6 +23,81 @@
     - relative는 static을 기준 정할 때 무시하지 않고 static의 원래 위치도 포함해서 위치를 계산한다.
   - https://thrillfighter.tistory.com/480
   - 이거보면서 ㄱㄱ하기
+
+- 가상 클래스 셀렉터(Pseudo-Class Selector)
+
+  - 가상 클래스는 **요소의 특정 상태**에 따라 스타일을 정의할 때 사용된다.
+
+  - ex)
+
+    - 마우스가 올라와 있을때
+    - 링크를 방문했을 때와 아직 방문하지 않았을 때
+    - 포커스가 들어와 있을 때
+
+  - ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        /* a 요소가 hover 상태일 때 */
+        a:hover { color: red; }
+        /* input 요소가 focus 상태일 때 */
+        input:focus { background-color: yellow; }
+      </style>
+    </head>
+    <body>
+      <a href="#">Hover me</a><br><br>
+      <input type="text" placeholder="focus me">
+    </body>
+    </html>
+    ```
+
+- 가상 요소 셀렉터(Pseudo-Element Selector)
+
+  - 가상 요소는 **요소의 특정 부분**에 스타일을 적용하기 위하여 사용된다.
+
+  - ex)
+
+    - 요소 콘텐츠의 첫글자 또는 첫줄
+    - 요소 콘텐츠의 앞 또는 뒤
+
+  - ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        /* p 요소 콘텐츠의 첫글자를 선택 */
+        p::first-letter { font-size: 3em; }
+        /* p 요소 콘텐츠의 첫줄을 선택 */
+        p::first-line   { color: red; }
+    
+        /* h1 요소 콘텐츠의 앞 공간에 content 어트리뷰트 값을 삽입한다 */
+        h1::before {
+          content: " HTML!!! ";
+          color: blue;
+        }
+        /* h1 요소 콘텐츠의 뒷 공간에 content 어트리뷰트 값을 삽입한다 */
+        h1::after {
+          content: " CSS3!!!";
+          color: red;
+        }
+    
+        /* 드래그한 콘텐츠를 선택한다 */
+        ::selection {
+          color: red;
+          background: yellow;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>This is a heading</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo illum sunt distinctio sed, tempore, repellat rerum et ea laborum voluptatum! Quisquam error fugiat debitis maiores officiis, tenetur ullam amet in!</p>
+    </body>
+    </html>
+    ```
+
+  - 
+
 - 미디어 쿼리 개념 정리 하기
 
 
@@ -27,11 +105,12 @@
 ### django
 
 - 설치
-  - c9에서 진행하는 중.(ruby on rails 컴퓨터로 할당. 메모리가 더 많아서.)
+  - c9에서 진행하는 중.(rails tutorial template로 컴퓨터 할당받기. 메모리가 더 많아서.)
   - 앞으로의 버전 관리를 위해 pyenv 설치하려함. c9 컴퓨터가 우분투라서 가능. 윈도우에서는 pyenv 불가능.
   - 그 전에 `sudo apt-get update` 한번 해줘야함. c9 컴퓨터 버전이 낮을 수 있어서. `sudo apt-get install openssl` 도. `sudo apt-get install zlib1g-dev` 도.
   - git에서 clone해와서 설치하면 되는데 readme에 방법 운영체제 별로 써있으니 읽어가면서 하면 된다.
-  - 그리고나서 `pyenv install 3.7.1` 하면 파이썬 3.7.1 버전 설치 됨.
+  - 그리고나서 `pyenv install 3.6.8` 하면 파이썬 3.6.8 버전 설치 됨.
+  - 설치 다 되고나면 `pyenv global 3.6.8` 입력해서 사용할 python 버전 바꿔주면 됨.
 
 
 
