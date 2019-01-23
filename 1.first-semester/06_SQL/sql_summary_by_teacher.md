@@ -41,6 +41,13 @@ RENAME TO <new_table_name>;
 
 ### Table 컬럼 추가
 
+```sqlite
+ALTER TABLE <table_name>
+ADD COLUMN <column_name> <data_type> [default <default_value>];
+```
+
+
+
 
 
 ## Data 조작 관련
