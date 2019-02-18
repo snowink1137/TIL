@@ -28,3 +28,17 @@ for test_case in range(1, T+1):
                 max_key = k
 
     print(f'#{test_case} {max_key} {max_val}')
+
+
+# 선생님 코드 일부    
+# N = int(input())
+# cards = input()
+# cnt = [0] * 10
+# for ch in cards:
+#     val = int(ch)
+#     cnt[val] += 1
+#     
+# Max = 0
+# for i in range(1, len(cnt)):
+#     if cnt[Max] < ...
+# 
