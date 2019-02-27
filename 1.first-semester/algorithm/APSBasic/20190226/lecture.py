@@ -63,24 +63,26 @@
 # perm(0, 3)  # 3: 요소 수(단말 노드의 높이)
 
 
-# #5 순열 구하기(재귀 호출로 바꾼 버전을 다른 방식으로 수정한 것. visit 정보를 비트 표현 및 비트 연산자 사용하여 간단하게 만들기 + 이전 정보를 전역 변수가 아닌 매개 변수로 전달하는 버전.)
-# arr = 'ABC'
-# N = len(arr)
-# order = [0] * N
-#
-#
-# def perm(k, n, visit): # k: 시작 상태, n: 단말 노드의 높이
-#     if k == n:
-#         # order[] 저장된 순서를 확인
-#         print(order)
-#         return
-#
-#     for i in range(n):
-#         if visit & (1 << i):
-#             continue
-#
-#         order[k] = i
-#         perm(k+1, n, visit | (1 << i))
-#
-#
-# perm(0, N, 0)  # 3: 요소 수(단말 노드의 높이)
+#5 순열 구하기(재귀 호출로 바꾼 버전을 다른 방식으로 수정한 것. visit 정보를 비트 표현 및 비트 연산자 사용하여 간단하게 만들기 + 이전 정보를 전역 변수가 아닌 매개 변수로 전달하는 버전.)
+arr = 'ABC'
+N = len(arr)
+order = [0] * N
+
+
+def perm(k, n, visit): # k: 시작 상태, n: 단말 노드의 높이
+    if k == n:
+        # order[] 저장된 순서를 확인
+        print(order)
+        perm_list.append(order)
+        return
+
+    for i in range(n):
+        if visit & (1 << i):
+            continue
+
+        order[k] = i
+        perm(k+1, n, visit | (1 << i))
+
+perm_list = []
+perm(0, N, 0)  # 3: 요소 수(단말 노드의 높이)
+print(perm_list)
