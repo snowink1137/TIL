@@ -18,7 +18,7 @@ for test_case in range(1, 11):
                 stack.append((string[i]))
             elif string[i] == ')':
                 for j in range(len(stack)):
-                    if stack[-j-1] == '(':
+                    if stack[-1] == '(':
                         stack.pop()
                         break
                     else:
@@ -36,7 +36,32 @@ for test_case in range(1, 11):
                 stack.append(string[i])
             else:
                 result.append(int(string[i]))
-    print(result)
+
+    stack = []
+    output = 0
+    for _ in range(len(result)):
+        if result[_] == '+':
+            if len(stack) < 2:
+                print(f'#{test_case} error')
+                break
+            else:
+                a = stack.pop()
+                b = stack.pop()
+                output = b + a
+                stack.append(output)
+        elif result[_] == '*':
+            if len(stack) < 2:
+                print(f'#{test_case} error')
+                break
+            else:
+                a = stack.pop()
+                b = stack.pop()
+                output = b * a
+                stack.append(output)
+        else:
+            stack.append(int(result[_]))
+
+    print(f'#{test_case} {stack.pop()}')
 
 
 
