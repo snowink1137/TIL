@@ -3,7 +3,7 @@ import sys
 sys.stdin = open('4881_sample_input.txt', 'r')
 
 
-def perm(k, n, visit,sum_what=0): # k: 시작 상태, n: 단말 노드의 높이
+def perm(k, n, visit, sum_what=0): # k: 시작 상태, n: 단말 노드의 높이
     global min_sum
     if k == n:
         if sum_what < min_sum:
