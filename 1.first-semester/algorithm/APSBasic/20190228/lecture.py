@@ -36,7 +36,7 @@ from queue import Queue
 
 def BFS(s, G):
     visit = [False] * (V + 1)
-    D = [0] * (V + 1)  # Distance 기록 배열
+    D = [0] * (V + 1)  # 간선의 Distance 기록 배열
     P = [0] * (V + 1)  # Path 기록 배열
 
     Q = Queue()
@@ -47,7 +47,7 @@ def BFS(s, G):
         v = Q.get()
         for w in G[v]:
             if not visit[w]:
-                D[w] = D[v] + 1
+                D[w] = D[v] + 1  # 각 간선의 가중치가 1인 경우. 가중치가 1 이상인 경우는 알고리즘이 달라져야 함.
                 P[w] = v
                 visit[w] = True
                 Q.put(w)
