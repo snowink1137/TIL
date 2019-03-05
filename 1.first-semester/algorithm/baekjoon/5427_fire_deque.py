@@ -1,7 +1,7 @@
 import sys
 from collections import deque
 
-sys.stdin = open('5427.txt', 'r')
+sys.stdin = open('F.in', 'r')
 
 T = int(input())
 for test_case in range(1, T+1):
@@ -23,14 +23,15 @@ for test_case in range(1, T+1):
 
     result = 'IMPOSSIBLE'
     visit = [[False] * N for _ in range(M)]
-    D = [[0] * N for _ in range(M)]
     difference = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
     Q = deque()
     Q.append(start)
     visit[start[0]][start[1]] = True
     flag = False
+    cnt = 0
     while not len(Q) == 0:
+        cnt += 1
         for fire in fires[:]:
             for i in difference:
                 new_fire_x = fire[0] + i[0]
@@ -54,13 +55,10 @@ for test_case in range(1, T+1):
 
             for w in directions:
                 if w[0] == 0 or w[0] == M-1 or w[1] == 0 or w[1] == N-1:
-                    D[w[0]][w[1]] = D[v[0]][v[1]] + 1
-                    result = D[w[0]][w[1]] + 1
+                    result = cnt + 1
                     flag = True
                     break
                 if not visit[w[0]][w[1]]:
-                    D[w[0]][w[1]] = D[v[0]][v[1]] + 1
-                    visit[w[0]][w[1]] = True
                     Q.append(w)
 
             if flag:

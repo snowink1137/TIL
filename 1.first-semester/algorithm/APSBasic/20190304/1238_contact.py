@@ -25,7 +25,6 @@ def bfs(s):
                 # Q.put(w)
                 Q.append(w)
 
-
     longest = max(D)
     long_list = []
     for idx in range(N+1):
