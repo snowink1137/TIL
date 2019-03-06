@@ -1,6 +1,6 @@
 import sys
 
-sys.stdin = open('1244.txt', 'r')
+sys.stdin = open('test.txt', 'r')
 
 N = int(input())
 switch = list(map(int, input().split()))
@@ -33,7 +33,8 @@ for _ in range(M):
             idx2 = where + cnt - 1
             if 0 > idx1 or idx2 > N - 1:
                 break
-
+            if switch[idx1] != switch[idx2]:
+                break
             if switch[idx1] == 0:
                 switch[idx1] = 1
             else:
@@ -44,5 +45,8 @@ for _ in range(M):
             else:
                 switch[idx2] = 0
 
-result = ' '.join(map(str, switch))
-print(result)
+length = len(switch)
+range_round = (length // 20) + 1
+for i in range(range_round):
+    result = ' '.join(map(str, switch[20*i:20*i+20]))
+    print(result)
