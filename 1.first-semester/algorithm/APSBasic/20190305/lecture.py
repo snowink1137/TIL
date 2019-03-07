@@ -1,4 +1,4 @@
-# 1. 중위 순회
+# 1. 트리 순회(전위, 중위, 후위)
 import sys
 
 sys.stdin = open('tree_input.txt')
@@ -32,3 +32,17 @@ for i in range(0, E*2, 2):
     P[v] = u
 
 inorder(1)
+
+
+# 2. 트리 순회(전역 변수 안 쓰고 return 사용하는 방법 예시)
+def inorder(v):
+    if v == 0:
+        return 0
+
+    l = inorder(L[v])
+    r = inorder(R[v])
+    return l + r + 1
+
+
+print()
+print(inorder(1))
