@@ -1,5 +1,4 @@
 import sys
-import itertools
 
 sys.stdin = open('5262_sample_input.txt', 'r')
 
@@ -11,26 +10,16 @@ for test_case in range(1, T+1):
     N = information[0]
     numbers = information[1:]
 
-    start1 = numbers[0]
-    start1_temp = numbers[0]
-    start1_cnt = 0
-    start2 = 1001
-    start2_temp = 1001
-    start2_cnt = 0
-    for number in numbers[1:]:
-        if start1_temp < number:
-            start1_cnt += 1
+    D = [1 for _ in range(information[0])]
+    # D[0] = 1
 
-        if start2_temp < number:
-            start2_cnt += 1
+    for i in range(N):
+        for j in range(i):
+            if numbers[j] > numbers[i]:
+                D[i] = D[j] + 1
+        else:
+            D[i] = D[i-1] + 1
 
-        if start1 > number:
-            start2 = number
-
-        if
-
-
-
-
+    result = max(D)
 
     print('#{} {}'.format(test_case, result))
