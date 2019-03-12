@@ -30,4 +30,4 @@ for test_case in range(1, T+1):
         if flag:
             B_copy.pop(temp)
 
-    print(f'#{test_case} {cnt}')
+    print('#{} {}'.format(test_case, cnt))

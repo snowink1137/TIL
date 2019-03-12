@@ -25,5 +25,4 @@ for test_case in range(1, T+1):
         if temp_result > result:
             result = temp_result
 
-    print(f'#{test_case} {result}')
-
+    print('#{} {}'.format(test_case, result))
