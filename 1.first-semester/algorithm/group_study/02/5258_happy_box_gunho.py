@@ -1,6 +1,3 @@
-
-memorize = {}
-
 def happybox(a,b):
     if b == 0 and a < arr[b][0]:
         memorize[(a,b)] = 0
@@ -21,6 +18,7 @@ def happybox(a,b):
 
 T = 1
 for _ in range(T):
+    memorize = {}
     N, M =12, 5
     arr = [[7, 20],[3,10],[5,3],[3,8],[6,15]]
     # print('#{} {}'.format(_+1,result))
