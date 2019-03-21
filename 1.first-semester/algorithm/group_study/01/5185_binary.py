@@ -1,6 +1,6 @@
 import sys
 
-sys.stdin = open('5185_sample_input.txt')
+sys.stdin = open('5185.txt')
 
 T = int(input())
 for test_case in range(1, T+1):
