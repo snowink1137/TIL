@@ -3,15 +3,23 @@ import sys
 sys.stdin = open('1865.txt', 'r')
 
 
-def perm(n, k):
-    if k == n:
-        perm_list.append(arr)
+def calculate(n, k=0, acc=1.0):
+    global max_probability
+
+    if acc <= max_probability:
         return
 
-    for i in range(k, n):
-        arr[k], arr[i] = arr[i], arr[k]
-        perm(n, k+1)
-        arr[k], arr[i] = arr[i], arr[k]
+    if n == k:
+        max_probability = acc
+        return
+
+    for i in range(N):
+        if not visit[i]:
+            new_acc = acc * matrix[k][i]
+
+            visit[i] = True
+            calculate(n, k+1, new_acc)
+            visit[i] = False
 
 
 T = int(input())
@@ -20,12 +28,11 @@ for test_case in range(1, T+1):
 
     matrix = []
     for _ in range(N):
-        matrix.append(list(map(int, input().split())))
+        matrix.append(list(map(lambda x: int(x)*0.01, input().split())))
 
-    perm_list = []
-    arr = [x for x in range(N)]
-    perm(N-1, 0)
+    visit = [False for _ in range(N)]
 
-    print(perm_list)
+    max_probability = 0
+    calculate(N)
+    print('#{} {}'.format(test_case, format(max_probability*100, '.6f')))
 
-    min_probability = -1
