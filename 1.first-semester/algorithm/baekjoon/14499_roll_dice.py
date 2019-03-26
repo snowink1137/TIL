@@ -71,6 +71,7 @@ for c in command:
                 matrix[dice.x][dice.y] = dice.values[dice.tail]
             else:
                 dice.color(matrix[dice.x][dice.y])
+                matrix[dice.x][dice.y] = 0
 
             print(dice.values[dice.head])
     elif c == 2:
@@ -80,6 +81,7 @@ for c in command:
                 matrix[dice.x][dice.y] = dice.values[dice.tail]
             else:
                 dice.color(matrix[dice.x][dice.y])
+                matrix[dice.x][dice.y] = 0
 
             print(dice.values[dice.head])
     elif c == 3:
@@ -89,6 +91,7 @@ for c in command:
                 matrix[dice.x][dice.y] = dice.values[dice.tail]
             else:
                 dice.color(matrix[dice.x][dice.y])
+                matrix[dice.x][dice.y] = 0
 
             print(dice.values[dice.head])
     elif c == 4:
@@ -98,5 +101,6 @@ for c in command:
                 matrix[dice.x][dice.y] = dice.values[dice.tail]
             else:
                 dice.color(matrix[dice.x][dice.y])
+                matrix[dice.x][dice.y] = 0
 
             print(dice.values[dice.head])
