@@ -3,7 +3,22 @@ import sys
 sys.stdin = open('5203.txt', 'r')
 
 
-def baby_gin()
+def baby_gin(arr):
+    cnt_dict = dict()
+    l = len(arr)
+    for i in range(l):
+        if cnt_dict.get(arr[i]):
+            cnt_dict[arr[i]] += 1
+        else:
+            cnt_dict[arr[i]] = 1
+
+    if 3 in cnt_dict.values():
+        return True
+
+    for i in range(l-2):
+        cnt = 0
+        if arr[i] + 1 in arr and arr[i] + 2 in arr:
+            return True
 
 
 T = int(input())
@@ -31,44 +46,23 @@ for test_case in range(1, T+1):
         print('#{} {}'.format(test_case, 2))
         continue
 
-    flag = False
     for i in range(3, 6):
         A.append(numbers[i * 2])
         B.append(numbers[i * 2 + 1])
 
         A.sort()
-        for j in range(i-1):
-            temp = A[j:j+3]
-            temp.sort()
-            if temp[0] == temp[1] == temp[2]:
-                print('#{} {}'.format(test_case, 1))
-                flag = True
-                break
-            elif temp[0] + 1 == temp[1] and temp[1] + 1 == temp[2]:
-                print('#{} {}'.format(test_case, 1))
-                flag = True
-                break
-
-        if flag:
+        a = baby_gin(A)
+        if a:
+            print('#{} {}'.format(test_case, 1))
             break
 
         B.sort()
-        for j in range(i - 1):
-            temp = B[j:j + 3]
-            temp.sort()
-            if temp[0] == temp[1] == temp[2]:
-                print('#{} {}'.format(test_case, 2))
-                flag = True
-                break
-            elif temp[0] + 1 == temp[1] and temp[1] + 1 == temp[2]:
-                print('#{} {}'.format(test_case, 2))
-                flag = True
-                break
-
-        if flag:
+        b = baby_gin(B)
+        if b:
+            print('#{} {}'.format(test_case, 2))
             break
 
-    if flag:
+    if a or b:
         continue
     else:
         print('#{} {}'.format(test_case, 0))
