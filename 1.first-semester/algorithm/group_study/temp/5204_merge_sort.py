@@ -26,4 +26,4 @@ for test_case in range(1, T+1):
     count(m)
     m.sort()
 
-    print(f'#{test_case} {m[N//2]} {cnt}')
+    print('#{} {} {}'.format(test_case, m[N//2], cnt))
