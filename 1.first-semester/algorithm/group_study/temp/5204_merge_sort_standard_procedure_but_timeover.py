@@ -1,6 +1,6 @@
 import sys
 
-sys.stdin = open('5204_sample_input.txt', 'r')
+sys.stdin = open('5204.txt', 'r')
 
 
 def merge_sort(m):
