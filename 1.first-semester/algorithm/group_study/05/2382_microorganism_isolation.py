@@ -8,6 +8,7 @@ class Micro:
         self.x = x
         self.y = y
         self.number = number
+        self.original_number = number
         self.direction = direction
 
     def go(self):
@@ -24,7 +25,7 @@ class Micro:
             if not MAP[self.x][self.y]:
                 MAP[self.x][self.y] = self
             elif visit[MAP[self.x][self.y].x][MAP[self.x][self.y].y]:
-                if MAP[self.x][self.y].number > self.number:
+                if MAP[self.x][self.y].original_number > self.original_number:
                     MAP[self.x][self.y].number += self.number
                 else:
                     self.number += MAP[self.x][self.y].number
@@ -41,7 +42,7 @@ class Micro:
             if not MAP[self.x][self.y]:
                 MAP[self.x][self.y] = self
             elif visit[MAP[self.x][self.y].x][MAP[self.x][self.y].y]:
-                if MAP[self.x][self.y].number > self.number:
+                if MAP[self.x][self.y].original_number > self.original_number:
                     MAP[self.x][self.y].number += self.number
                 else:
                     self.number += MAP[self.x][self.y].number
@@ -57,7 +58,7 @@ class Micro:
             if not MAP[self.x][self.y]:
                 MAP[self.x][self.y] = self
             elif visit[MAP[self.x][self.y].x][MAP[self.x][self.y].y]:
-                if MAP[self.x][self.y].number > self.number:
+                if MAP[self.x][self.y].original_number > self.original_number:
                     MAP[self.x][self.y].number += self.number
                 else:
                     self.number += MAP[self.x][self.y].number
@@ -73,7 +74,7 @@ class Micro:
             if not MAP[self.x][self.y]:
                 MAP[self.x][self.y] = self
             elif visit[MAP[self.x][self.y].x][MAP[self.x][self.y].y]:
-                if MAP[self.x][self.y].number > self.number:
+                if MAP[self.x][self.y].original_number > self.original_number:
                     MAP[self.x][self.y].number += self.number
                 else:
                     self.number += MAP[self.x][self.y].number
@@ -104,6 +105,7 @@ for test_case in range(1, T+1):
         object_list = []
         for t in temp:
             object_list.append(MAP[t[0]][t[1]])
+            MAP[t[0]][t[1]].original_number = MAP[t[0]][t[1]].number
 
     result = 0
     for o in object_list:
