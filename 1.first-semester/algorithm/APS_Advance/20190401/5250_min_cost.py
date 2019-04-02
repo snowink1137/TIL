@@ -3,7 +3,7 @@ from collections import deque
 
 sys.stdin = open('5250.txt', 'r')
 
-dx = (0, 1, 0 , -1)
+dx = (0, 1, 0, -1)
 dy = (1, 0, -1, 0)
 
 
