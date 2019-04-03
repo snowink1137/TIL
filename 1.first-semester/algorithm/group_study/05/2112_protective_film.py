@@ -26,6 +26,7 @@ def check(film, cnt):
     for combination in combinations(range(D), cnt):
         for prod in product(range(2), repeat=cnt):
             test_film = [film[i][:] for i in range(D)]
+            flag = False
             for i in combination:
                 test_film[i] = [prod[i]] * W
 
@@ -41,10 +42,13 @@ def check(film, cnt):
                         acc = 0
 
                 if acc != K - 1:
+                    flag = True
                     break
 
-            return True
+            if flag:
+                continue
 
+            return True
 
 
 T = int(input())
