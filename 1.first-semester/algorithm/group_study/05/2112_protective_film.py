@@ -26,9 +26,12 @@ def check(film, cnt):
     for combination in combinations(range(D), cnt):
         for prod in product(range(2), repeat=cnt):
             test_film = [film[i][:] for i in range(D)]
-            flag = False
+            flag1 = False
+            flag2 = False
+            iter_cnt = 0
             for i in combination:
-                test_film[i] = [prod[i]] * W
+                test_film[i] = [prod[iter_cnt]] * W
+                iter_cnt += 1
 
             for j in range(W):
                 acc = 0
@@ -42,10 +45,15 @@ def check(film, cnt):
                         acc = 0
 
                 if acc != K - 1:
-                    flag = True
+                    flag1 = True
                     break
+            else:
+                flag2 = True
 
-            if flag:
+            if flag2:
+                return True
+
+            if flag1:
                 continue
 
             return True
@@ -62,7 +70,7 @@ for test_case in range(1, T+1):
         print('#{} {}'.format(test_case, cnt))
         continue
 
-    cnt = 2
+    cnt = 1
     while True:
         result = check(film, cnt)
         if result:
