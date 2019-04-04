@@ -1,5 +1,4 @@
 import sys
-from collections import deque
 
 sys.stdin = open('2383.txt', 'r')
 
@@ -22,25 +21,21 @@ def calculate(people_index, stair):
         calculate_list[i] = abs(people[people_index[i]][0]-x) + abs(people[people_index[i]][1]-y)
 
     calculate_list.sort()
-    time = calculate_list[0]
-    for i in range(l):
-        calculate_list[i] -= time
+    if l <= 3:
+        if l == 0:
+            pass
+        else:
+            time = calculate_list[-1] + k
+    else:
+        delay = 0
+        for i in range(l%3-1, l, 3):
+            if calculate_list[i] - calculate_list[i-1] - k > 0:
+                delay += calculate_list[i] - calculate_list[i-1] - k
 
-
-    queue = deque(calculate_list)
-    wait_queue_1 = deque()
-    wait_queue_2 = deque()
-    wait_queue_3 = deque()
-    flow = 0
-    time_table = [0, 0, 0]
-    while len(queue):
-        if time
-
-        if len(wait_queue_1) == 0:
-            if queue
-
+        time = calculate_list[-1] + k + delay
 
     return time
+
 
 def go(number, depth=0, select=0):
     global result
@@ -58,12 +53,11 @@ def go(number, depth=0, select=0):
         temp2 = calculate(use_stair2, 2)
 
         result = max(temp1, temp2)
+        return
 
     for i in range(number):
-        go(number, depth+1, select|1<<i)
-        go(number, depth+1, select)
-
-
+        go(number, depth+1, select | (1 << i))
+        # go(number, depth+1, select)
 
 
 T = int(input())
@@ -89,4 +83,3 @@ for test_case in range(1, T+1):
     result = 0xffffff
     go(len(people))
     print('#{} {}'.format(test_case, result))
-
