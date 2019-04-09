@@ -1,15 +1,54 @@
 {% extends 'board/base.html' %}
 
 {% block body %}
-    <h1>{{ article.title }}</h1>
+    <h1>{{ posting.title }}</h1>
+
     <p>
-        {{ article.content }}
+        {{ posting.content }}
     </p>
+
     <hr>
-    <a href="/board/articles/"><button>List</button></a>
-    <a href="/board/articles/{{ article.id }}/edit/"><button>Edit</button></a>
-    <form action="/board/articles/{{ article.id }}/delete/">
+
+    <a href="{% url 'board_ad:posting_list' %}"><button>List</button></a>
+    <a href="{% url 'board_ad:update_posting' posting.id %}"><button>Edit</button></a>
+    <form action="{% url 'board_ad:delete_posting' posting.id %}" method="POST">
         {% csrf_token %}
-        <button type="submit">Delete</button>
+        <button type="submit" onclick="return confirm('진짜 지울거야? ㅠㅠ');">Delete</button>
     </form>
+
+    <hr>
+
+    {% if comments %}
+        <ul>
+        {% for comment in comments %}
+            <li>
+                {{ comment.content }}
+                <form action="{% url 'board_ad:delete_comment' posting_id=posting.id comment_id=comment.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="삭제">
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    <hr>
+
+    <form action="{% url 'board_ad:create_comment' posting.id%}" method="POST">
+        {% csrf_token %}
+
+        <label for="comment">Comment</label>
+        <input type="text" name="content" id="comment">
+        <input type="submit" value="댓글쓰기">
+    </form>
+
+
+
+    <button id="reset_button">WOW</button>
+    <script>
+        button = document.querySelector('#reset_button');
+        button.addEventListener('click', (e) => {
+            document.write('<h1>hahaha</h1>');
+        });
+    </script>
 {% endblock %}

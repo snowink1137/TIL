@@ -14,6 +14,8 @@ class Posting(models.Model):
 class Comment(models.Model):
     posting = models.ForeignKey(Posting, on_delete=models.CASCADE)
     content = models.CharField(max_length=200, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.id}: {self.content[:30]}'
