@@ -60,6 +60,24 @@
 | ------- | ------------------- | --------- | ----------- |
 | INT     | INT                 | CharField | TextField   |
 
+#### Student
+
+| id (PK) | name          |
+| ------- | ------------- |
+| INT     | CharField(20) |
+
+#### Message
+
+| id (PK) | content       | student (FK) - Student |
+| ------- | ------------- | ---------------------- |
+| INT     | CharField(30) | INT                    |
+
+#### Reply
+
+| id (PK) | content       | student (FK) - Student | message (FK) - Message |
+| ------- | ------------- | ---------------------- | ---------------------- |
+| INT     | CharField(30) | INT                    | INT                    |
+
 
 
 

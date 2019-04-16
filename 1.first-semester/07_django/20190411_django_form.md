@@ -10,8 +10,8 @@
 
 - (ex)
 
-  - 예를 들면, 내가 구성한 model에 맞게 form 입력 양식을 html로 구현이 편하다.
-  - 사용자로부터 받은 form 정보에 대한 유효성 검증이 편하다.
+  - 예를 들면, 내가 구성한 model에 맞게 form 입력 양식을 html로 구현이 편하다. front쪽 일 편하게.
+  - 사용자로부터 받은 form 정보에 대한 유효성 검증이 편하다. back쪽 일 편하게.
 
 - forms 모듈 구현 방법 1(`forms.py`)
 
@@ -96,7 +96,7 @@
 
 
 
-### 데이터 베이스에 file 저장
+### ORM으로 file 저장
 
 - `settings.py`에 MEDIA 옵션을 추가해준다.
 
@@ -108,6 +108,8 @@
 - html 문서 form 태그에 enctype 옵션을 추가해줘야 한다.
 
   - `<form method="POST" enctype="multipart/form-data">`
+
+- 데이터베이스에 file을 직접 저장하는 것이 아니라 file은 media에 저장하고 데이터베이스에는 이름만 저장하는 것.
 
 
 
