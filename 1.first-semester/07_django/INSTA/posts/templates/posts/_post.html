@@ -30,6 +30,20 @@
     </div>
 
     <div class="card-body">
+        <form action="{% url 'posts:toggle_like' post_id=post.id %}" method="POST">
+            {% csrf_token %}
+            {% if user in post.like_users.all %}
+                <span>총 좋아요 수:</span> <span>{{ post.like_users.all.count }}</span>
+                <button type="submit" class="btn btn-danger">좋아요 취소</button>
+            {% else %}
+                <span>총 좋아요 수:</span> <span>{{ post.like_users.all.count }}</span>
+                <button type="submit" class="btn btn-info">좋아요</button>
+            {% endif %}
+        </form>
+    </div>
+
+
+    <div class="card-body">
             {% for comment in post.comment_set.all %}
                 <p class="card-text">
                     <strong>{{ comment.user.username }}</strong>: {{ comment.content }}

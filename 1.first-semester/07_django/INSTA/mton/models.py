@@ -18,7 +18,8 @@ class Client(models.Model):
 
 class Hotel(models.Model):
     name = models.CharField(max_length=30)
-    clients = models.ManyToManyField(Client)
+    # related_name을 안정해주면? Client 객체인 client에서  Hotel을 조회할 때 client.hotel_set.all() 이런 식으로 접근해야함. related_name을 정해주면? client.hotels.all() 이렇게 가능.
+    clients = models.ManyToManyField(Client, related_name='hotels')
 
     @classmethod
     def dummy(cls, n):

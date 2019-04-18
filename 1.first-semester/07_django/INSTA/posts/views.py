@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Post, Image
 from .forms import PostModelForm, ImageModelForm, CommentModelForm
 
+
 @login_required
 @require_http_methods(['GET', 'POST'])
 def create_post(request):
@@ -92,3 +93,18 @@ def create_comment(request, post_id):
 
     # TODO else:
     # FIXME
+
+
+@login_required
+@require_POST
+def toggle_like(request, post_id):
+    user = request.user
+    post = get_object_or_404(Post, id=post_id)
+
+    # if post.like_users.filter(id=user.id): # 찾으면, [value] / 없으면, []
+    if user in post.like_users.all():
+        post.like_users.remove(user)
+    else:
+        post.like_users.add(user)
+
+    return redirect('posts:post_list')

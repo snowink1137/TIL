@@ -6,7 +6,7 @@
 
 - 기존 CRUD 구현에 form을 활용하여 좀더 편하고 효과적으로 서버를 만들 수 있음!
 
-- django ORM(`Model.py`)인 models 모듈로 데이터베이스 관련한 작업을 편하게 django에서 처리했던 것처럼, forms 모듈을 `forms.py`에 구현하여 사용자가 form으로 받는 작업을 편하게 할 수 있다.
+- django ORM(`Model.py`)인 models 모듈로 데이터베이스 관련한 작업을 편하게 django에서 처리했던 것처럼, forms 모듈을 `forms.py`에 구현하여 form관련한 요청과 응답 작업을 편하게 할 수 있다.
 
 - (ex)
 
