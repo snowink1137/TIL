@@ -4,6 +4,7 @@ from .forms import CustomUserCreationForm, CustomUserAuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 # from django.contrib.auth import get_user_model
+from django.contrib import messages
 from .models import User
 from posts.forms import CommentModelForm
 
@@ -37,8 +38,11 @@ def login(request):
         form = CustomUserAuthenticationForm(request, data=request.POST)
 
         if form.is_valid():
+            user = form.get_user()
             # DO LOGIN
-            auth_login(request, form.get_user())
+            auth_login(request, user)
+            messages.add_message(request, messages.SUCCESS, 'welcome back!')
+            messages.add_message(request, messages.INFO, f'last login: {user.last_login}')
 
             return redirect(request.GET.get('next') or 'posts:post_list')
     # 사용자가 로그인 화면을 요청할 때
@@ -54,6 +58,7 @@ def login(request):
 @login_required
 def logout(request):
     auth_logout(request)
+    messages.add_message(request, messages.SUCCESS, '안녕히 가세요 :)')
     return redirect('posts:post_list')
 
 
