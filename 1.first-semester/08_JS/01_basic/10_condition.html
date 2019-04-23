@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<script>
+    const userName = prompt('Hello! Who are you?');
+    let message = ``;
+
+    if (userName === '1q2w3e4r') {
+        message = `<h1>This is secret Admin Page</h1>`;
+    } else if (userName === 'jj') {
+        message = `<h1>hello master</h1>`;
+    } else {
+        message = `<h1>Hello ${userName}</h1>`;
+    }
+
+    document.write(message);
+
+    /*  [Python]
+        num = 10
+
+        if num > 5:
+            string = 'bigger than 5'
+        else:
+            string = 'less than 5'
+
+        <==>
+
+        string = 'bigger than 5' if num > 5 else 'less'
+
+     */
+
+    // Ternary Operator == 삼항 연산자
+
+    const num = 10;
+    let string = '';
+    if (num > 5) {
+        string = 'big';
+    } else {
+        string = 'small';
+    }
+
+    string = (num > 5) ? 'big' : 'small';
+
+</script>
+</body>
+</html>
