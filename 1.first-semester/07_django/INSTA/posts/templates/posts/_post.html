@@ -30,16 +30,35 @@
     </div>
 
     <div class="card-body">
-        <form action="{% url 'posts:toggle_like' post_id=post.id %}" method="POST">
-            {% csrf_token %}
+{#        <!-- 좋아요 버튼 1, 기존에 했던 방식. -->#}
+{#        <form action="{% url 'posts:toggle_like' post_id=post.id %}" method="POST">#}
+{#            {% csrf_token %}#}
+{#            {% if user in post.like_users.all %}#}
+{#                <span>총 좋아요 수:</span> <span>{{ post.like_users.all.count }}</span>#}
+{#                <button type="submit" class="btn btn-danger">좋아요 취소</button>#}
+{#            {% else %}#}
+{#                <span>총 좋아요 수:</span> <span>{{ post.like_users.all.count }}</span>#}
+{#                <button type="submit" class="btn btn-info">좋아요</button>#}
+{#            {% endif %}#}
+{#        </form>#}
+        <!-- 좋아요 버튼 2 -->
+        {% if user in post.like_users.all %}
+            <i class="fas fa-thumbs-up fa-2x activate"></i>
+        {% else %}
+            <i class="fas fa-thumbs-up fa-2x"></i>
+        {% endif %}
+
+        <button class="like-button" data-id="{{ post.id }}" data-user="{{ post.user }}">
             {% if user in post.like_users.all %}
-                <span>총 좋아요 수:</span> <span>{{ post.like_users.all.count }}</span>
-                <button type="submit" class="btn btn-danger">좋아요 취소</button>
+                안좋아요
             {% else %}
-                <span>총 좋아요 수:</span> <span>{{ post.like_users.all.count }}</span>
-                <button type="submit" class="btn btn-info">좋아요</button>
+                좋아요
             {% endif %}
-        </form>
+        </button>
+
+        <p class="card-text"><strong>{{ post.user }}</strong> {{ post.content }}</p>
+        <p class="card-text">좋아요 <span id="like-count-{{ post.id }}">{{post.like_users.count}}</span>개</p>
+        <!-- 좋아요 끝 -->
     </div>
 
 

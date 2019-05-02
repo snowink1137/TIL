@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>caesar cypher</title>
+</head>
+<body>
+<h1>씨저 싸이퍼</h1>
+<div>
+    <label for="user-n">몇 칸 밀까요?</label>
+    <input type="text" id="user-n">
+</div>
+
+<div>
+    <label for="user-input">밀어 봅시다</label>
+    <input type="text" id="user-input">
+</div>
+
+<h2 id="user-output">
+</h2>
+
+<script>
+    const inputArea = document.querySelector('#user-input');
+    const numberArea = document.querySelector('#user-n');
+    const resultArea = document.querySelector('#user-output');
+
+    inputArea.addEventListener('input', e => {
+        const number = Number(numberArea.value);
+        const charArray = inputArea.value.split('');
+        const numberArray = charArray.map(e => e.charCodeAt());
+        const resultArray = numberArray.map(e => String.fromCharCode(e + number));
+        resultArea.innerHTML = resultArray.toString();
+
+        // // by teacher code
+        // const resultString = charArray.map(char => {
+        //     let charNumber = char.charCodeAt();
+        //     charNumber += number;
+        //     return String.fromCharCode(charNumber)
+        // }).join('');
+        // resultArea.innerHTML = resultString;
+    })
+</script>
+</body>
+</html>
