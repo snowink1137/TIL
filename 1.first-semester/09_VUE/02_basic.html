@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="app">
+    <h1 v-once>{{ title }}</h1>
+    <p>{{ sayHello() }}</p>
+    <div>
+        <a v-bind:href="link">Google</a>
+    </div>
+    <div>
+        {{ rawHTML }}  <!-- XSS: Cross Site Scripting -->
+    </div>
+    <div v-html="rawHTML">Naver</div>
+</div>
+<script src="./vue.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            title: 'Hello',
+            link: 'http://google.com',
+            rawHTML: '<a href="https://naver.com">Naver</a>'
+        },
+        methods: {
+            sayHello() {
+                return this.title
+            }
+        }
+    })
+</script>
+</body>
+</html>
