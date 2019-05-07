@@ -10,6 +10,7 @@
     <p>{{ sayHello() }}</p>
     <div>
         <a v-bind:href="link">Google</a>
+        <a :href="link">Google</a>
     </div>
     <div>
         {{ rawHTML }}  <!-- XSS: Cross Site Scripting -->

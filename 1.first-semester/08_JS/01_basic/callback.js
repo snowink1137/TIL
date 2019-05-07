@@ -48,3 +48,29 @@ result2 = numberEach([1,2,3,4,5], muler);
 result3 = numberEach([1,2,3,4,5], (number, sum=0) => sum + number);
 
 console.log(result1, result2, result3);
+
+// 1. 과목 평가 예시
+function myFunc () {
+    return n => n + 1;
+    // return function (n) {
+    //     return n + 1;
+    // } // 이거와 같은 말임.
+}
+
+const num_101 = myFunc()(100);
+
+// 2. 과목 평가 예시
+function func1 (cb1, cb2) {
+    console.log(1);
+    cb1(cb2(cb1))
+}
+
+function func2 (callback) {
+    console.log(2);
+}
+
+function func3 (callback) {
+    console.log(3);
+}
+
+func1(func2, func3);

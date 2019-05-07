@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<div id="app">
+    <h2 v-if="eng">Hi</h2>
+
+<!--    show는 display: none 을 걸어줌. 자주 바뀔 요소인 경우에는 이걸로 하는 게 비용상 좋다. css 요소만 조정하는 거니까. if는 있게 만들었다 없게 만들었다 하는 거니까 렌더링 비용 큼.-->
+    <h2 v-show="kor">안녕</h2>
+
+    {{ message }}
+    {{ status ? 'Good' : 'Bad' }}
+    {{ message | capitalize }}
+
+    <!-- vue에서만 쓰는 가상의 태그. 브라우저 mark up에서 안나옴. -->
+    <template v-if="status">
+<!--        template 태그는 v-if 랑 쓴다.-->
+        <h1>Good</h1>
+        <p>Good to see you again</p>
+    </template>
+
+    <p v-if="type === 'A'">A</p>
+    <p v-else-if="type === 'B'">B</p>
+    <p v-else-if="type === 'C'">C</p>
+    <p v-else>?</p>
+</div>
+<script src="./vue.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            message: 'ssafy',
+            status: true,
+            type: 'A',
+            eng: true,
+            kor: true,
+        },
+        methods: {},
+        filters: {
+            capitalize (value) {
+                if (!value) return '';
+                value = value.toString();
+                return value.charAt(0).toUpperCase() + value.slice(1);
+            },
+        },
+    })
+</script>
+</body>
+</html>

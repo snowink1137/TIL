@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <select v-model="status">
+        <option value="all">all</option>
+        <option value="active" selected>active</option>
+        <option value="completed">completed</option>
+    </select>
+
+<!--  v-on: 을 줄여서 쓰면 @  -->
+    <input type="text" v-model="newTodos" @keyup.enter="addTodo()">
+    <button v-on:click="addTodo()">+</button>
+    <button v-on:click="clearCompleted()">Clear Completed</button>
+
+<!--    <ol v-if="todos.length">-->
+<!--        <li v-for="todo in todos" v-if="!todo.completed" v-on:click="check(todo)">-->
+<!--            {{ todo.content }}-->
+<!--        </li>-->
+<!--        <li v-else-if="todo.completed === 2">-->
+<!--            [무엇]-->
+<!--        </li>-->
+<!--        <li v-else v-on:click="check(todo)">-->
+<!--            [완료!]-->
+<!--        </li>-->
+<!--    </ol>-->
+
+    <ol v-if="todos.length">
+        <li v-for="todo in groupTodosByStatus()" v-bind:class="todo.completed ? 'completed' : ''" v-bind:key="todo.id">
+            <input type="checkbox" v-model="todo.completed">
+            <span>{{ todo.content }}</span>
+        </li>
+    </ol>
+</div>
+<script src="./vue.js"></script>
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            todos: [
+                {
+                    id: 1,
+                    content: '저녁 메뉴 고민하기',
+                    completed: true,
+                },
+                {
+                    id: 2,
+                    content: '시험 공부 하기',
+                    completed: false,
+                },
+                {
+                    id: 3,
+                    content: '집 살 걱정하기',
+                    completed: false,
+                },
+                {
+                    id: 4,
+                    content: '행복하기',
+                    completed: false,
+                },
+            ],
+            newTodos: '',
+            status: 'active',
+        },
+        methods: {
+            check: function (todo={}) {
+                todo.completed = !todo.completed;
+            },
+            addTodo () {
+                if (this.newTodos) {
+                    this.todos.push({
+                        id: Date.now(),
+                        content: this.newTodos,
+                        completed: false,
+                    });
+                    this.newTodos = '';
+                }
+            },
+            clearCompleted () {
+                // this.todos = this.todos.filter(todo => !todo.completed)
+                const newTodos = this.todos.filter(todo => {
+                    if (todo.completed) {
+
+                    } else { return true }
+                });
+                this.todos = newTodos;
+            },
+        },
+        computed: {
+            groupTodosByStatus () {
+                if (this.status === 'active') {
+                    return this.todos.filter(todo => !todo.completed)
+                } else if (this.status === 'completed') {
+                    return this.todos.filter(todo => todo.completed);
+                } else {
+                    return this.todos;
+                }
+            },
+        }
+    })
+</script>
+</body>
+</html>
