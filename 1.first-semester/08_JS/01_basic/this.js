@@ -14,7 +14,9 @@ const me = {
         return `Hi my name is ${this.name}.`
     }
 };
-console.log(me.intro());
+
+// console.log(me.intro());
+
 const you = {
     name: '상현',
     phone: '01011112222',
