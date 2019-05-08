@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <select v-model="status">
+        <option value="all">all</option>
+        <option value="active" selected>active</option>
+        <option value="completed">completed</option>
+    </select>
+
+    <input type="text" v-model="newTodo" @keyup.enter="addTodo()">
+    <button v-on:click="addTodo()">+</button>
+    <button v-on:click="clearCompleted()">Clear Completed</button>
+
+    <ol v-if="todos.length">
+        <li v-for="todo in groupTodosByStatus" v-bind:class="todo.completed ? 'completed' : ''" v-bind:key="todo.id">
+            <input type="checkbox" v-model="todo.completed" v-on:change="updateTodo(todo)">
+            <span>{{ todo.content }}</span>
+        </li>
+    </ol>
+
+</div>
+<script src="./vue.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+<script>
+    // Initialize Firebase
+    // TODO: Replace with your project's customized code snippet
+    const config = {
+        apiKey: "AIzaSyAP7SmN7z2fQ4rms5PvKc7iB2N4Qa7ReQQ",
+        databaseURL: "https://todo-vue-bc22c.firebaseio.com/",
+        projectId: "todo-vue-bc22c",
+    };
+    firebase.initializeApp(config);
+
+    const database = firebase.database();
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            newTodo: '',
+            status: 'all',
+        },
+        firebase: {
+          todos: database.ref('todos'),
+        },
+        methods: {
+            check: function (todo={}) {
+                todo.completed = !todo.completed;
+            },
+            addTodo () {
+                if (this.newTodo) {
+                    this.$firebaseRefs.todos.push({
+                        id: Date.now(),
+                        content: this.newTodo,
+                        completed: false,
+                    });
+                    this.newTodo = '';
+                }
+            },
+            clearCompleted () {
+                const completedTodos = this.todos.filter(todo => todo.completed);
+                completedTodos.forEach(todo => {
+                    this.$firebaseRefs.todos.child(todo['.key']).remove()
+                });
+            },
+            updateTodo (todo) {
+                // deepcopy 하려고 spread 표현식 쓴 것.
+                const newTodo = { ...todo };
+                delete newTodo['.key'];
+
+                // JS 배열에 child라는 메소드는 원래 없지만 import 해온 firebase, vuefire의 js 파일에서 child라는 메소드를 추가해 놨다. 그래서 갖다 쓸 수 있는 것. 자세한 것은 공식문서 보면 나올것임.
+                // firebase, vuefire를 사용하려다보니 Vue 객체에 firebase 라는 객체를 생성해야했고, 따라서 todo라는 데이터에 접근하는 방법이 아래와 같이 바뀐 것임. todo라는 데이터에 데이터를 입력할 때도 그 형식에 맞춰줘야 하고.
+                this.$firebaseRefs.todos.child(todo['.key']).set(newTodo);
+            },
+        },
+        computed: {
+            groupTodosByStatus () {
+                if (this.status === 'active') {
+                    return this.todos.filter(todo => !todo.completed)
+                } else if (this.status === 'completed') {
+                    return this.todos.filter(todo => todo.completed);
+                } else {
+                    return this.todos;
+                }
+            },
+        },
+        // watch: {
+        //     todos: {
+        //         deep: true,
+        //         handler: function (value) {
+        //             console.log(value);
+        //             todosApp.save(value);
+        //         }
+        //     },
+        // },
+    });
+</script>
+</body>
+</html>

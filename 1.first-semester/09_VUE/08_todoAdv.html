@@ -18,22 +18,9 @@
         <option value="completed">completed</option>
     </select>
 
-<!--  v-on: 을 줄여서 쓰면 @  -->
-    <input type="text" v-model="newTodos" @keyup.enter="addTodo()">
+    <input type="text" v-model="newTodo" @keyup.enter="addTodo()">
     <button v-on:click="addTodo()">+</button>
     <button v-on:click="clearCompleted()">Clear Completed</button>
-
-<!--    <ol v-if="todos.length">-->
-<!--        <li v-for="todo in todos" v-if="!todo.completed" v-on:click="check(todo)">-->
-<!--            {{ todo.content }}-->
-<!--        </li>-->
-<!--        <li v-else-if="todo.completed === 2">-->
-<!--            [무엇]-->
-<!--        </li>-->
-<!--        <li v-else v-on:click="check(todo)">-->
-<!--            [완료!]-->
-<!--        </li>-->
-<!--    </ol>-->
 
     <ol v-if="todos.length">
         <li v-for="todo in groupTodosByStatus" v-bind:class="todo.completed ? 'completed' : ''" v-bind:key="todo.id">
@@ -41,49 +28,39 @@
             <span>{{ todo.content }}</span>
         </li>
     </ol>
+
 </div>
 <script src="./vue.js"></script>
 <script>
+    const todosApp = {
+        storageKey: 'my-todos',
+        fetch: function () {
+            return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        },
+        save (todos) {
+            localStorage.setItem(this.storageKey, JSON.stringify(todos))
+        },
+    };
+
     const app = new Vue({
         el: '#app',
         data: {
-            todos: [
-                {
-                    id: 1,
-                    content: '저녁 메뉴 고민하기',
-                    completed: true,
-                },
-                {
-                    id: 2,
-                    content: '시험 공부 하기',
-                    completed: false,
-                },
-                {
-                    id: 3,
-                    content: '집 살 걱정하기',
-                    completed: false,
-                },
-                {
-                    id: 4,
-                    content: '행복하기',
-                    completed: false,
-                },
-            ],
-            newTodos: '',
-            status: 'active',
+            todos: todosApp.fetch(),
+            newTodo: '',
+            status: 'all',
         },
         methods: {
             check: function (todo={}) {
                 todo.completed = !todo.completed;
             },
             addTodo () {
-                if (this.newTodos) {
+                if (this.newTodo) {
                     this.todos.push({
                         id: Date.now(),
-                        content: this.newTodos,
+                        content: this.newTodo,
                         completed: false,
                     });
-                    this.newTodos = '';
+                    this.newTodo = '';
                 }
             },
             clearCompleted () {
@@ -106,8 +83,17 @@
                     return this.todos;
                 }
             },
-        }
-    })
+        },
+        watch: {
+            todos: {
+                deep: true,
+                handler: function (value) {
+                    console.log(value);
+                    todosApp.save(value);
+                }
+            },
+        },
+    });
 </script>
 </body>
 </html>
