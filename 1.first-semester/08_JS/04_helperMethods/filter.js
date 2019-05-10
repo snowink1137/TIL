@@ -35,5 +35,5 @@ const users = [
     { id: 3, admin: false },
     { id: 4, admin: true },
     { id: 5, admin: false },
-]
+];
 
