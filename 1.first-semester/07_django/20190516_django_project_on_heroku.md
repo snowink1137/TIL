@@ -77,7 +77,9 @@ python-3.7.3
 
 bash에서 `$ heroku login` 을 입력하고, 브라우저에서 로그인을 마무리한다.
 
-그리고 bash를 하나 새로 켜고, `$ heroku create [프로젝트 이름]` 을 입력하면 heroku에 프로젝트가 등록되고, heroku의 git 주소와 연결된다.
+그리고 bash를 하나 새로 켜고(log in 해둔 bash는 그대로 두고.), `$ heroku create [프로젝트 이름]` 을 입력하면 heroku에 프로젝트가 등록되고, heroku의 git 주소와 연결된다.
+
+해당 프로젝트를 commit한 후 `$ git push heroku master` 명령으로 push 한다.
 
 
 
