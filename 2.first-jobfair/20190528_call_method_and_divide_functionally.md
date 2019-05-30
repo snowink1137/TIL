@@ -8,7 +8,7 @@
 
 - 값에 의한 호출(call by value)
 
-  - C, Java의 method에서 primitive type의 인자는 call by value 방식으로 동작한다. primitive type이 아닌 다른 type을 인자로 넘기면 call by refference 방식으로 동작한다.
+  - C, Java의 method에서 primitive type의 인자는 call by value 방식으로 동작한다. primitive type이 아닌 다른 type을 인자로 넘기면 call by refference 방식으로 동작하는것처럼 보인다! 하지만.. 이 때도 call by value로 동작하는 것이다. primitive type이 아닌 다른 type인 참조 변수인 인자가 call by value에 의해 복사되어서 함수에서 실행되는 것이고, 어차피 복사된 인자가 가리키는 객체는 똑같기 때문이다.
 
   - ```java
     // 호출문
