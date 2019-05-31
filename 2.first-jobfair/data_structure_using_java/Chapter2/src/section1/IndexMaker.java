@@ -1,12 +1,14 @@
-package Section3;
+package section1;
 
 import java.io.*;
 import java.util.*;
 
-public class Code22 {
-	static String [] words = new String [100000];
-	static int [] count = new int [100000];
-	static int n = 0;	
+public class IndexMaker {
+//	static String [] words = new String [100000];
+//	static int [] count = new int [100000];
+	
+	static Item [] items = new Item [100000];
+	static int n = 0;
 	
 	public static void main(String[] args) {
 		Scanner kb = new Scanner(System.in);
@@ -22,7 +24,7 @@ public class Code22 {
 				String str = kb.next();
 				int index = findWord(str);
 				if (index > -1) {
-					System.out.println("The word " + words[index] + " appears " + count[index] + " times.");
+					System.out.println("The word " + items[index].word + " appears " + items[index].count + " times.");
 				} else {
 					System.out.println("The word " + str + " does not appear.");
 				}
@@ -39,6 +41,7 @@ public class Code22 {
 		
 		kb.close();
 		
+// check¿ë ÄÚµå
 //		for (int i=0; i<n; i++) {
 //			System.out.println(words[i] + " " + count[i]);
 //		}
@@ -51,7 +54,15 @@ public class Code22 {
 			
 			while (inFile.hasNext()) {
 				String str = inFile.next();
-				addWord(str);
+				
+				String trimmed = trimming(str);
+				
+				if (trimmed != null) {
+					String t = trimmed.toLowerCase();
+					
+					addWord(t);
+				}
+				
 			}
 			
 			inFile.close();
@@ -61,20 +72,50 @@ public class Code22 {
 		}
 	}
 	
+	static String trimming(String str) {
+		int i = 0;
+		int j = str.length() - 1;
+		
+		while (i < str.length() && !Character.isLetter(str.charAt(i))) {
+			i++;
+		}
+		
+		while (j >= 0 && !Character.isLetter(str.charAt(j))) {
+			j--;
+		}
+		
+		if (i <= j) {
+			String trimmed = str.substring(i, j+1);
+			
+			return trimmed;
+		} else {
+			return null;
+		}
+		
+	}
+
 	static void addWord(String str) {
 		int index = findWord(str);  // return -1 if not found
 		if (index != -1) {
-			count[index] += 1;
+			items[index].count += 1;
 		} else {
-			words[n] = str;
-			count[n] = 1;
+			int i = n - 1;
+			for (; i>=0 && items[i].word.compareToIgnoreCase(str)>0; i--) {
+//				words[i+1] = words[i];
+//				count[i+1] = count[i];
+				items[i+1] = items[i];
+			}
+			
+			items[i+1] = new Item();
+			items[i+1].word = str;
+			items[i+1].count = 1;
 			n++;
 		}
 	}
 	
 	static int findWord(String str) {
 		for (int i=0; i<n; i++) {
-			if (words[i].equals(str)) {
+			if (items[i].word.equals(str)) {
 				return i;
 			}
 		}
@@ -86,7 +127,7 @@ public class Code22 {
 		try {
 			PrintWriter outFile = new PrintWriter(new FileWriter(fileName));
 			for (int i=0; i<n; i++) {
-				outFile.println(words[i] + " " + count[i]);
+				outFile.println(items[i].word + " " + items[i].count);
 			}
 			
 			outFile.close();

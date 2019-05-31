@@ -1,14 +1,12 @@
-package Section1;
+package section3;
 
 import java.io.*;
 import java.util.*;
 
-public class IndexMaker {
-//	static String [] words = new String [100000];
-//	static int [] count = new int [100000];
-	
-	static Item [] items = new Item [100000];
-	static int n = 0;
+public class Code22 {
+	static String [] words = new String [100000];
+	static int [] count = new int [100000];
+	static int n = 0;	
 	
 	public static void main(String[] args) {
 		Scanner kb = new Scanner(System.in);
@@ -24,7 +22,7 @@ public class IndexMaker {
 				String str = kb.next();
 				int index = findWord(str);
 				if (index > -1) {
-					System.out.println("The word " + items[index].word + " appears " + items[index].count + " times.");
+					System.out.println("The word " + words[index] + " appears " + count[index] + " times.");
 				} else {
 					System.out.println("The word " + str + " does not appear.");
 				}
@@ -41,7 +39,6 @@ public class IndexMaker {
 		
 		kb.close();
 		
-// check¿ë ÄÚµå
 //		for (int i=0; i<n; i++) {
 //			System.out.println(words[i] + " " + count[i]);
 //		}
@@ -54,15 +51,7 @@ public class IndexMaker {
 			
 			while (inFile.hasNext()) {
 				String str = inFile.next();
-				
-				String trimmed = trimming(str);
-				
-				if (trimmed != null) {
-					String t = trimmed.toLowerCase();
-					
-					addWord(t);
-				}
-				
+				addWord(str);
 			}
 			
 			inFile.close();
@@ -72,50 +61,20 @@ public class IndexMaker {
 		}
 	}
 	
-	static String trimming(String str) {
-		int i = 0;
-		int j = str.length() - 1;
-		
-		while (i < str.length() && !Character.isLetter(str.charAt(i))) {
-			i++;
-		}
-		
-		while (j >= 0 && !Character.isLetter(str.charAt(j))) {
-			j--;
-		}
-		
-		if (i <= j) {
-			String trimmed = str.substring(i, j+1);
-			
-			return trimmed;
-		} else {
-			return null;
-		}
-		
-	}
-
 	static void addWord(String str) {
 		int index = findWord(str);  // return -1 if not found
 		if (index != -1) {
-			items[index].count += 1;
+			count[index] += 1;
 		} else {
-			int i = n - 1;
-			for (; i>=0 && items[i].word.compareToIgnoreCase(str)>0; i--) {
-//				words[i+1] = words[i];
-//				count[i+1] = count[i];
-				items[i+1] = items[i];
-			}
-			
-			items[i+1] = new Item();
-			items[i+1].word = str;
-			items[i+1].count = 1;
+			words[n] = str;
+			count[n] = 1;
 			n++;
 		}
 	}
 	
 	static int findWord(String str) {
 		for (int i=0; i<n; i++) {
-			if (items[i].word.equals(str)) {
+			if (words[i].equals(str)) {
 				return i;
 			}
 		}
@@ -127,7 +86,7 @@ public class IndexMaker {
 		try {
 			PrintWriter outFile = new PrintWriter(new FileWriter(fileName));
 			for (int i=0; i<n; i++) {
-				outFile.println(items[i].word + " " + items[i].count);
+				outFile.println(words[i] + " " + count[i]);
 			}
 			
 			outFile.close();
