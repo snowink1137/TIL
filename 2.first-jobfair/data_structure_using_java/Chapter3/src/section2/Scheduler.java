@@ -3,11 +3,12 @@ package section2;
 import java.util.*;
 
 public class Scheduler {
-	
-	public Event events [] = new Event [100];
+
+	private int capacity = 10;
+	public Event events [] = new Event [capacity];
 	public int n = 0;
 	private Scanner kb;
-	
+
 	public void processCommand() {
 		kb = new Scanner (System.in);
 		while(true) {
@@ -23,51 +24,75 @@ public class Scheduler {
 					handleAddDeadlinedEvent();
 				}
 			} else if (command.equals("list")) {
-				
+				handleList();
 			} else if (command.equals("show")) {
-				
+
 			} else if (command.equals("exit")) {
 				break;
 			} 
 		}
-		
+
 		kb.close();
 	}
-	
+
+	private void handleList() {
+		for (int i=0; i<n; i++) {
+			System.out.println("   "+events[i].toString());
+		}
+	}
+
 	private void handleAddDeadlinedEvent() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void handleAddDurationEvent() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void handleAddOneDayEvent() {
 		System.out.print("  when: ");
 		String dateString = kb.next();
 		MyDate date = parseDateString(dateString);
-		
+
 		System.out.print("  title: ");
 		String title = kb.next();
-		
+
 		OneDayEvent ev = new OneDayEvent(title, date);
-		
-		System.out.println(ev.toString());  // test
-		
+
+		//		System.out.println(ev.toString());  // test
+
+		addEvent(ev);
 		events[n++] = ev;
+	}
+
+	private void addEvent(OneDayEvent ev) {
+		if (n >= capacity) {
+			reallocate();
+		}
+		events[n++] = ev;
+	}
+
+	private void reallocate() {
+		Event [] tmpArray = new Event [capacity*2];
+		for (int i=0; i<n; i++) {
+			tmpArray[i] = events[i];
+		}
+
+		events = tmpArray;
+		capacity *= 2;
 	}
 
 	private MyDate parseDateString(String dateString) {
 		String [] tokens = dateString.split("/");
-		
+
 		int year = Integer.parseInt(tokens[0]);
 		int month = Integer.parseInt(tokens[1]);
 		int day = Integer.parseInt(tokens[2]);
-		
+
 		MyDate d = new MyDate(year, month, day);
-		
+
 		return d;
 	}
 
