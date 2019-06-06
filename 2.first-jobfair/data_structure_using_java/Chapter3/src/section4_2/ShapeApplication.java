@@ -49,8 +49,6 @@ public class ShapeApplication {
 //		}
 //	}
 
-
-
 	private void handleShow(boolean detailed) {
 		for (int i=0; i<n; i++) {
 			System.out.println((i+1)+". "+shapes[i].toString());

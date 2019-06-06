@@ -1,12 +1,13 @@
-package section4;
+package section5;
 
 import java.util.*;
 
 public class Scheduler {
 
-	private int capacity = 10;
-	public Event events [] = new Event [capacity];
-	public int n = 0;
+//	private int capacity = 10;
+	public ArrayList<Event> events = new ArrayList<>();
+//	public Event events [] = new Event [capacity];
+//	public int n = 0;
 	private Scanner kb;
 
 	public void processCommand() {
@@ -28,7 +29,7 @@ public class Scheduler {
 			} else if (command.equals("show")) {
 				handleShow();
 			} else if (command.equals("sort")) {
-				Arrays.sort(events, 0, n);
+				Collections.sort(events);
 			} else if (command.equals("exit")) {
 				break;
 			} 
@@ -41,17 +42,17 @@ public class Scheduler {
 		String dateString = kb.next();
 		MyDate theDate = parseDateString(dateString);
 		
-		for (int i=0; i<n; i++) {
+		for (Event ev : events) {
 			// test if events[i] is relevant to the date, then print it;
-			if (events[i].isRelevant(theDate)) {
-				System.out.println(events[i].toString());
+			if (ev.isRelevant(theDate)) {
+				System.out.println(ev.toString());
 			}
 		}
 	}
 
 	private void handleList() {
-		for (int i=0; i<n; i++) {
-			System.out.println("   "+events[i].toString());
+		for (Event ev : events) {  // enhanced for loop
+			System.out.println("   "+ev.toString());
 		}
 	}
 
@@ -81,21 +82,21 @@ public class Scheduler {
 	}
 
 	private void addEvent(Event ev) {
-		if (n >= capacity) {
-			reallocate();
-		}
-		events[n++] = ev;
+//		if (n >= capacity) {
+//			reallocate();
+//		}
+		events.add(ev);
 	}
 
-	private void reallocate() {
-		Event [] tmpArray = new Event [capacity*2];
-		for (int i=0; i<n; i++) {
-			tmpArray[i] = events[i];
-		}
-
-		events = tmpArray;
-		capacity *= 2;
-	}
+//	private void reallocate() {
+//		Event [] tmpArray = new Event [capacity*2];
+//		for (int i=0; i<n; i++) {
+//			tmpArray[i] = events.get(i);
+//		}
+//
+//		events = tmpArray;
+//		capacity *= 2;
+//	}
 
 	private MyDate parseDateString(String dateString) {
 		String [] tokens = dateString.split("/");
