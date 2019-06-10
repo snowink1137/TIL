@@ -1,5 +1,7 @@
 package section3;
 
+import java.util.Iterator;
+
 public class Polynomial {
 	char name;
 	public MySingleLinkedList<Term> terms;
@@ -14,30 +16,37 @@ public class Polynomial {
 			return;
 		}
 		
-		Node<Term> p = terms.head;
-		Node<Term> q = null;
-		while (p != null && p.data.expo > expo) {
-			q = p;
-			p = p.next;
-		}
+		Iterator<Term> p = terms.iterator();
+		Iterator<Term> q = terms.iterator();
 		
-		if (p != null && p.data.expo == expo) {
-			p.data.coef += coef;
-			
-			if (p.data.coef == 0) {
-				if (q == null) {
-					terms.removeFirst();
-				} else {
-					terms.removeAfter(q);
-				}
-			}
-		} else {  // add after q
-			Term t = new Term(coef, expo);
-			
+		Term t = null;
+		int index = 0;
+		
+		while (p.hasNext()) {
 			if (q == null) {
-				terms.addFirst(t);
+				q = terms.iterator();
 			} else {
-				terms.addAfter(q, t);
+				q.next();
+			}
+			
+			t = p.next();
+			
+			index++;
+			
+			if (t.expo <= expo) {
+				break;
+			}
+			
+			if (t != null && t.expo == expo) {
+				t.coef += coef;
+				
+				if (t.coef == 0) {
+					terms.remove(index);
+				}
+			} else {
+				Term term = new Term(coef, expo);
+				terms.add(index, term);
+				
 			}
 			
 		}
@@ -46,14 +55,10 @@ public class Polynomial {
 	public int calc(int x) {
 		int result = 0;
 		
-//		Node<Term> p = terms.head;
-//		while (p != null) {
-//			result += p.data.calc(x);
-//			p = p.next;
-//		}
+		Iterator<Term> iter = terms.iterator();
 		
-		for (int i=0; i<terms.size(); i++) {
-			Term t = terms.get(i);
+		while (iter.hasNext()) {
+			Term t = iter.next();
 			result += t.calc(x);
 		}
 		
@@ -63,10 +68,10 @@ public class Polynomial {
 	public String toString() {
 		String result = "";
 		
-		Node<Term> p = terms.head;
-		while (p != null) {
-			result += ("+" + p.data.toString());
-			p = p.next;
+		Iterator<Term> iter = terms.iterator();
+		while (iter.hasNext()) {
+			Term t = iter.next();
+			result += ("+" + t.toString());
 		}
 		
 		return result;

@@ -1,5 +1,8 @@
 package section3;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class MySingleLinkedList<T> {
 	public Node<T> head;
 	public int size;
@@ -20,6 +23,39 @@ public class MySingleLinkedList<T> {
 		}
 	}
 	
+	private class MyIterator implements Iterator<T> {
+		private Node<T> nextNode;
+		
+		public MyIterator() {
+			nextNode = head;
+		}
+		
+		public boolean hasNext() {
+			return nextNode != null;
+		}
+		
+		public T next() {
+			if (nextNode == null) {
+				throw new NoSuchElementException();
+			}
+			
+			T val = nextNode.data;
+			nextNode = nextNode.next;
+			
+			return val;
+		}
+		
+		public void remove() {
+			// ? 4-4 에서 다루겠음.
+		}
+		
+	}
+	
+	
+	public Iterator<T> iterator(){
+		return new MyIterator();
+	}
+	
 	private void addFirst(T item) {
 		Node<T> newNode = new Node<T>(item);  // T: type parameter
 		
@@ -38,7 +74,7 @@ public class MySingleLinkedList<T> {
 	
 	public void add(int index, T item) {  // insert
 		if (index<0 || index>= size) {
-			return;
+			throw new IndexOutOfBoundsException();
 		}
 		
 		if (index == 0) {
@@ -75,7 +111,7 @@ public class MySingleLinkedList<T> {
 	
 	public T remove(int index) {  // delete
 		if (index<0 || index>= size) {
-			return null;
+			throw new IndexOutOfBoundsException();
 		}
 		
 		if (index == 0) {
@@ -86,7 +122,7 @@ public class MySingleLinkedList<T> {
 		return removeAfter(prev);
 	}
 	
-	public T remove(T item) {
+	public boolean remove(T item) {
 		Node<T> p = head;
 		Node<T> q = null;
 		
@@ -96,13 +132,15 @@ public class MySingleLinkedList<T> {
 		}
 		
 		if (p == null) {
-			return null;
+			return false;
 		}
 		
 		if (q == null) {
-			return removeFirst();
+			T tmp = removeFirst();
+			return (tmp != null);
 		} else {	
-			return removeAfter(q);
+			T tmp = removeAfter(q);
+			return (tmp != null);
 		}
 	}
 	
@@ -146,7 +184,10 @@ public class MySingleLinkedList<T> {
 		}
 		
 		return p;
-		
+	}
+	
+	public int size() {
+		return size;
 	}
 	
 	public static void main(String[] args) {
