@@ -21,7 +21,15 @@
   - remove() 메서드는 지원하지만 add() 메서드를 지원하지 않는다.
   - 항상 리스트의 처음에서 시작한다.
 - ListIterator는 Iterator를 확장한다.
-- Iterator 처럼 ListIterator 역시 개념적으로 노드와 노드 사이를 가리킨다.
+- Iterator 처럼 ListIterator 역시 개념적으로는 노드와 노드 사이를 가리킨다.
   - 따라서, ListIterator의 위치는 0에서 size까지의 인덱스로 표현한다.
-  - 다만 양방향 연결 리스트이므로 이전에 어디서 왔는지가 중요하다. 그에 따라 next와 previous가 가리키는 것이 달라진다. history dependant.
-- 
+  - 물론 여기서도 Iterator는 이전에 구현한 Iterator 처럼 next 노드를 가리키는 것으로 구현한다.
+  - 다만 양방향 연결 리스트이므로 이전에 어디서 왔는지가 중요하다. 그에 따라 previous가 가리키는 것이 달라진다. history dependant.
+- 양방향 순회가 가능해야 한다.
+  - 따라서 생성자에 시작 index를 설정하는 것이 좋다.
+- ListIterator 인터페이스는 Iterator의 서브 인터페이스이므로 ListIterator 인터페이스를 구현하면 Iterator 인터페이스도 구현하는 셈이다.(다형성)
+  - 이중연결리스트를 사용할 때도 사용자 편의상 Iterator 객체 생성 하는 메소드를 만드는 것이 좋다.
+- 참고) 원형 단방향 연결 리스트, 원형 양방향 연결 리스트 이런 것도 있음!
+
+
+
