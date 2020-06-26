@@ -476,5 +476,82 @@
 - 추상 클래스 다중 상속은 일반적으로 많이 사용한다. 추상 메소드는 반드시 오버라이딩 해야하니까.  
   다만 추상 클래스여도 추상 클래스 내에 이름이 겹치는 일반 메소드가 있으면 일반 클래스의 다중 상속 상황과 동일한 문제가 생긴다
 
-- 
+- 함수/메소드 다형성
 
+  - 클래스 다형성 이외에도, 함수/메소드도 다형성을 사용할 수 있다
+    1. Optional Parameter 사용
+       - Optional Parameter는 꼭 일반 Parameter 뒤에 정의해야 한다
+    2. 함수 호출할 때, 파라미터 이름 명시하기
+       - ex)  
+         `print_name(last_name='김', first_name='철수')`  
+         `print_name(first_name='철수', last_name='김')`
+    3. 개수가 확정되지 않은 파라미터
+       - ex)  
+         `def print_message_and_add_numbers(message, *numbers): ...`
+
+- 파이썬 EAFP 코딩 스타일
+
+  - LBYL(Look Before You Leap)
+
+    - 어떤 작업을 수행하기 전에 그 작업을 수행해도 괜찮을지 확인
+
+    - ex)  
+
+      ```python
+      def add_shape(self, shape):
+          if isinstance(shape, Shape):
+              self.shapes.append(shape)
+          else:
+              print('도형 클래스가 아닌 인스턴스는 추가할 수 없습니다!')
+              
+      def total_area_of_shapes(self):
+          return sum([shape.area() for shape in self.shapes])
+      ```
+
+  - EAFP(Easier to Ask for Forgiveness than Permission)
+
+    - 일단 먼저 빨리 싱행하고, 문제가 생기면 처리한다
+
+    - LBYL와 정반대 스타일
+
+    - ex)  
+
+      ```python
+      def add_shape(self, shape):
+          self.shapes.append(shape)
+          
+      def total_area_of_shapes(self):
+          total_area = 0
+          
+          for shape in self.shapes:
+              try:
+                  total_area += shape.area()
+              except:
+                  print('그림판에 area 메소드가 없거나 잘못 정의되어 있는 인스턴스 {}가 있습니다.'.format(shape))
+                  
+          return total_area
+      ```
+
+    - 이게 파이썬스러운 스타일이라고 한다
+
+
+
+## 3. 견고한 객체 지향 프로그래밍
+
+- SOLID 원칙
+
+  1. **단일 책임 원칙** (Single Responsibility Principle)
+  2. **개방 폐쇄 원칙** (Open-Closed Principle)
+  3. **리스코프 치환 원칙** (Liskov Substitution Principle)
+  4. **인터페이스 분리 원칙** (Interface Segregation Principle)
+  5. **의존 관계 역전 원칙** (Dependency Inversion Principle)
+
+  - Robert C. Martin이 2000년도에 처음 소개한 객체 설계의 기본 원칙
+  - 객체 지향 프로그래밍에서 사실상 표준 규칙으로 알려져 있음
+  - 프로그램의 크기가 커질수록  SOLID 원칙을 잘 지키는 것이 중요함
+
+
+
+### 단일 책임 원칙
+
+- 
