@@ -74,4 +74,56 @@
 ### 5. Object - Volume
 
 - ![image-20200627215924050](kubernetes_정리.assets/image-20200627215924050.png)
-- 
+
+
+
+### 5. Object - ConfigMap, Secret
+
+- ![image-20200628193913186](kubernetes_정리.assets/image-20200628193913186.png)
+  - 유저, SSH, Key 값 정보 등은 환경에 따라 바뀌어야 한다. 각 Container 이미지를 따로 만들어서 보관하기에는 자원의 낭비가 크므로, 해당 정보들을 따로 관리해주는 Object가 ConfigMap, Secret이다. Container는 해당 정보를 비운 채로 보관하고, ConfigMap과 Secret Object를 연결해서 사용하는 방식으로 Container를 사용한다
+- ![image-20200628194830289](kubernetes_정리.assets/image-20200628194830289.png)
+  - Env(Literal) 방식은 정보를 메모리에 저장한다. 따라서 성능에 영향을 줄 수 있다
+  - Env(File) 방식과 Volume Mount(File) 방식은 둘 다 파일을 사용하지만, Env(File) 방식은 Pod에 정보를 한번 주입하면 끝이다. 파일이 업데이트 되어도 Pod에 업데이트 안됨
+  - cf) Base64: 64진법 인코딩 방식
+
+
+
+### 5. Object - Namespace, ResourceQuota, LimitRange
+
+- ![image-20200628200150658](kubernetes_정리.assets/image-20200628200150658.png)
+  - Pod를 Namespace라는 논리적 개념으로 묶는다. 여기에 Resource Quota라는 리소스 관리 Object를 붙이고, LimitRange라는 Object를 붙여서 Namespace로 들어올 수 있는 Pod에 제한을 둔다. Resource Quota와 Limit Range는 Namespace 뿐만 아니라 Kubernetes Cluster에도 붙여서 전체 자원에 대한 관리도 가능하다
+- ![image-20200628200924631](kubernetes_정리.assets/image-20200628200924631.png)
+  - 하나의 Namespace에는 Pod의 이름이 중복될 수 없다. 다른 Namespace에서 Object들이 name으로 통신할 수 없다. IP를 사용하면 가능하다. Namespace들이 공통으로 사용하는 PV, Node와 같은 것들도 있다. ResourceQuota와 LimitRange에 request, limits, min, max 등의 옵션을 주어서 해당 옵션을 모두 만족해야만 해당 Namespace가 관리하는 Pod를 생성할 수 있다
+  - Service Object 역시 NodePort를 사용할 때, 같은 Namespace에서 다른 Service Object가 같은 port를 사용할 수 없다
+
+
+
+### 6. Controller - 개요
+
+- Controller의 역할  
+  ![image-20200628212150356](kubernetes_정리.assets/image-20200628212150356.png)
+  - 위와 같은 역할을 ReplicationController, ReplicaSet, HPA, Deployment, CronJob 등의 Object가 수행한다
+
+
+
+### 6. Controller - Replication Controller, ReplicaSet
+
+- ![image-20200628213039741](kubernetes_정리.assets/image-20200628213039741.png)
+  - Replication Controller는 Deprecated됨. Template, Replicas 기능은 Replication Controller와 ReplicaSet 모두 가지고 있고, Selector 기능은 ReplicaSet에만 있음
+  - Replicas 기능에 갯수를 지정하고, Templete Pod를 지정하면 Pod를 자동으로 생성하므로, Pod를 직접 생성하지 않고, Controller만 만드는 방식으로 많이 사용한다
+    - Controller를 삭제하면 보통 해당 Pod들도 사라지는데, kubectl 명령으로 Controller만 삭제하는 기능도 있다
+
+
+
+### 6. Controller - Deployment
+
+- ![image-20200628214505068](kubernetes_정리.assets/image-20200628214505068.png)
+  - 네 가지의 배포 방식이 있다. 방식에 따라 자원 효율적이거나, Downtime이 없거나, test를 해보며 배포하거나(Canary) 할 수 있다
+  - ReCreate와 Rolling Update 방식은 Deployment Object를 조정해서 업데이트한다. Blue/Green 방식과 Canary 방식은 Deployment를 조정해서 업데이트하는 것이 아니다(Blue/Green 방식의 경우, Service Object의 `ver` 라벨을 직접 조정해서 업데이트한다)
+- ![image-20200628215107870](kubernetes_정리.assets/image-20200628215107870.png)
+  - Deployment Object가 replicaSet의 replicas를 조정해서 업데이트를 실행한다. ReCreate 방식은 이 숫자를 한번에 0으로 바꾸는 방식이고, Rolling Update 방식은 일정 간격을 두고 숫자를 조정하는 방식이다
+  - revisionHistoryLimit 라는 옵션을 이용해서, ReplicaSet의 history 갯수를 지정해서 롤백하는 경우에 기존 ReplicaSet을 사용할 수 있도록 한다
+
+
+
+### 6. Controller - 
