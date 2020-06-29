@@ -126,4 +126,9 @@
 
 
 
-### 6. Controller - 
+### 6. Controller - DaemonSet, Job, CronJob
+
+- ![image-20200629211935120](kubernetes_정리.assets/image-20200629211935120.png)
+  - DaemonSet은 Node의 현재 자원 상태에 따라 Pod를 배분하는 것이 아니고, Node 별로 Pod을 하나씩 두고 쓴다. Performance, Logging, Storage 등 필수적으로 쓰는 Pod를 생성하기 때문이다
+  - CronJob은 Job을 관리하는 Object이다. Job은 Pod를 만들어서 Job을 수행한다. ReplicaSet과 Job의 차이는 Pod에 문제가 생겼을 때 나타난다. ReplicaSet은 Restart를 수행하고, Job은 그냥 해당 Pod를 Finish한다. Finish해도 해당 Pod가 없어지는 것은 아니고, 자원을 사용하지 않는 상태가 되므로, 해당 Pod에 접속해서 로그를 확인할 수 있다
+- ![image-20200629212920213](kubernetes_정리.assets/image-20200629212920213.png)
