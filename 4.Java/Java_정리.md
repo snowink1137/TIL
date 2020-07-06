@@ -186,3 +186,26 @@ char a4 = '가';
 
 
 
+### 접근 제어자
+
+- 접근 제어뿐만 아니라 변수에 원하지 않는 값이 들어가는 것도 방지하는 역할
+  - ex) 음수가 들어가면 안되는 변수
+
+
+
+### 메소드 오버로딩
+
+- 똑같은 이름으로 파라미터 구성만 다르게 메소드 작성하면 됨
+
+  - cf) 파이썬에서는 기본 값 설정을 통해 하나의 메소드로 작성했었음
+
+  - ```python
+    def stackoverflow(self, i=None):
+        if i is None:
+            print('first form')
+        else:
+            print('second form')
+    ```
+
+
+
