@@ -209,3 +209,62 @@ char a4 = '가';
 
 
 
+### this
+
+- 현재 인스턴스 가리키는 역할뿐만 아니라 생성자로 쓸 수도 있다  
+
+  ```java
+  // 이렇게 생성자가 여러 개인 경우 this의 반복이 많다
+  public Person(String name) {
+      this.name = name
+      age = 12;
+      cashAmount = 0;
+  }
+  
+  public Person(String name, int age) {
+      this.name = name;
+      this.age = age;
+      cashAmount = 0;
+  }
+  
+  public Person(String name, int age, int cashAmount) {
+      if (age < 0) {
+          this.age = 12;
+      } else {
+          this.age = age;
+      }
+  
+      if (cashAmount < 0) {
+          this.cashAmount = 0;
+      } else {
+          this.cashAmount = cashAmount;
+      }
+      this.name = name;
+  }
+  
+  // 위와 같은 여러 개의 생성자를 this를 생성자로 사용하면 더 간단하게 표현할 수 있다
+  public Person(String name) {
+      this(name, 12, 0); // 12살을 기본 나이로 설정, 초기 현금 보유액은 0원.
+  }
+  
+  public Person(String name, int age) {
+      this(name, age, 0); // 초기 현금 보유액은 0원.
+  }
+  
+  public Person(String name, int age, int cashAmount) {  // 이렇게 가장 많은 파라미터를 가진 생성자를 직접 작성한 후 this 생성자를 활용하는 것이 좋다
+      if (age < 0) {
+          this.age = 12;
+      } else {
+          this.age = age;
+      }
+  
+      if (cashAmount < 0) {
+          this.cashAmount = 0;
+      } else {
+          this.cashAmount = cashAmount;
+      }
+      this.name = name;
+  }
+  ```
+
+  
