@@ -268,3 +268,93 @@ char a4 = '가';
   ```
 
   
+
+### 기본형(Primitive Type) vs. 참조형(Reference Type)
+
+- 기본형
+  - 변수가 값 자체를 보관
+  - ex) int, boolean, char, double
+- 참조형
+  - 변수는 값이 보관되어 있는 영역을 가리킴
+  - ex) Person, String, int[]
+- null
+  - '비어있음'을 표현하는 값
+  - 참조형 변수만 가질 수 있는 값이다
+  - 어떤 객체를 가리키는 이름표, 즉 변수는 있는데 가리키는 대상이 없는 경우
+    - 따라서 `null != ""`이다
+
+
+
+### 변수 안전하게 만들기(final)
+
+- 변수를 정의할 때 final을 써주면 '상수'가 된다. 즉, 한 번 정의하고 나서 다시 바꿀 수 없다
+- 배열의 length 변수는 상수로 만들어져 있다
+- final로 상수를 만들면 getter, setter 없이 바로 가져다 쓰는 식으로 코딩하면 된다
+
+
+
+### 인스턴스 변수 vs. 클래스 변수
+
+- ```java
+  // 인스턴스 변수 예시
+  public class Person {
+      int count;
+  }
+  
+  // 클래스 변수 예시 1
+  public class Person {
+      static int count;
+  }
+  
+  // 클래스 변수 예시 2
+  public class Person {
+      static int count;
+  
+      public Person() {
+          count++;
+      }
+  }
+  
+  // 상수는 보통 클래스 변수로 쓴다
+  public class CodeitConstants {
+      public static final double PI = 3.141592653589793;
+      public static final double EULERS_NUMBER = 2.718281828459045;
+      public static final String THIS_IS_HOW_TO_NAME_CONSTANT_VARIABLE = "Hello";
+  
+      public static void main(String[] args) {
+          System.out.println(CodeitConstants.PI + CodeitConstants.EULERS_NUMBER);  // 클래스 변수 사용법
+      }
+  }
+  ```
+
+- 클래스 변수는 인스턴스가 아닌 클래스에 속한 변수라고 생각하면 됨
+
+- 모두가 공유하는 값을 쓸 때는 클래스 변수로 쓰자
+
+
+
+### 인스턴스 메소드 vs. 클래스 메소드
+
+- 클래스 변수와 마찬가지로, 클래스 메소드는 인스턴스가 아닌 클래스에 속한 메소드라고 생각하면 됨
+
+- ```java
+  // 클래스 메소드 사용 예시 1
+  import java.lang.Math;
+  
+  public class Driver {
+      public static void main(String[] args) {
+          System.out.println(Math.abs(-10));   // 절댓값
+          System.out.println(Math.max(3, 7));  // 두 값 중 최댓값
+          System.out.println(Math.random());   // 0.0과 1.0 사이의 랜덤값
+      }
+  }
+  // 클래스 메소드 사용 예시 2
+  public static void main(String[] args) {
+      ...
+  }
+  ```
+
+  - 이처럼 인스턴스의 생성 없이 메소드만 모아서 사용하고 싶을 때, 클래스 메소드를 만들어 쓰면 된다
+  - main은 자바 프로그램의 시작점이다. 첫 번째로 실행되는 코드이니, 어떤 인스턴스도 생성되어 있지 않다. 따라서 클래스 메소드여야 하는 것이다
+
+- "생성된 인스턴스가 하나도 없더라도 이 메소드를 호출하는 것이 말이 되는가?" 가 맞는 경우에 클래스 메소드를 사용하면 된다
