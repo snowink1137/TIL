@@ -358,3 +358,218 @@ char a4 = '가';
   - main은 자바 프로그램의 시작점이다. 첫 번째로 실행되는 코드이니, 어떤 인스턴스도 생성되어 있지 않다. 따라서 클래스 메소드여야 하는 것이다
 
 - "생성된 인스턴스가 하나도 없더라도 이 메소드를 호출하는 것이 말이 되는가?" 가 맞는 경우에 클래스 메소드를 사용하면 된다
+
+
+
+### String 클래스
+
+- 비교연산자 `==`는 기본형의 경우 값이 같은지 확인하고, 참조형의 경우에는 가리키는 인스턴스가 같은지 확인한다
+- 문자열의 경우 참조형이므로 문자열의 내용을 비교하기 위해서는 `==`로 하면 안되고 `equals`메소드를 사용해야 한다
+  - cf) switch 문에서도 내부적으로 `==`대신 `equals`메소드를 사용하는 것이다
+
+
+
+### Wrapper Class
+
+- 기본 자료형을 객체 형식으로 감싸는 역할을 하는 클래스
+
+- 기본형 자료형(Primitive Type)을 참조형(Reference Type)처럼 다루어야할 때 Wrapper 클래스를 사용한다
+
+  - 예를 들어 ArrayList같은 컬렉션을 사용할 때는 반드시 참조형을 사용해야 한다
+
+- Wrapper 클래스의 인스턴스는 생성자로 생성할 수도 있고, 리터럴로 생성할 수도 있다
+
+  - ```java
+    Integer i = new Integer(123);
+    Integer i = 123;
+    
+    System.out.println(123 == 123);  // true
+    System.out.println(new Integer(123) == new Integer(123));  // false
+    System.out.println(new Integer(123).equals(new Integer(123)));  // true
+    ```
+
+
+
+### ArrayList, HashMap
+
+- ```java
+  // ArrayList, HashMap 사용 예시
+  import java.util.ArrayList;
+  import java.util.HashMap;
+  
+  public class Main {
+      public static void main(String[] args) {
+          ArrayList<Pokemon> arrayList = new ArrayList<>();
+          arrayList.add(new Pokemon("이상해씨"));
+          arrayList.add(new Pokemon("이상해풀"));
+          arrayList.add(new Pokemon("이상해꽃"));
+          System.out.println(arrayList.get(0));
+          System.out.println(arrayList.get(1));
+          System.out.println(arrayList.get(2));
+          
+          HashMap<String, Pokemon> pokedex = new HashMap<>();
+          pokedex.put("피카츄", new Pokemon("피카츄"));
+          pokedex.put("파이리", new Pokemon("파이리"));
+          pokedex.put("이상해씨", new Pokemon("이상해씨"));
+          pokedex.put("이상해풀", new Pokemon("이상해풀"));
+          pokedex.put("이상해꽃", new Pokemon("이상해꽃"));
+          
+          pokedex.remove("이상해풀");
+          System.out.println(pokedex.get("피카츄"));
+      }
+  }
+  ```
+
+
+
+## 3. 자바 중급 개념
+
+### 상속
+
+- 코드 중복성을 제거하기 위해 사용한다
+
+- 부모의 변수, 메소드를 사용하는 경우
+
+  - ```java
+    public class BankAccount {
+        .
+        .
+        .
+        boolean withdraw(int amount) {
+            ...
+        }
+    }
+    
+    public class TransferLimitAccount extends BankAccount {
+        private int transferLimit;
+    
+        @Override
+        boolean withdraw(int amount) {
+            if (amount > transferLimit) {
+                return false;
+            }
+    
+            return super.withdraw(amount);
+        }
+    }
+    ```
+
+  - 이런식으로 `super` 키워드를 사용해서 부모의 메소드를 사용할 수 있다
+
+  - `@override` 어노테이션을 사용하면, 부모 클래스에 해당 메소드 이름이 없는 경우 오류 메세지를 준다
+
+  - 부모의 private 변수는 자식에게도 상속되지 않는다
+
+- 부모의 생성자가 사용되는 경우
+
+  - 자식 클래스의 인스턴스가 생성되기 위해서는 부모 클래스와 자식 클래스의 초기 설정을 모두 해주어야 한다. 즉, 부모 클래스의 생성자도 불려야 한다
+
+  - 부모 클래스의 생성자는 `super.([변수])` 형식으로 부를 수 있다. `this` 키워드를 사용해서 자기 자신의 클래스를 부르는 것과 같은 개념이다
+
+  - 부모 클래스의 생성자 사용 규칙 요약
+
+    1. 자식 클래스의 인스턴스 생성시, 부모 클래스의 생성자는 반드시 불린다. 따라서 부모 클래스에 명시된 생성자가 없으면, 자동으로 제공되는 부모 클래스의 기본 생성자가 불린다  
+
+       ```java
+       public class Parent {
+           ...
+       }
+       
+       public class Child extends Parent {
+           ...
+       }
+       
+       Child c = new Child(); // Child 인스턴스 생성시 Parent의 생성자도 불림
+       ```
+
+    2. 부모 클래스에 기본 생성자가 없는 경우, 자식 클래스에서 반드시 직접 부모 클래스의 생성자 호출을 코드로 작성해야 한다  
+
+       ```java
+       public class Parent {
+           // 별도로 생성자가 지정되어있는 경우 (파라미터 없는 기본 생성자가 없는 경우)
+           public Parent(int a, int b) {
+               ...
+           }
+           ...
+       }
+           
+       public class Child extends Parent {
+           public Child() {
+               super(0, 0); // 자식 클래스에 생성자를 만들어 'super(int, int)'를 호출해 주어야 함
+               ...
+           }
+       }
+       ```
+
+    3. 부모 클래스의 생성자를 명시적으로 호출하는 경우, 반드시 자식 클래스 생성자 맨 윗줄에 적어야 한다  
+
+       ```java
+       public class Child extends Parent {
+           public Child() {
+               int a = 0;
+               ...
+               super(0, 0); // 이 곳에서 호출할 수 없음. 반드시 첫 번째 줄에 있어야 함. 오류 난다.
+           }
+       }
+       ```
+
+
+
+### protected 접근 제어자
+
+- private 접근 제어자와 유사하지만 **자식 클래스에선 접근 가능**하다
+
+- ```java
+  public class BankAccount {
+      protected int balance;
+      ...
+  }
+  
+  public class MinimumBalanceAccount extends BankAccount {
+      ...
+      @Override
+      public boolean withdraw(int amount) {
+          // if (getBalance() - amount < minimum) {
+          if (balance - amount < minimum) {
+              System.out.println("적어도 " + minimum + "원은 남겨야 합니다.");
+              return false;
+          }
+      
+          // setBalance(getBalance() - amount);
+          balance -= amount;
+          return true;
+      }
+  }
+  ```
+
+
+
+### 객체를 위한 클래스(Object Class)
+
+- Object 최상위 클래스, 모든 클래스의 부모 클래스
+
+- 따라서 클래스를 만들어서 아무 메소드를 만들지 않더라도 Object 클래스가 갖고 있는 메소드는 쓸 수 있다
+
+- [댓글 질문] Object Class equals 메소드에 대해서. 왜 같은 내용의 문자열로 생성한 두 객체가 equals 메소드로 비교했을 때 다른가?
+
+  - ```java
+    class Student {
+        String name;
+        Student(String name) {
+            this.name = name;
+        }
+    }
+    
+    public class ObjectDemo {
+        public static void main(String[] args) {
+            Student s1 = new Student("전우치");
+            Student s2 = new Student("전우치");
+            System.out.println(s1 == s2);
+            System.out.println(s1.equals(s2));
+        }
+    
+    }
+    ```
+
+  - [댓글 답변] String 끼리 비교할 때 값으로 비교할 수 있었던 것은 String 클래스에서 equals 메소드를 overriding 해서 값으로 비교하는 방식으로 바꾼 것이다. 기본적으로 Object 클래스에서 제공하는 equals 메소드는 `==` 연산자와 같다
+
