@@ -589,3 +589,81 @@ char a4 = '가';
 
 
 
+### 제네릭(Generic)
+
+- \<Generic\>을 사용하면 (Casting) 의 불편한 점을 해결할 수 있다
+
+- ```java
+  // 제네릭을 사용하지 않을 경우의 불편함 예시
+  
+  // 이렇게 어떤 타입이라도 담을 수 있도록 Box라는 클래스를 정의할 수 있다
+  public class Box {
+      private Object something;
+      
+      public void set(Object object) {
+          this.something = object;
+      }
+      
+      public Object get() {
+          return something;
+      }
+  }
+  
+  // 그래서 이런 식을 사용할 수 있다
+  Box box = new Box();
+  Phone phone = new Phone();
+  box.set(phone);
+  
+  Phone unboxed = (Phone) box.get();  // 다시 꺼낼 때는 Object 타입으로 반환되므로 반드시 타입캐스팅을 해줘야 한다. 만약 box.get()에서 나오는 타입이 Phone이 아니라면 오류가 날 수도 있으므로 위험한 방식이다
+  ```
+
+- 따라서 Box라는 클래스를 정의할 때 약간 느슨하게(?) 타입을 강제해놓지 않는 방식이 제네릭이다. 따라서 각 타입에 맞는 Box를 새로 만들지 않고도 타입 캐스팅 및 오류를 줄일 수 있는 문법이다
+
+- ```java
+  public class Box<T> {  // <T>: 타입 파라미터, 타입 변수. 이러한 것을 받는 클래스를 제네릭 클래스라고 부른다
+      private T something;
+      
+      public void set(T object) {
+          this.something = object;
+      }
+      
+      public T get() {
+          return something;
+      }
+  }
+  
+  // 사용 예시
+  Box<Phone> box = new Box<>();  // 이렇게 Box 인스턴스를 생성할 때 필요한 타입을 정의한다
+  Phone phone = new Phone();
+  box.set(phone);
+  
+  Phone unboxed = box.get();  // 그러면 이제 get() 메소드를 사용할 때 타입 캐스팅을 해줄 필요도 없고, 타입 오류가 날 경우를 줄일 수도 있다
+  ```
+
+- 보통 타입 파라미터의 경우 T나 E를 많이 쓴다. 하지만 아무렇게나 정의해도 괜찮다. 예를 들어 HashMap<K, V> 와 같은 경우에는 Key, Value를 뜻하는 파라미터로 정의해 놓았다
+
+- 상속의 개념이 더해지면 제네릭을 더 다양한 방식으로 사용할 수 있다
+
+  - 단순한 상속
+
+    - ```java
+      public class PhoneBox extends Box<Phone> {
+          public void handsFreeCall(String numberString) {
+              object.call(numberString);  // 이 Phone 타입의 object가 Phone의 자식 클래스 인 경우, 타입 캐스팅이 필요할 것이다
+          }
+      }
+      ```
+
+    - 이렇게 Box에 Phone만 담을 수 있도록 고정하고, Phone이 담긴 Box에 맞게 고치고 싶을 때 상속을 이용할 수 있다. 하지만 Phone을 상속받아서 여러 가지 Phone의 자식들이 있는 경우 다시 Generic을 사용하기 전과 같은 문제가 생긴다. 타입이 Phone으로 고정되어 있으므로 Phone의 자식들이 오버라이딩 해 둔 메소드라던지 자식들만 가지고 있는 메소드를 사용할 때 또 타입 캐스팅을 해줘야 하기 때문이다. 그래서 이러한 경우 다음과 같은 방식이 사용될 수 있다
+
+  - 타입 파라미터를 상속으로 정의하기
+
+    - ```java
+      public class PhoneBox<T extends Phone> extends Box<T> {
+          public void handsFreeCall(String numberString) {
+              object.call(numberString);  // 애초에 object의 타입을 Phone으로부터 상속되었다고 정의했기 때문에, object가 Phone의 자식 클래스 인스턴스여도 타입 캐스팅이 필요 없다
+          }
+      }
+      ```
+
+    - 이러한 방식으로 T 라는 타입 파라미터 자체를 Phone을 상속받는다고 명시해두면, Phone 자식들의 메소드를 타입캐스팅 문제 없이 사용할 수 있다
