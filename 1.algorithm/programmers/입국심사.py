@@ -1,28 +1,25 @@
-import heapq as hq
-
-
 def solution(n, times):
     answer = 0
-    times_heap = []
+    left = 1
+    right = max(times) * n
 
-    if n < len(times):
-        times.sort()
-        return times[n-1]
+    while left <= right:
+        mid = (left + right) // 2
+        number = 0
 
-    for time in times:
-        hq.heappush(times_heap, [time*2, time])
+        for time in times:
+            number += mid // time
 
-    n -= len(times)
+            if number >= n:
+                break
 
-    for _ in range(n):
-        temp = hq.heappop(times_heap)
-        temp[0] += temp[1]
+        if number >= n:
+            answer = mid
+            right = mid - 1
+        else:
+            left = mid + 1
 
-        hq.heappush(times_heap, temp)
-
-    result_temp = hq.nlargest(len(times), times_heap)
-
-    return result_temp[0][0] - result_temp[0][1]
+    return answer
 
 
 n = 6
