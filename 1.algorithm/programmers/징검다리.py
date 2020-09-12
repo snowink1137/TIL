@@ -1,11 +1,12 @@
 def solution(distance, rocks, n):
+    answer = 0
     rocks.sort()
     rocks.append(distance)
     left = 0
     right = distance * 2
 
     while left <= right:
-        answer = distance
+        temp_answer = distance
         mid = (left + right) // 2
         before = 0
 
@@ -15,8 +16,8 @@ def solution(distance, rocks, n):
             if diff < mid:
                 cnt += 1
             else:
-                if diff < answer:
-                    answer = diff
+                if diff < temp_answer:
+                    temp_answer = diff
 
                 before = rocks[i]
 
@@ -26,6 +27,7 @@ def solution(distance, rocks, n):
         if cnt > n:
             right = mid - 1
         else:
+            answer = temp_answer
             left = mid + 1
 
     return answer
