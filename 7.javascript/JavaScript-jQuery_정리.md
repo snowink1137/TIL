@@ -1,14 +1,10 @@
-# JavaScript 정리
-
 > 코드잇 인터랙티브 웹 강의 중 다시볼 내용을 정리한 문서
 >
 > https://www.codeit.kr/learn/courses/interactive-web-programming
 
-
-
 [TOC]
 
-
+# JavaScript
 
 ## 1. 데이터를 다루는 법
 
@@ -175,4 +171,53 @@ const MAX_LEVEL = 99;  // 상수
   ```
 
 
+
+### for of 반복문
+
+- 파이썬의 `for x in X:`랑 비슷하다고 생각하면 될 듯. ES6 부터 가능한 기능
+
+- ```javascript
+  for (value of values) {
+      console.log(value);
+  }
+  ```
+
+
+
+### for in 반복문
+
+- 인덱스를 편하게 가져오는 반복문이라고 생각하면 됨
+- 하지만 별로 추천되는 반복문은 아니다. IE8에서 오류가 나기도 하며, 실행 황경에 따라 배열에 저장된 값의 순서가 보장되지 않는 문제점이 있다. ES6에서 삭제하려고 했지만 이미 for in 반복문을 사용하는 코드가 많아서 삭제하지 못했다
+
+- ```javascript
+  var arr =  ['Americano', 'Latte', 'Tea'];
+  
+  for (var k in arr) {
+    console.log(k);
+  }
+  
+  /* result
+  0
+  1
+  2
+  */
+  ```
+
+
+
+### while 반복문
+
+- ```javascript
+  var i = 0;
+  while (i < 6) {
+      console.log(arr[i]);
+      i++;
+  }
+  ```
+
+
+
+# jQuery
+
+## 1. HTML, CSS와의 콜라보레이션
 
