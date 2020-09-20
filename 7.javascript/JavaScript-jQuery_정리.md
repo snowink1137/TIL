@@ -224,9 +224,81 @@ const MAX_LEVEL = 99;  // 상수
 ### jQuery 개요
 
 - 자바스크립트를 편하게 사용할 수 있는 라이브러리
-  - 순수 자바스크립트(Vanilla)
+  
+  - 순수 자바스크립트(Vanilla)로 동적인 변화를 주려면 코드가 길어지기 때문이다
+  
+  - ```javascript
+    // Vanilla javascript 예시
+    document.getElementById('home').addEventListener('click', clickHome);
+    document.getElementById('seoul').addEventListener('click', clickSeoul);
+    document.getElementById('tokyo').addEventListener('click', clickTokyo);
+    document.getElementById('paris').addEventListener('click', clickParis);
+    
+    // jQuery 사용 코드 예시
+    $('#home').on('click', clickHome);
+    $('#seoul').on('click', clickSeoul);
+    $('#tokyo').on('click', clickTokyo);
+    $('#paris').on('click', clickParis);
+    ```
+  
+  - 실무에서는 점차 사용하지 않는 것이 추세이다. 현재 프론트엔드 개발에는 angular, react, vue 같은 것들을 많이 사용한다. 하지만 jQuery로 쓰여진 코드들이 많기 때문에 알아는 두는 것이 좋다
 
 
 
 ### 이벤트 & 이벤트 핸들링
+
+- 이벤트: HTML 요소들에게 일어나는 여러 가지 일들  
+  ex) 요소 클릭, 마우스 커서 올리기, 마우스 커서 내리기, 페이지 로딩, 키보드 입력 등
+
+- 이벤트 핸들링: 이벤트가 일어났을 때 어떤 동작이 일어나도록 하는 것  
+  ex) 키보드 'q'를 누르면 게임이 끝나게 하는 것 등
+
+- ```javascript
+  // 이벤트 및 이벤트 핸들링 예시
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>로그인</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="login-form">
+      <form>
+        <input type="text" name="email" id="email-input" class="text-field" placeholder="아이디"><br>
+        <input type="password" name="password" id="password-input" class="text-field" placeholder="비밀번호"><br>
+        <input type="submit" value="로그인" id="submit-btn">
+      </form>
+  
+      <div class="links">
+        <a href="#">비밀번호를 잊어버리셨나요?</a>
+      </div>
+    </div>
+  
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <script>
+      // 여기에 코드를 작성하세요.
+      $('#email-input').on('input', checkInput);
+      $('#password-input').on('input', checkInput);
+  
+      function checkInput() {
+          var email = $('#email-input').val();
+          var password = $('#password-input').val();
+          
+          if (email === '' || password === '') {
+              $('#submit-btn').css('background-color', '#9B9B9B');
+          } else {
+              $('#submit-btn').css('background-color', '#1BBC9B');
+          }
+      }
+    </script>
+  </body>
+  </html>
+  ```
+
+
 
