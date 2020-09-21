@@ -16,7 +16,13 @@
 
 
 
-## 2. VSCode
+## 2. Chocolatey
+
+
+
+
+
+## 3. VSCode
 
 ### Remote-WSL
 
@@ -28,13 +34,13 @@
 
 
 
-## 3. Windows Terminal
+## 4. Windows Terminal
 
 ### setting
 
 
 
-## 4. shell
+## 5. shell
 
 ### zsh
 
