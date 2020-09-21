@@ -217,6 +217,94 @@ const MAX_LEVEL = 99;  // 상수
 
 
 
+### Math
+
+- ```javascript
+  console.log(Math.abs(-10));  // 10
+  console.log(Math.max(2, -1, 4, 5, 0));  // 5
+  console.log(Math.min(2, -1, 4, 5, 0));  // -1
+  console.log(Math.pow(2, 3));  // 8
+  console.log(Math.sqrt(25));  // 5
+  console.log(Math.round(2.3));  // 2
+  console.log(Math.floor(2.49));  // 2
+  console.log(Math.random());  // 0 이상 1 미만의 유리수 랜덤으로 추출
+  ```
+
+
+
+### String
+
+- ```javascript
+  var str = 'Codeit';
+  console.log(str.length);  // 6
+  console.log(str.toUpperCase());  // CODEIT
+  console.log(str.toLowerCase());  // codeit
+  
+  var str = 'Codeit';
+  console.log(str.charAt(2));  // d
+  
+  var str = 'Hello World!';
+  console.log(str.indexOf('z'));  // -1
+  console.log(str.indexOf('o'));  // 4. 처음 발견된 인덱스가 리턴됨
+  console.log(str.lastIndexOf('o'));  // 7. 가장 나중 인덱스가 리턴됨
+  console.log(str.substring(2, 5));  // llo. 인덱스 2부터 인덱스 4까지 잘라서 리턴
+  console.log(str.substr(2, 5));  // llo W. 인덱스 2부터 길이를 5만큼 잘라서 리턴
+  
+  var str = '        Hello World!      ';
+  console.log(str.trim());  // Hello World!
+  ```
+
+
+
+### Array
+
+- ```javascript
+  var brands = ['Apple', 'Coca-Cola', 'Starbucks'];
+  console.log(brands.length);  // 3
+  console.log(brands.indexOf('Starbucks'));  // 2
+  console.log(brands.indexOf('Kakao'));  // -1
+  
+  brands.push('Samsung', 'LG', 'Facebook');
+  console.log(brands);  // ['Apple', 'Coca-Cola', 'Starbucks', 'Samsung', 'LG', 'Facebook']
+  
+  var lastBrand = brands.pop();
+  console.log(brands);  // ['Apple', 'Coca-Cola', 'Starbucks', 'Samsung', 'LG']
+  
+  console.log(brands.join());  // Apple,Coca-Cola,Starbucks,Samsung,LG
+  console.log(brands.join('#'));  // Apple#Coca-Cola#Starbucks#Samsung#LG
+  ```
+
+
+
+### Date
+
+- ```javascript
+  var date = new Date();  // 현재 날짜 Date 객체 리턴
+  
+  // 1988년 6월 11일 5시 25분 30초
+  var date1 = new Date('June 11, 1988 05:25:30');
+  var date2 = new Date('1988-06-11T05:25:30');
+  
+  // 1999년 12월 15일 (날짜만)
+  var date3 = new Date('1999-12-15');
+  var date4 = new Date('12/15/1999');
+  var date5 = new Date('December 15 1999');
+  var date6 = new Date('Dec 15 1999');
+  
+  var date = new Date('June 11, 1988 05:25:30');
+  console.log(date.getDate());  // 6. 일요일을 0으로 시작하여 숫자로 표현됨
+  console.log(date.getMonth());  // 5. 0부터 시작해서 6월을 뜻함
+  console.log(date.getSeconds());  // 30
+  console.log(date.getMilliseconds());  // 0
+  console.log(date.toString());  // Sat Jun 11 1988 05:25:30 GMT+1000 (KDT)
+  console.log(date.toLocaleString());  // 6/11/1988, 5:25:30 AM
+  console.log(date.getTime());  // 581973930000. timestamp
+  ```
+
+- 
+
+
+
 # jQuery
 
 ## 1. HTML, CSS와의 콜라보레이션
@@ -299,6 +387,5 @@ const MAX_LEVEL = 99;  // 상수
   </body>
   </html>
   ```
-
 
 
