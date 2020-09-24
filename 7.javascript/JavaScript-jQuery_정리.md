@@ -10,10 +10,16 @@
 
 ### 변수와 상수
 
-```javascript
-var score = 5;  // 변수
-const MAX_LEVEL = 99;  // 상수
-```
+- let, const는 es6 이후에 나온 문법이다. var는 기존의 javascript에서 사용하던 변수 선언 방식이다. let과 const로 var를 대체할 수 있기 때문에, 기본적으로 es6 이후에는 var를 권장하지 않는다
+
+- ```javascript
+  var score = 5;  // 변수
+  const MAX_LEVEL = 99;  // 상수
+  
+  let score = 5;  // 변수
+  score = 10;  // 괜찮음
+  let score = 6;  // error! 재할당이 불가능하게 함으로써 변수를 좀더 안전하게 사용하게 한다
+  ```
 
 
 
@@ -42,6 +48,60 @@ const MAX_LEVEL = 99;  // 상수
 - ```javascript
   3 == '3';  // true
   3 === '3';  // false
+  ```
+
+
+
+### Boolean의 활용
+
+#### undefined vs null
+
+- null은 비어있는 값, undefined는 변수에 아무것도 할당되지 않았을 때의 값이다
+
+- ```javascript
+  var n = null;
+  var u;
+  
+  console.log(n);  // null
+  console.log(u);  // undefined
+  ```
+
+
+
+#### NaN
+
+- Not a Number
+
+- ```javascript
+  var n = parseInt('abcd');
+  console.log(n);  // NaN
+  ```
+
+
+
+#### false와 true로 간주되는 것들
+
+- ```javascript
+  // 0은 false. 이외의 수 들은 true
+  if (0) {
+    console.log('0은 true');
+  } else {
+    console.log('0은 false');  // 출력되는 값
+  }
+  
+  // 비어있는 문자열은 false. 이외의 문자열은 true
+  if ('') {
+    console.log('비어있는 문자열은 true');
+  } else {
+    console.log('비어있는 문자열은 false');  // 출력되는 값
+  }
+  
+  // null, undefined, NaN는 false
+  if (null || undefined || NaN) {
+      console.log('null은 true');
+  } else {
+      console.log('null은 false');  // 출력되는 값
+  }
   ```
 
 
@@ -301,13 +361,12 @@ const MAX_LEVEL = 99;  // 상수
   console.log(date.getTime());  // 581973930000. timestamp
   ```
 
-- 
 
 
 
 # jQuery
 
-## 1. HTML, CSS와의 콜라보레이션
+## 1. jQuery 기초
 
 ### jQuery 개요
 
@@ -388,4 +447,7 @@ const MAX_LEVEL = 99;  // 상수
   </html>
   ```
 
+
+
+## 2. jQuery 활용
 
