@@ -451,3 +451,62 @@
 
 ## 2. jQuery 활용
 
+### DOM
+
+- Document Object Model
+
+- HTML 태그들이 하나의 객체로서 트리 구조 관계를 갖는 모델
+
+- 이 객체들을 javascript로 조작할 수 있다. jQuery는 이를 좀더 쉽게해준다
+  - jQuery 코드는 크게 '선택',  '동작' 두 가지로 나눠진다고 생각하면 된다
+
+  - ```javascript
+    // 선택      동작
+    $('#hello').on('click', sayHello);
+    $('#hello').text();
+    $('#hello').css('background', '#7f8ff4');
+    ```
+
+
+
+### jQuery(선택)
+
+- CSS 문법을 그대로 사용한다
+  - `#아이디명`: id 선택 
+  - `.클래스명`: class 선택
+  - `.클래스명 태그명`: 클래스명의 자식 중 모든 해당 태그 선택
+  - `.클래스명 > 태그명`: 클래스명의 직속 자식 중 모든 해당 태그 선택
+  - `.클래스명1, .클래스명2`: 태그 복수 선택
+  - `.클래스명1.클래스명2`: 클래스1과 클래스2 모두 갖고 있는 태그 선택
+  - `:가상클래스`: 가상 클래스 사용하여 선택
+    - ex)  
+       `.div1 p:last-child`: div1의 자식인 p 태그 중 마지막 p 태그 선택  
+      `h1:hover`: 마우스가 h1 태그 위에 올라 갔을 때를 선택
+
+
+
+### jQuery(동작)
+
+- 메서드를 사용해서 동작하게 한다
+
+- ```javascript
+  // 클래스 관련 ex)
+  $('#item').addClass('header');
+  $('#item').removeClass('header');
+  $('#item').toggleClass('header');
+  $("#item").hasClass('header');  // item에 header 클래스 있으면 true, 없으면 false 리턴
+  
+  // 속성 관련 ex)
+  $('img').attr('src');  // img 태그의 src 속성 받아오기
+  $('img').attr('src', 'images/logo.png');  // img 태그의 src 속성 지정하기
+  $('h1').text();  // h1 태그의 텍스트 받아오기
+  $('h1').text('Hello World!');  // h1 태그에 텍스트 지정하기
+  $('h1').html('<b>Hello World!</b>');  // h1 태그에 html 텍스트 지정하기
+  
+  // 스타일 관련 ex)
+  $("#item").css('font-weight','bold');  // item의 font-weight를 bold로 지정하기
+  $("#item").css('background-color');  // item의 background-color 가져오기
+  ```
+
+
+
