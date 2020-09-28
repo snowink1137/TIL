@@ -471,7 +471,7 @@
 
 ### jQuery(선택)
 
-- CSS 문법을 그대로 사용한다
+- CSS 선택자 문법을 그대로 사용한다
   - `#아이디명`: id 선택 
   - `.클래스명`: class 선택
   - `.클래스명 태그명`: 클래스명의 자식 중 모든 해당 태그 선택
@@ -482,6 +482,22 @@
     - ex)  
        `.div1 p:last-child`: div1의 자식인 p 태그 중 마지막 p 태그 선택  
       `h1:hover`: 마우스가 h1 태그 위에 올라 갔을 때를 선택
+  
+- jQuery에서 제공하는 선택자도 있다
+
+  - ```javascript
+    // filter는 선택된 요소 중 조건에 해당하는 것들을 한번 더 걸러줌. not은 반대로 조건에 해당하는 것들을 제외 시킴
+    $('button').filter('.color-3').text('SELECTED!');
+    $('button').not('.color-3').text('SELECTED!');
+    
+    $('button').eq(1).text('SELECTED!');  // eq는 선택된 요소들 중 n번째 요소를 골라내줌. 0부터 시작
+    
+    // 계층 관계 선택자
+    $('#btn-1').parent().css('background-color', 'black');  // 부모 요소를 찾아준다. 괄호 안에 조건을 걸 수 있다
+    $('#box-1').children().css('background-color', 'black');  // 자식 요소를 찾아준다. 괄호 안에 조건을 걸 수 있다. 직속 자식만 골라준다
+    $('#box-1').find('.color-2').css('background-color', 'black');  // 모든 자식 요소를 찾아준다. 자식의 자식의 자식... 이런 식으로. 괄호 안에 조건을 걸 수 있다
+    $('#btn-1').siblings().text('SELECTED!');  // 형제 요소를 찾아준다. 괄호 안에 조건을 걸 수 있다
+    ```
 
 
 
@@ -506,7 +522,36 @@
   // 스타일 관련 ex)
   $("#item").css('font-weight','bold');  // item의 font-weight를 bold로 지정하기
   $("#item").css('background-color');  // item의 background-color 가져오기
+  
+  // 요소 추가, 이동, 삭제 관련 ex)
+  $('#todo-list').append($('.important'));
+  $('#todo-list').prepend($('.important'));
+  $('#movie').remove();
+  
+  // 요소 숨기기, 보여주기
+  $('#photo').hide();
+  $('#photo').fadeIn(1000);  // 1000ms 후에 사진이 나타남
+  
+  // 스크롤 동작
+  $(window).on('scroll', function() {
+      $('.top').css('opacity', 1-$(window).scrollTop()/$('.top').height());  // 스크롤을 내리면 opacity(투명도)를 낮춰서 선택 요소를 안보이게 함. scrollTop 함수는 현재 스크롤 위치를 리턴함
+  })
+  
+  $('.go-to-top').on('click', function() {
+      $('html, body').animate({scrollTop: 0}, 500);  // scroll을 0의 위치로 500ms 동안 부드럽게 올라가게 함
+  })
+  
+  // each
+  $('.card').each(function() {
+      console.log('hello');  // each는 선택된 모든 요소에 대해 파라미터 함수를 실행한다
+  })
+  
+  // animation
+  $("div").animate({left: '250px'});  // div태그에 left: 250px를 이동시키며 적용함
+  $("div").animate({left: '250px', opacity: '0.5'});  // 이렇게 동시에 적용할 수도 있음
+  $("div").animate({left: '+=250px'});  // 이러면 이벤트가 일어났을 때 반복해서 250px을 더하는 적용이 가능해짐
+  $("div").animate({left: '250px'}, 1000);  // 애니메이션을 1000ms 동안 실행하기
+  $("div").animate({left: '250px'}, 1000, 'easeOutElastic');  // 이런 식으로 애니메이션 이펙트를 줄 수도 있음
   ```
-
 
 
