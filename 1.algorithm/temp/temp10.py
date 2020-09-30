@@ -1,6 +1,3 @@
-root
-
-
 def solution(input: list):
     answer = []
     temp = 0
