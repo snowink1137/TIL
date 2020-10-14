@@ -5,8 +5,8 @@ sys.stdin = open('19238_sample_input.txt', 'r')
 N, M, F = map(int, input().split())
 
 navi_map = [list(map(int, input().split())) for _ in range(N)]
-taxi = list(map(int, input().split()))
-customers = [list(map(int, input().split())) for _ in range(M)]
+taxi = list(map(lambda x: int(x)-1, input().split()))
+customers = [list(map(lambda x: int(x)-1, input().split())) for _ in range(M)]
 customers_start = {}
 dx = [0, 1, 0, -1]
 dy = [1, 0, -1, 0]
@@ -15,7 +15,9 @@ dy = [1, 0, -1, 0]
 def calculate_distance(start, end):
     queue = deque()
     queue.append(start)
-    visit = [[0 for _ in range(N)] for _ in range(N)]
+    visit = [[False for _ in range(N)] for _ in range(N)]
+    step = [[0 for _ in range(N)] for _ in range(N)]
+    visit[start[0]][start[1]] = True
 
     while queue:
         x, y = queue.popleft()
@@ -28,19 +30,26 @@ def calculate_distance(start, end):
             if visit[new_x][new_y]:
                 continue
 
-            visit[new_x][new_y] = visit[x][y] + 1
-            queue.append((new_x, new_y))
+            visit[new_x][new_y] = True
+            step[new_x][new_y] += step[x][y] + 1
 
             if new_x == end[0] and new_y == end[1]:
-                return visit[new_x][new_y]
+                return step[new_x][new_y]
+            else:
+                queue.append((new_x, new_y))
 
 
 def find(taxi):
+    if customers_start.get((taxi[0], taxi[1])):
+        return tuple(taxi), 0
+
     queue = deque()
     queue.append(taxi)
-    visit = [[0 for _ in range(N)] for _ in range(N)]
-    nearest_customer = M
-    flag = False
+    visit = [[False for _ in range(N)] for _ in range(N)]
+    step = [[0 for _ in range(N)] for _ in range(N)]
+    visit[taxi[0]][taxi[1]] = True
+    nearest_customer_list = []
+    distance = N * N
 
     while queue:
         x, y = queue.popleft()
@@ -53,36 +62,65 @@ def find(taxi):
             if visit[new_x][new_y]:
                 continue
 
-            visit[new_x][new_y] = visit[x][y] + 1
-            if not flag:
+            visit[new_x][new_y] = True
+
+            step_distance = step[x][y] + 1
+            if step_distance > distance:
+                continue
+
+            step[new_x][new_y] = step_distance
+
+            if customers_start.get((new_x, new_y)):
+                temp_customer = (new_x, new_y)
+
+                if step_distance == distance:
+                    nearest_customer_list.append(temp_customer)
+                else:
+                    distance = step_distance
+                    nearest_customer_list = [temp_customer]
+            else:
                 queue.append((new_x, new_y))
 
-            if type(customers_start.get((new_x, new_y))) == int:
-                if customers_start[(new_x, new_y)] < nearest_customer:
-                    nearest_customer = customers_start[(new_x, new_y)]
-                    flag = True
+    if nearest_customer_list:
+        nearest_customer_list.sort()
+        return nearest_customer_list[0], distance
 
-    return nearest_customer
-
+    return None, None
 
 # 손님 최단 거리 계산
+impossible = False
 for i in range(len(customers)):
-    customers[i].append(calculate_distance([customers[i][0], customers[i][1]], [customers[i][2], customers[i][3]]))
-    customers_start[(customers[i][0], customers[i][1])] = i
+    distance = calculate_distance([customers[i][0], customers[i][1]], [customers[i][2], customers[i][3]])
+    if not distance:
+        impossible = True
+
+    customers_start[(customers[i][0], customers[i][1])] = (customers[i][2], customers[i][3], distance)
 
 # 택시 운행
 while True:
-    if F <= 0:
-        if len(customers):
+    if impossible:
+        result = -1
+        break
+
+    if not len(customers_start):
+        result = F
+        break
+
+    next_customer, next_customer_distance = find(taxi)
+    if next_customer is None:
+        if len(customers_start):
             result = -1
+            break
         else:
-            result = 0
+            result = F
+            break
 
-    next_customer = find(taxi)
+    if next_customer_distance + customers_start[next_customer][2] > F:
+        result = -1
+        break
 
-
-
-
-
+    F = F - next_customer_distance + customers_start[next_customer][2]
+    taxi = customers_start[next_customer][:2]
+    customers_start.pop(next_customer)
 
 print(result)
