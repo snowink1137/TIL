@@ -1,6 +1,7 @@
 # 자료: 물고기 정보(번호, 위치, 방향), 방향 정보(8가지 방향, 회전에 따른 순서로), 상어 정보(위치, 방향)
 # 기능: 물고기 이동, 상어 이동(다양한 경우를 재귀로 구현)
 
+from copy import deepcopy
 import sys
 
 sys.stdin = open('19236_sample_input.txt', 'r')
@@ -9,36 +10,28 @@ dx = [-1, -1, 0, 1, 1, 1, 0, -1]
 dy = [0, -1, -1, -1, 0, 1, 1, 1]
 
 
-def dfs(result_mid):
-    global result, fish_info, fish_map, shark
+def next(fish_info, shark):
+    new_xy_list = []
+    shark_x = shark['location'][0]
+    shark_y = shark['location'][1]
+    shark_direction = shark['direction']
 
-    if len(fish_map) == 0:
-        if result_mid > result:
-            result = result_mid
+    for i in range(1, 4):
+        shark_new_x = shark_x + dx[shark_direction] * i
+        shark_new_y = shark_y + dy[shark_direction] * i
 
-        return
-
-    # 자료 복사
-    fish_info_temp = {}
-    fish_map_temp = {}
-    for k, v in fish_info.items():
-        if v == None:
-            fish_info_temp[k] = None
+        if not (0 <= shark_new_x < 4 and 0 <= shark_new_y < 4):
             continue
 
-        fish_info_temp[k] = {}
-        for kk, vv in v.items():
-            fish_info_temp[k][kk] = vv
+        if not fish_info[(shark_new_x, shark_new_y)]:
+            continue
 
-        fish_map_temp[fish_info_temp[k]['number']] = k
+        new_xy_list.append((shark_new_x, shark_new_y))
 
-    shark_temp = {
-        'location': (shark['location'][0], shark['location'][1]),
-        'direction': shark['direction'],
-    }
-    result_mid_temp = result_mid
+    return new_xy_list
 
-    # 물고기 이동
+
+def move(fish_map, fish_info, shark):
     for fish_number in sorted(fish_map.keys()):
         x, y = fish_map[fish_number]
         direction = fish_info[(x, y)]['direction']
@@ -54,44 +47,43 @@ def dfs(result_mid):
                 continue
 
             if fish_info[(new_x, new_y)]:
-                fish_map[fish_info[(x, y)]['number']], fish_map[fish_info[(new_x, new_y)]['number']] = fish_map[fish_info[(new_x, new_y)]['number']], fish_map[fish_info[(x, y)]['number']]
+                fish_map[fish_number], fish_map[fish_info[(new_x, new_y)]['number']] = fish_map[fish_info[(new_x, new_y)]['number']], fish_map[fish_number]
                 fish_info[(x, y)], fish_info[(new_x, new_y)] = fish_info[(new_x, new_y)], fish_info[(x, y)]
+                fish_info[(new_x, new_y)]['direction'] = (direction + i) % 8
                 break
             else:
                 fish_map[fish_number] = (new_x, new_y)
                 fish_info[(new_x, new_y)] = fish_info[(x, y)]
                 fish_info[(x, y)] = None
+                fish_info[(new_x, new_y)]['direction'] = (direction + i) % 8
                 break
 
+
+def dfs(result_mid, fish_map, fish_info, shark):
+    global result
+    fish_map = deepcopy(fish_map)
+    fish_info = deepcopy(fish_info)
+    shark = deepcopy(shark)
+
+    # 물고기 먹기
+    fish_number = fish_info[shark['location']]['number']
+    fish_direction = fish_info[shark['location']]['direction']
+    shark['direction'] = fish_direction
+    fish_map.pop(fish_number)
+    fish_info[shark['location']] = None
+
+    # 현재까지 최대 값 탐색
+    result = max(result_mid+fish_number, result)
+
+    # 물고기 이동
+    move(fish_map, fish_info, shark)
+
     # 상어 이동
-    shark_x = shark['location'][0]
-    shark_y = shark['location'][1]
-    shark_direction = shark['direction']
-
-    for i in range(1, 4):
-        shark_new_x = shark_x + dx[shark_direction] * i
-        shark_new_y = shark_y + dy[shark_direction] * i
-
-        if not (0 <= shark_new_x < 4 and 0 <= shark_new_y < 4):
-            continue
-
-        if not fish_info[(shark_new_x, shark_new_y)]:
-            continue
-
-        result_mid += fish_info[(shark_new_x, shark_new_y)]['number']
-        shark['location'] = (shark_new_x, shark_new_y)
-        shark['direction'] = fish_info[(shark_new_x, shark_new_y)]['direction']
-        fish_map.pop(fish_info[(shark_new_x, shark_new_y)]['number'])
-        fish_info[(shark_new_x, shark_new_y)] = None
-
-        dfs(result_mid)
-        result_mid = result_mid_temp
-        fish_info = fish_info_temp
-        fish_map = fish_map_temp
-        shark = shark_temp
-
-    if result_mid > result:
-        result = result_mid
+    new_xy_list = next(fish_info, shark)
+    for new_x, new_y in new_xy_list:
+        next_shark = deepcopy(shark)
+        next_shark['location'] = (new_x, new_y)
+        dfs(result_mid+fish_number, fish_map, fish_info, next_shark)
 
     return
 
@@ -109,12 +101,9 @@ for i in range(4):
 
 shark = {
     'location': (0, 0),
-    'direction': fish_info[(0, 0)]['direction']
+    'direction': 0,
 }
 
-fish_map.pop(fish_info[(0, 0)]['number'])
-fish_info[(0, 0)] = None
-
 result = 0
-dfs(0)
+dfs(0, fish_map, fish_info, shark)
 print(result)
