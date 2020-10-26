@@ -93,7 +93,7 @@
 - 배열 중심으로 계산할 때 표현이 간단하다
 
 - ```python
-  ## ex1)
+  # ex1)
   import numpy as np
   
   revenue_in_yen = [
@@ -114,11 +114,60 @@
   bad_days_revenue
   ```
 
-- 
+
+
+
+## Pandas
+
+- Numpy를 기본적으로 포함하고, 외부 데이터 읽고 쓰기, 데이터 정리, 데이터 분석 등의 기능을 추가한 라이브러리
+
+- Data science에서 Python의 인기가 많아지게 한 라이브러리
+
+- 그럼 Numpy 안쓰고 Pandas만 쓰면 되지 않나?
+
+  - Numpy 만의 장점이 있음. 연산이 빠르다는 점 그리고 선형대수, 푸리에변환 등 산술계산에 필요한 여러 기능이 있음
+  - Pandas는 구조화된 데이터들을 변형하거나 자르는 등 유연하게 처리하는 데 특화되어 있음
+  - 따라서 두 가지를 함께 쓰는 경우가 많다
+  - Numpy: 수학과 과학 연산을 위한 파이썬 패키지.  
+    참고: https://medium.com/@5eo1ab/numpy-%EC%93%B0%EB%8A%94-%EC%9D%B4%EC%9C%A0-37895f4fdc03
+  - Pandas: 데이터 베이스(데이터 프레임)을 다루기 위한 패키지.  
+    참고: https://medium.com/@5eo1ab/pandas-%EC%93%B0%EB%8A%94-%EC%9D%B4%EC%9C%A0-9063a90b0bd5
+
+- ```python
+  # ex1)
+  import pandas as pd
+  
+  celebrities = [
+      ['Taylor Swift', 'December 13, 1989', 'Singer-songwriter'],
+      ['Aaron Sorkin', 'June 9, 1961', 'Screenwriter'],
+      ['Harry Potter', 'July 31, 1980', 'Wizard'],
+      ['Ji-Sung Park', 'February 25, 1981', 'Footballer']
+  ]
+  
+  df = pd.DataFrame(celebrities, columns=['name', 'birthday', 'occupation'])
+  
+  # ex2) ⇔ ex1)
+  dict1 = {
+      'name': ['Taylor Swift', 'Aaron Sorkin', 'Harry Potter', 'Ji-Sung Park'],
+      'birthday': ['December 13, 1989', 'June 9, 1961', 'July 31, 1980', 'February 25, 1981'],
+      'occupation': ['Singer-songwriter', 'Screenwriter', 'Wizard', 'Footballer'],
+  }
+  df = pd.DataFrame(dict1)
+  ```
 
 
 
 # DataFrame 다루기
+
+### DataFrame 인덱싱
+
+
+
+### 데이터 변형하기
+
+
+
+### 큰 데이터 다루기
 
 
 
