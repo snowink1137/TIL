@@ -249,6 +249,87 @@ df
 
 # 데이터 분석과 시각화
 
+## 시각화 개요
+
+- 데이터를 시각화해야 분석이 편하다
+
+  - outlier 같은 값들도 한번에 알아볼 수 있고 인사이트를 얻기 좋다는 장점이 있다
+  - 다른 사람들에게 보고를 할 때 이해하기 쉽고 관심을 얻기도 좋다
+
+- ```python
+  # ex1)
+  %matplotlib inline
+  import pandas as pd
+  
+  df = pd.read_csv('data/silicon_valley_summary.csv')
+  
+  # 코드를 작성하세요.
+  boolean_male = df['gender']=='Male'
+  boolean_manager = df['job_category'] == 'Managers'
+  boolean_not_all = df['race_ethnicity'] != 'All'
+  
+  df[boolean_male & boolean_manager & boolean_not_all].plot(kind='bar', x='race_ethnicity',  y='count')
+  ```
+
+- 선 그래프, 막대 그래프, 파이 그래프, 히스토그램, 박스 플롯, 산점도 등 적절한 그래프를 사용하면 분석에 효율적이다
+
+
+
+## Seaborn 시각화
+
+- 다양한 그래프를 사용할 수 있는 라이브러리
+- Statistical Data Visualization
+- PDF(Probability Density Function)
+  - 확률 밀도 함수
+  - 히스토그램의 막대 갯수를 무한대로 늘려서 확률 밀도 함수를 추정할 수 있다
+    - 다른 방법들도 있음(커널방법(kernel method), 국소가능도방법(local likelihood method))
+  - 특정 구간의 확률은 그래프 아래 그 구간의 면적과 동일
+- KDE(Kernel Density Estimation)
+  - 확률 밀도 함수 추정법 중 하나
+  - 갖고 있는 데이터를 바탕으로 확률 밀도 함수를 추정해준다
+  - Seaborn 라이브러리로 히스토그램, 박스 플롯, 산점도 등에 PDF 관련 그래프를 그릴 수 있다. 산점도 같은 경우 등고선으로 표현된다
+
+
+
+## 통계 분석
+
+- 평균값 vs 중간값
+  - 평균값은 잘못된 데이터의 영향을 크게 받는다. 예를 들어 엄청나게 큰 수가 잘못 들어왔을 때
+  - 하지만 평균값이 더 좋은 인사이트를 주는 경우도 있다. 잘못된 데이터가 없다는 가정하에서 평점 평균 같은 경우 중간 값보다 좀더 좋은 결과를 줄 수 있으니까
+- 피어슨 상관 계수
+  - -1 ~ 1 까지의 계수를 가짐
+  - 1은 확실한 상관 관계, 0은 관계 없음, -1은 반대의 상관 관계를 갖는다는 것을 의미한다
+
+
+
+## Exploratory Data Analysis(EDA)
+
+- 데이터 셋을 다양한 관점에서 살펴보고 탐색하면서 인사이트를 찾는 것
+
+  - 각 row는 무엇을 의미하는가?
+  - 각 column은 무엇을 의미하는가?
+  - 각 column은 어떤 분포를 보이는가?
+  - 두 column은 어떤 연관성이 있는가?
+  - 등등
+
+- EDA는 공식이 없다
+
+  - 시각적인 방법, 통계적인 방법 등. 이 중 시각적인 방법이 많이 사용되는 편이다
+
+- ```python
+  # 상관관계를 통한 분석 예시
+  import pandas as pd
+  
+  df = pd.read_csv('young_survey.csv')
+  df.corr()
+  
+  brunch_df[1:19].sort_values(ascending=True)  # 음악 장르가 있는 1~18 column 골라서 정렬하기
+  
+  df.corr().loc['Writing notes', 'New environment']  # 가설 "메모를 자주 하는 사람들은 새로운 환경에 쉽게 적응할 것이다"의 상관 계수 구하기
+  ```
+
+- 
+
 
 
 # 데이터 퀄리티 높이기
