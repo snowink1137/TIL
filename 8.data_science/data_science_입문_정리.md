@@ -328,11 +328,78 @@ df
   df.corr().loc['Writing notes', 'New environment']  # 가설 "메모를 자주 하는 사람들은 새로운 환경에 쉽게 적응할 것이다"의 상관 계수 구하기
   ```
 
-- 
+- 클러스터 분석(Cluster Analysis)
+
+  - 데이터를 특정 기준을 통해 클러스터를 구성해서 분석하는 것
+  - 예를 들어 상관 관계가 높은 의학, 화학, 생물학을 좋아하는 사람들을 한 데 묶어서 분석하는 것
+
+
+
+## 새로운 인사이트 발견하기
+
+- 데이터 변형을 통해 새로운 데이터를 만들어내서 분석하는 방식
+
+  - 새로운 column으로 모든 수치를 합한 Total 데이터를 만들거나, column 문자열 중 일부를 필터링하여 데이터를 만드는 경우, groupby로 카테고리를 만드는 경우, merge(inner join, left outer join, right outer join, full outer join)를 통해 데이터를 만드는 경우 등
+
+- ```python
+  # ex1) 문자열 다루기 예시
+  import pandas as pd
+  
+  df = pd.read_csv('data/museum_2.csv')
+  
+  # 코드를 작성하세요.
+  phone = df['운영기관전화번호'].str.split(pat='-', expand=True)  ## 문자열 포함 여부를 확인하는 method는 contains. ex) str.contains('대학교')
+  df['지역번호'] = phone[0]
+  df
+  
+  # ex2) dictionary를 통해 데이터 카테고리화 예시
+  import pandas as pd
+  
+  df = pd.read_csv("data/museum_3.csv", dtype={'지역번호': str})
+  
+  # 코드를 작성하세요.
+  region = {
+      '02': '서울시',
+      '031': '경기도', '032': '경기도',
+      '033': '강원도', 
+      '041': '충청도', '042': '충청도', '043': '충청도', '044': '충청도',
+      '051': '부산시', 
+      '052': '경상도', '053': '경상도', '054': '경상도', '055': '경상도',
+      '061': '전라도', '062': '전라도', '063': '전라도',
+      '064': '제주도',
+      '1577': '기타', '070': '기타'
+  }
+  df["지역번호"] = df["지역번호"].map(region)
+  df.rename(columns={"지역번호": "지역명"}, inplace=True)
+  df
+  
+  # ex3) groupby method로 카테고리화 하는 예시
+  import pandas as pd
+  
+  df = pd.read_csv('data/occupations.csv')
+  
+  # 코드를 작성하세요.
+  occupation_group = df.groupby('occupation')
+  df.loc[df['gender'] == 'M', 'gender'] = 0
+  df.loc[df['gender'] == 'F', 'gender'] = 1
+  occupation_group.mean()['gender'].sort_values(ascending=False)
+  
+  # ex4) merge로 데이터 join하는 예시
+  import pandas as pd
+  
+  museum = pd.read_csv("data/museum_3.csv", dtype={'지역번호': str})
+  number = pd.read_csv("data/region_number.csv", dtype={'지역번호': str})
+  
+  # 코드를 작성하세요.
+  combined_df = pd.merge(museum, number, on='지역번호', how='left')
+  combined_df
+  ```
 
 
 
 # 데이터 퀄리티 높이기
+
+
 
 
 
