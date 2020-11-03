@@ -159,7 +159,7 @@
 
 # DataFrame 다루기
 
-### DataFrame 인덱싱
+## DataFrame 인덱싱
 
 | 이름으로 인덱싱하기           | 기본 형태                             | 단축 형태                      |
 | ----------------------------- | ------------------------------------- | ------------------------------ |
@@ -181,7 +181,7 @@
 
 
 
-### 데이터 변형하기
+## 데이터 변형하기
 
 ```python
 # ex1)
@@ -207,7 +207,7 @@ df
 
 
 
-### 큰 데이터 다루기
+## 큰 데이터 다루기
 
 ```python
 # ex)
@@ -399,13 +399,179 @@ df
 
 # 데이터 퀄리티 높이기
 
+## 좋은 데이터의 기준
 
+### 완결성
+
+- 데이터에는 필수 항목과 선택 항목이 있다. 필수 항목은 모두 채워져 있어야 완결성이 있는 것이다
+- 결측값이 있는지 확인하는 것으로 판단할 수 있다
+
+
+
+### 유일성
+
+- 동일한 데이터가 불필요하게 중복되어 있으면 안된다
+  - 왜? 해당 데이터를 수정해야할 일이 있을 때 하나만 수정하고 다른 동일한 데이터를 수정하지 않으면 잘못된 정보가 기록되는 것이기 때문에
+- ex) 회원 데이터를 예로 든다면, 이메일 인증이나 휴대폰 인증을 통해 데이터의 유일성을 유지할 수 있다
+
+
+
+### 통일성(Conformity)
+
+- 데이터가 동일한 형식으로 저장되어 있어야 한다
+- 표기법, 단위, 기준, 언어 등을 형식으로 보고, 이를 일치시켜야 한다
+
+
+
+### 정확성
+
+- 데이터가 정확해야 한다
+- 주로 데이터를 모으는 과정에서 일어난다
+- 이상점 체크를 통해 정확한 데이터인지 재확인하는 과정이 필요하다
+  - 이상점(Outlier): 다른 값들과 너무 동떨어져 있는 데이터. 어쩌면 부정확한 값일지도 모르는 데이터
+
+
+
+## 데이터 클리닝
+
+### 완결성
+
+```python
+# ex)
+import pandas as pd
+
+df = pd.read_csv('data/steam_1.csv')
+
+df.dropna(inplace=True)  # df.dropna(axis='columns'), df.fillna(df.mean()) 등 여러 방법들이 있음
+
+# 정답 출력
+df
+```
+
+
+
+### 유일성
+
+```python
+# ex)
+import pandas as pd
+
+df = pd.read_csv('data/steam_1.csv')
+
+df.drop_duplicates()  # row가 중복되면 삭제
+df.T  # 행과 열 바꾸기
+df.T.drop_duplicates()  # 이런 식으로 column 중복을 제거할 수 있음
+df.drop_duplicates(subset='col1')  # 이런 식으로 중복을 판단할 column을 지정할 수 있음
+
+# 정답 출력
+df
+```
+
+
+
+### 정확성
+
+- 이상점 기준
+
+  - 절대적인 기준은 없고 다양한 방법이 사용된다
+  - ex) IQR(Interquartile Range, 데이터의 75% 지점과 25% 지점 사이의 거리)를 사용하는 방법
+    - pandas에서 기본 설정으로 ±1.5 * IQR 바깥에 있는 값들은 이상점으로 본다. 범위 조절 가능
+
+- 관계적 이상점
+
+  - 키 188cm: 충분히 존재 가능
+  - 몸무게 42kg: 충분히 존재 가능
+  - 키 188cm & 몸무게 42kg: 어려움. 이렇게 관계를 고려했을 때 이상점이라고 판단할 수도 있다
+
+- 이상점이 제대로 된 데이터 라면?
+
+  - 분석에 방해가 되면 제거하고, 의미 있는 정보라면 제거하지 않는다
+  - 상황에 맞는 판단이 필요하다
+
+- ```python
+  # ex 1) IQR 기준 이상점 제거
+  %matplotlib inline
+  import pandas as pd
+  
+  df = pd.read_csv('data/movie_metadata.csv')
+  
+  # 코드를 작성하세요.
+  q1 = df['budget'].quantile(0.25)
+  q3 = df['budget'].quantile(0.75)
+  iqr = q3 - q1
+  
+  condition = (df['budget'] > q3 + 5 * iqr)
+  df.drop(df[condition].index, inplace=True)
+  
+  df.plot(kind='scatter', x='budget', y='imdb_score')
+  
+  # ex 2) 상위 값 기준 이상점 제거
+  %matplotlib inline
+  import pandas as pd
+  
+  df = pd.read_csv('data/movie_metadata.csv')
+  
+  # 코드를 작성하세요.
+  drop_index = df['budget'].sort_values(ascending=False).head(15).index
+  df.drop(drop_index, inplace=True)
+  
+  df.plot(kind='scatter', x= 'budget', y='imdb_score')
+  ```
 
 
 
 # 데이터 만들기
 
+- 데이터를 활용하기 이전에 일단 각종 데이터를 잘 모으는 것이 중요하다!
 
+
+
+## 데이터를 만드는 방법
+
+### 데이터 다운로드
+
+- 국내 사이트
+  - 서울열린데이터광장: https://data.seoul.go.kr/
+  - 공공데이터포털: https://www.data.go.kr
+  - e-나라지표: http://www.index.go.kr/
+  - 국가통계포털: http://kosis.kr
+  - 서울특별시 빅데이터 캠퍼스: https://bigdata.seoul.go.kr/
+  - 통계청: http://kostat.go.kr/
+- 해외 사이트
+  - 구글 데이터 검색: https://toolbox.google.com/datasetsearch
+  - 캐글: https://www.kaggle.com/datasets
+  - Awesome Public Datasets Github: https://github.com/awesomedata/awesome-public-datasets
+  - Data and Story Library: https://dasl.datadescription.com/
+  - 데이터허브: https://datahub.io/
+
+
+
+### 센서 사용하기
+
+- 센서: 물리적인 현상을 감지해서 전기 신호로 변환해 주는 장치
+- 옷에 붙은 전자 태그 데이터, 기상청 데이터 등
+- 아두이노, 라즈베리 파이 활용도 가능
+
+
+
+### 웹에서 모으기
+
+- 웹 스크래핑(Web Scraping)
+  - 웹에서 내용을 긁어오는 것
+- 웹 크롤링(Web Crawling)
+  - crawl: (엎드려) 기다
+  - 웹을 기어다니는 것
+- 웹 크롤러: 웹 크롤링을 하며 웹 페이지 내용을 수집하는 프로그램
+
+
+
+## 웹 페이지 가져오기
+
+
+
+
+
+## 필요한 데이터 골라내기
 
 
 
