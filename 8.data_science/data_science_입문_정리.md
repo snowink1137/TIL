@@ -567,11 +567,99 @@ df
 
 ## 웹 페이지 가져오기
 
+- URL 주소 해석
 
+  - ex) https://www.ikea.com/catalog/news?sorting=price&pageNumber=4
+    - https: 소통 방식
+    - www.ikea.com: 도메인 이름
+    - /catalog/news: 경로
+    - sorting=price&pageNumber=4: 쿼리 스트링(파라미터)
+  - ex) https://en.wikipedia.org/wiki/Computer_programming#Debugging
+    - https: 소통 방식
+    - en.wikipedia.org: 도메인 이름
+    - /wiki/Computer_programming: 경로
+    - #Debugging: 위치 지정
+
+- ```python
+  # ex)
+  import requests
+  
+  rating_pages = []
+  for year in range(2010, 2019):
+      for month in range(1, 13):
+          for week in range(0, 5):
+              rating_pages.append(requests.get('https://workey.codeit.kr/ratings/index?year={}&month={}&weekIndex={}'.format(year, month, week)).text)
+  
+  print(len(rating_pages)) # 가져온 총 페이지 수 
+  print(rating_pages[0]) # 첫 번째 페이지의 HTML 코드
+  ```
 
 
 
 ## 필요한 데이터 골라내기
 
+- BeautifulSoup 라이브러리 사용
 
+- ```python
+  # ex 1)
+  import requests
+  from bs4 import BeautifulSoup
+  
+  # HTML 코드 받아오기
+  response = requests.get("https://workey.codeit.kr/orangebottle/index")
+  
+  # BeautifulSoup 타입으로 변환
+  soup = BeautifulSoup(response.text, 'html.parser')
+  
+  # "phoneNum" 클래스를 가진 태그 선택하기
+  phoneNum_tags = soup.select('.phoneNum')
+  
+  # 빈 리스트 생성
+  phone_numbers = []
+  
+  # 텍스트 추출해서 리스트에 담기
+  for tag in phoneNum_tags:
+      phone_numbers.append(tag.text)
+  
+  # 결과 출력
+  print(phone_numbers)
+  
+  # ex 2)
+  import pandas as pd
+  import requests
+  from bs4 import BeautifulSoup
+  
+  response_pages = []
+  
+  for year in range(2010, 2019):
+      for month in range(1, 13):
+          for week in range(0, 5):
+              response = requests.get('https://workey.codeit.kr/ratings/index?year={}&month={}&weekIndex={}'.format(year, month, week))
+              response_soup = BeautifulSoup(response.text, 'html.parser')
+              
+              if len(response_soup.select('.row')) > 1:
+                  response_pages.append(response_soup)
+                  
+  rows = []
+  for page in response_pages:
+      date = page.select('option[selected=selected]')[2].text
+      ranks = page.select('.row .rank')[1:]
+      channels = page.select('.row .channel')[1:]
+      programs = page.select('.row .program')[1:]
+      percents = page.select('.row .percent')[1:]
+      
+      for i in range(10):
+          row = []
+          row.append(date)
+          row.append(ranks[i].text)
+          row.append(channels[i].text)
+          row.append(programs[i].text)
+          row.append(percents[i].text)
+          rows.append(row)
+  
+  df = pd.DataFrame(data=rows, columns=['period', 'rank', 'channel', 'program', 'rating'])
+  
+  # 결과 출력
+  df.head()
+  ```
 
