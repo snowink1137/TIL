@@ -7,6 +7,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 public class BeanLifeCycleTest {
 
     @Test
@@ -19,6 +21,8 @@ public class BeanLifeCycleTest {
     @Configuration
     static class LifeCycleConfig {
 
+        // @Bean 옵션으로 초기화 및 소멸 메서드 지정하기
+//        @Bean(initMethod = "init", destroyMethod = "close")
         @Bean
         public NetworkClient networkClient() {
             NetworkClient networkClient = new NetworkClient();
