@@ -35,5 +35,5 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform()
+//	useJUnitPlatform()  // JUnit5를 사용할 때 필요한 옵션
 }
