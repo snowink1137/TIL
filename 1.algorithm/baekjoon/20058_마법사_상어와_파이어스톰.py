@@ -3,17 +3,17 @@ import sys
 sys.stdin = open('20058_sample_input.txt', 'r')
 
 
-def dfs(x, y, cnt):
-    global N, result2
+def dfs(x, y):
+    global N
+    total = 1
+    visit[x][y] = True
 
     for d in directions:
-        new_x, new_y = x + d[0] ,y + d[1]
+        new_x, new_y = x + d[0], y + d[1]
         if 0 <= new_x < 2**N and 0 <= new_y < 2**N and ice_map[new_x][new_y] and not visit[new_x][new_y]:
-            if result2 < cnt+1:
-                result2 = cnt+1
+            total += dfs(new_x, new_y)
 
-            visit[new_x][new_y] = True
-            dfs(new_x, new_y, cnt+1)
+    return total
 
 
 directions = [
@@ -70,7 +70,7 @@ visit = [[False for _ in range(2**N)] for _ in range(2**N)]
 for x in range(2**N):
     for y in range(2**N):
         if ice_map[x][y] and not visit[x][y]:
-            dfs(x, y, 0)
+            result2 = max(result2, dfs(x, y))
 
 print(result1)
 print(result2)
