@@ -1,17 +1,33 @@
 import sys
+from collections import deque
+
 
 sys.stdin = open('20058_sample_input.txt', 'r')
 
 
-def dfs(x, y):
+def bfs(x, y):
     global N
     total = 1
     visit[x][y] = True
+    queue = deque()
 
     for dir in directions:
         new_x, new_y = x + dir[0], y + dir[1]
         if 0 <= new_x < 2**N and 0 <= new_y < 2**N and ice_map[new_x][new_y] and not visit[new_x][new_y]:
-            total += dfs(new_x, new_y)
+            queue.append((new_x, new_y))
+
+    while queue:
+        x, y = queue.popleft()
+        if visit[x][y]:
+            continue
+
+        visit[x][y] = True
+        total += 1
+
+        for dir in directions:
+            new_x, new_y = x + dir[0], y + dir[1]
+            if 0 <= new_x < 2 ** N and 0 <= new_y < 2 ** N and ice_map[new_x][new_y] and not visit[new_x][new_y]:
+                queue.append((new_x, new_y))
 
     return total
 
@@ -70,7 +86,7 @@ visit = [[False for _ in range(2**N)] for _ in range(2**N)]
 for x in range(2**N):
     for y in range(2**N):
         if ice_map[x][y] and not visit[x][y]:
-            result2 = max(result2, dfs(x, y))
+            result2 = max(result2, bfs(x, y))
 
 print(result1)
 print(result2)
