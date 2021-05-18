@@ -56,6 +56,7 @@
 
 ```sql
 -- 예시 데이터 create query
+-- 실제 수업에서는 member 테이블로 member-data.csv import 해서 했다
 
 CREATE TABLE `member` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -248,6 +249,7 @@ FROM copang_main.member;
 - COALESCE
   - COALESCE(column, 'NULL대체표현')
   - COALESCE(column, 'NULL대체표현1', 'NULL대체표현2')
+    - 'NULL대체표현1'도 NULL이면 'NULL대체표현2'로 넘어감
     - ex) COALESCE(height, weight * 2.3, 'N/A')
 - IFNULL
   - MySQL에만 있는 함수. 파라미터 2개만 가능
@@ -294,17 +296,228 @@ FROM copang_main.member;
 - GROUP BY 절은 특정 컬럼을 대상으로 ROW들을 그룹지어 준다
   - 그냥 SELECT 하면 DISTINCT와 다를 바 없어보이지만, 집계 함수를 사용할 때는 다르다. 집계 함수의 대상이 각 GROUP이 되어서 여러 개의 결과가 나올 수 있다
 
-![image-20210517185707050](SQL_정리.assets/image-20210517185707050.png)
+- ![image-20210517185707050](SQL_정리.assets/image-20210517185707050.png)
+
+```sql
+-- 기준 만들어서 그루핑하기, 여러 개 그루핑하기 예시
+SELECT
+	SUBSTRING(address, 1, 2) as region,
+	COUNT(*)
+FROM copang_main.member
+GROUP BY
+	SUBSTRING(address, 1, 2),
+	gender;
+
+-- 그룹에 조건 걸기
+SELECT
+	SUBSTRING(address, 1, 2) as region,
+	COUNT(*)
+FROM copang_main.member
+GROUP BY
+	SUBSTRING(address, 1, 2),
+	gender
+HAVING
+	region = '서울'
+	AND gender = 'm';
+```
 
 
 
+- WHERE vs HAVING
+  - WHERE는 ROW들을 조회할 때 조건을 설정하는 구문
+  - HAVING은 조회된 ROW들에 대해 그루핑했을 때 생성된 그룹들 중에서 다시 필터링 하는 구문
+- GROUP BY 했을 때  SELECT 절에는 GROUP BY 뒤에서 사용한 컬럼들 혹은 집계 함수만 사용할 수 있다
+  - 생각해보면 당연한 것일 수도 있는데, GROUP BY를 통해 GROUP 당 한 줄로 조회되기는 하지만 그 한 줄은 하나의 ROW 데이터가 아니다. 여러 ROW가 합쳐져 있는 것이므로 GROUP BY에 사용되지 않은 컬럼의 데이터 중 어떤 것을 가져와야할지 판단할 수가 없다
+  - 하지만 집계 함수는 해당 GROUP의 특정 컬럼에 대해 집계를 하므로 SELECT 할 수 있다
 
+
+
+### SELECT 문 작성 순서 및 실행 순서
+
+- 작성 순서
+  1. SELECT 
+  2. FROM
+  3. WHERE
+  4. GROUP BY
+  5. HAVING 
+  6. ORDER BY
+  7. LIMIT
+- 실행 순서
+  1. **FROM**
+  2. **WHERE** 
+  3. **GROUP BY**
+  4. **HAVING** 
+  5. **SELECT**
+     - ∴ SELECT 순서가 WHERE 보다 뒤에 있기 때문에 SELECT에서 alias 해도 WHERE에서 alias를 인식 못하는 것. SELECT 보다 뒤에 있는 ORDER BY, LIMIT에서는 alias를 쓸 수 있다
+  6. **ORDER BY**
+  7. **LIMIT**
+
+
+
+### ROLLUP
+
+- 말아 올리다. **그룹 별로 말아 올리다** <==> 그룹 총계
+- 세부 그룹들을 좀더 큰 단위의 그룹으로 중간중간 합쳐주는 것
+  - ∴ GROUP BY 절에 앞에 썼던 기준이 좀더 상위 그룹이 되므로 뒤에 썼던 기준의 총계를 구하는 것
+
+```sql
+-- 기본 롤업 예시
+SELECT YEAR(birthday) AS b_year, YEAR(sign_up_day) AS s_year, gender, COUNT(*)
+FROM copang_main.member
+GROUP BY YEAR(birthday), YEAR(sign_up_day), gender WITH ROLLUP
+ORDER BY b_year DESC, s_year DESC, gender DESC;
+```
+
+![image-20210518132454441](SQL_정리.assets/image-20210518132454441.png)
+
+- 이런 식으로 ROLLUP 결과를 NULL 항목을 사용해서 표현함. 작은 그룹에서 큰 그룹으로 점진적으로 ROLLUP
+
+```sql
+-- NULL항목이 있을 때 롤업 예시
+SELECT YEAR(sign_up_day) AS s_year, gender, SUBSTRING(address, 1, 2) AS region, COUNT(*)
+FROM copang_main.member
+GROUP BY YEAR(sign_up_day), gender, SUBSTRING(address, 1, 2) WITH ROLLUP
+ORDER BY s_year DESC, gender DESC, region DESC, COUNT(*);
+```
+
+![image-20210518135019112](SQL_정리.assets/image-20210518135019112.png)
+
+- region에 NULL이 있는 row가 있기 때문에, 위와 같이 ROLLUP에 의한 결과로 착각할 수 있는 row가 있다
+
+```sql
+-- NULL 항목에 대한 구분을 위하여 GROUPING 함수를 사용한 쿼리
+SELECT YEAR(sign_up_day) AS s_year, gender, SUBSTRING(address, 1, 2) AS region, GROUPING(YEAR(sign_up_day)), GROUPING(gender), GROUPING(SUBSTRING(address, 1, 2)), COUNT(*)
+FROM copang_main.member
+GROUP BY YEAR(sign_up_day), gender, SUBSTRING(address, 1, 2) WITH ROLLUP
+ORDER BY s_year DESC, gender DESC, region DESC, COUNT(*);
+```
+
+![image-20210518135723900](SQL_정리.assets/image-20210518135723900.png)
+
+- GROUPING() : 그루핑 기준에서 고려하지 않은 부분 총계를 나타내는 경우 1을 리턴하는 함수
+- GROUPING 함수를 사용하여 부분 총계를 나타내기 위해 컬럼에 NULL이 쓰인 것인지 실제 NULL인지 구분할 수 있다
 
 
 
 ## 1.5. 테이블 조인을 통한 깊이있는 데이터 분석
 
+### Foreign Key
 
+- 다른 테이블의 특정 row를 식별할 수 있게 해주는 컬럼
+- 외래키를 가지고 그 키를 기본키로 사용하는 테이블에서 정보를 얻는다
+  - 이 때, 외래키를 가진 쪽을 자식 테이블, 외래키에 대응되는 기본키를 가진 쪽을 부모 테이블이라고 한다
+- foreign key 설정을 해두면 부모 테이블에 없는 기본키가 입력되는 것을 막아준다(에러를 내준다)
+
+![image-20210518165907427](SQL_정리.assets/image-20210518165907427.png)
+
+- 왼쪽 박스 부분에 foreign key 이름과 참조할 테이블을 지정한 후, 오른쪽 박스 부분에 foreign key로 사용할 컬럼과 참조할 컬럼을 선택해준다
+
+
+
+### OUTER JOIN
+
+- LEFT OUTER JOIN은 왼쪽 테이블을 기준으로 두 테이블을 합치는 것이고, RIGHT OUTER JOIN은 오른쪽 테이블을 기준으로 두 테이블을 합치는 것이다
+- 기준이 된다는 말은 두 테이블을 합칠 때, 데이터를 모두 보존하면서 합친다는 말이다. 두 테이블을 합치다보면 JOIN 기준에 부합하지 않는 데이터도 생길 수 있다. 이 때, JOIN 기준에 부합하지 않더라도 기준이되는 테이블의 데이터는 모두 조회된다. 대신, 합쳐지는 상대 테이블의 정보는 없으므로 NULL로 표시된다
+
+```sql
+-- OUTER JOIN 예시
+SELECT
+	i.id,
+	i.name,
+	s.item_id,
+	s.inventory_count
+FROM item AS i RIGHT OUTER JOIN stock AS s  -- 테이블에도 alias를 쓸 수 있다
+ON i.id = s.item_id;
+```
+
+
+
+### 컬럼 alias vs 테이블 alias
+
+- 컬럼 alias는 실제로 조회할 때 그 alias로 보여지게 하기 위해 쓴다
+- 테이블 alias는 SQL 문의 가독성을 높이기 위해 사용한다
+- 테이블 alias를 한번 지정해주면, 반드시 alias를 사용해야 한다. 사용하지 않고 원래 테이블 이름을 사용하면 오류난다
+
+
+
+### INNER JOIN
+
+- OUTER JOIN과 다르게, 따로 기준이 되는 테이블이 없다. JOIN 기준에 대한 교집합 개념으로 테이블을 합치기 때문에 합치면서 NULL이 생기지 않는다
+- foreign key는 참조되는 테이블에 없는 데이터가 입력되는 것을 막아준다. 따라서 foreign key를 가진 테이블을 기준으로 삼고 foreign key를 JOIN 기준으로 사용해서 OUTER JOIN을 하면 INNER JOIN과 결과가 같다(중간에 참조되는 테이블만 일부러 데이터를 삭제하지 않는 한).
+
+
+
+### JOIN 기준
+
+- JOIN을 할 때 보통 foreign key를 기준으로 하는 경우가 많다. 하지만 반드시 JOIN을 foreign key로만 해야하는 것은 아니다
+- 따라서 상황에 따라 LEFT OUTER JOIN, RIGHT OUTER JOIN, INNER JOIN 결과가 다르게 나올 수 있다
+
+![image-20210518171716714](SQL_정리.assets/image-20210518171716714.png)
+
+- 위와 같은 경우 각 JOIN 결과가 모두 다르다
+
+
+
+### 결합 연산 vs 집합 연산
+
+- 결합 연산
+  - 테이블을 가로로 합치는 것
+  - ex) JOIN 연산
+- 집합 연산
+  - 테이블을 세로로 합치는 것. 따라서 집합 연산은 두 테이블의 컬럼 구조가 같아야 한다
+  - 수학에서 집합 연산하는 개념임(교집합, 차집합, 합집합). 따라서 합집합했을 때 겹치는 row들도 하나의 row로 합쳐준다(cf: UNION ALL 절을 사용하면 중복 row 제거 없이 그대로 합쳐준다)
+  - ex) INTERSECT, MINUS, UNION
+  - MySQL에서는 8.0 버전 기준으로 UNION만 가능하다. 대신 조인 연산을 사용해서 간접적으로 구현할 수 있다. cf) 오라클은 3가지 연산자를 모두 지원한다
+
+
+
+### 같은 종류 테이블 연산
+
+- 같은 종류 테이블을 JOIN할 때는 ON 대신 USING 절을 사용할 수 있다
+  - ex) `ON old.id = new.id` == `USING(id)`
+- 같은 종류 테이블을 여러 방식으로 JOIN 하면서 차집합, 교집합을 구현할 수 있다
+
+```sql
+-- 차집합 구현. old집합 - new집합
+SELECT
+	old.id AS old_id,
+	old.name AS old_name,
+	new.id AS new_id,
+	new.name AS new_name
+FROM item AS old LEFT OUTER JOIN item_new AS new
+ON old.id = new.id
+WHERE new.id IS NULL;
+
+-- 합집합. 두 테이블의 구조가 다를 때 컬럼 따로 빼는 식으로 맞춰서 할 수도 있음
+SELECT id, nation, count FROM Summer_Olympic_Medal
+UNION
+SELECT id, nation, count FROM Winter_Olympic_Medal;
+
+-- 결과가 같더라도 의미가 다르므로 이런 경우에는 UNION ALL로 그대로 합칠 수도 있다
+SELECT id, nation, count FROM Summer_Olympic_Medal
+UNION ALL
+SELECT id, nation, count FROM Winter_Olympic_Medal;
+```
+
+
+
+### 서로 다른 3개의 테이블 조인 예시
+
+```sql
+SELECT
+	i.name, i.id,
+	r.item_id, r.star, r.comment, r.mem_id,
+	m.id, m.email
+FROM
+	item AS i LEFT OUTER JOIN review AS r
+		ON r.item_id = i.id
+	LEFT OUTER JOIN member AS m
+		ON r.mem_id = m.id;
+```
+
+![image-20210518182135130](SQL_정리.assets/image-20210518182135130.png)
+
+- 하나의 상품에 여러 리뷰를 달 수 있는 1:n 관계이기 때문에, JOIN 결과 1에 해당하는 상품이 여러 번 중복해서 조회될 수 있다
 
 
 
