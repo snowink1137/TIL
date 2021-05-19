@@ -10,6 +10,10 @@
 
 # 1. SQL로 하는 데이터 분석
 
+- 데이터 분석과 관련된 토픽이므로 대부분 조회(SELECT) 관련 내용이다
+
+
+
 ## 1.1. 데이터베이스 기본 개념
 
 ### 데이터베이스
@@ -235,7 +239,7 @@ CASE
 	WHEN weight IS NULL OR height is NULL THEN '비만 여부 알 수 없음'
 	WHEN weight / ((height/100) * (height/100)) >= 25 THEN '과체중 또는 비만'
 	WHEN weight / ((height/100) * (height/100)) >= 18.5
-		AND WHEN weight / ((height/100) * (height/100)) < 25
+		AND weight / ((height/100) * (height/100)) < 25
 		THEN '정상'
 	ELSE '저체중'
 END
@@ -351,6 +355,7 @@ HAVING
      - ∴ SELECT 순서가 WHERE 보다 뒤에 있기 때문에 SELECT에서 alias 해도 WHERE에서 alias를 인식 못하는 것. SELECT 보다 뒤에 있는 ORDER BY, LIMIT에서는 alias를 쓸 수 있다
   6. **ORDER BY**
   7. **LIMIT**
+- 위의 실행 순서가 표준이기는 하지만, 모든 DBMS에서 표준을 지키지는 않는다. 예를들어 MySQL 같은 경우에는 HAVING 절을 실행하기 이전에 SELECT 절을 일부 평가한다. 이때문에 HAVING 절에서 SELECT 절에서 정의한 alias를 사용할 수 있다
 
 
 
@@ -466,14 +471,14 @@ ON i.id = s.item_id;
 - 집합 연산
   - 테이블을 세로로 합치는 것. 따라서 집합 연산은 두 테이블의 컬럼 구조가 같아야 한다
   - 수학에서 집합 연산하는 개념임(교집합, 차집합, 합집합). 따라서 합집합했을 때 겹치는 row들도 하나의 row로 합쳐준다(cf: UNION ALL 절을 사용하면 중복 row 제거 없이 그대로 합쳐준다)
-  - ex) INTERSECT, MINUS, UNION
+  - ex) INTERSECT, MINUS, UNION, UNION ALL
   - MySQL에서는 8.0 버전 기준으로 UNION만 가능하다. 대신 조인 연산을 사용해서 간접적으로 구현할 수 있다. cf) 오라클은 3가지 연산자를 모두 지원한다
 
 
 
 ### 같은 종류 테이블 연산
 
-- 같은 종류 테이블을 JOIN할 때는 ON 대신 USING 절을 사용할 수 있다
+- 기준이 되는 두 컬럼의 이름이 같은 경우를 JOIN할 때는 ON 대신 USING 절을 사용할 수 있다
   - ex) `ON old.id = new.id` == `USING(id)`
 - 같은 종류 테이블을 여러 방식으로 JOIN 하면서 차집합, 교집합을 구현할 수 있다
 
@@ -521,13 +526,272 @@ FROM
 
 
 
+### 기타 조인
+
+```sql
+/*
+NATURAL JOIN
+- ON 절을 사용하지 않는 INNER JOIN
+- 두 테이블에서 같은 이름의 컬럼을 찾아서 자동으로 기준을 잡고 조인한다
+*/
+SELECT p.id, p.player_name, p.team_name, t.team_name, t.region
+FROM player AS p NATURAL JOIN team AS t;
+
+/*
+CROSS JOIN
+- 한 테이블의 하나의 row에 다른 테이블의 모든 row를 매칭하는 조인
+- 조건을 사용하지 않으므로 두 테이블의 모든 row 쌍이 조합된다
+- inner join을 조건 없이 사용해도 같은 결과를 얻는다
+- 집합 이론 Cartesian Product와 같다
+*/
+SELECT * FROM member CROSS JOIN stock;
+
+/*
+SELF JOIN
+- JOIN할 테이블을 자기 자신으로 삼는 것
+- 하나의 테이블에서 통합해서 조회하고 싶은 경우 사용한다
+- ex1) 같은 테이블 안에서 나이가 같은 조합을 알고 싶을 때
+- ex2) 같은 테이블 안에 상사의 id가 적혀있는 경우, 상사의 이름도 조회하고 싶을 때
+*/
+SELECT *
+FROM member AS m1 LEFT OUTER JOIN member AS m2
+ON m1.age = m2.age;
+
+SELECT *
+FROM employee AS e1 LEFT OUTER JOIN employee AS e2
+ON e1.boss = e2.id
+LEFT OUTER JOIN employee AS e3
+ON e2.boss = e3.id;
+
+/*
+FULL OUTER JOIN
+- LEFT OUTER JOIN + RIGHT OUTER JOIN
+- Oracle에서는 FULL OUTER JOIN 연산자가 내장되어 있지만, MySQL에서는 기존 연산자를 활용해야 한다
+*/
+SELECT *
+FROM player AS p LEFT OUTER JOIN team AS t
+ON p.team_name = t.team_name
+UNION
+SELECT *
+FROM player AS p RIGHT OUTER JOIN team AS t
+ON p.team_name = t.team_name;
+
+/*
+Non-Equi 조인
+- ON 절에 부등호가 들어가는 조인
+- 날짜나 수 기준 or != 기준이 필요한 경우에 쓰인다
+*/
+SELECT m.email, m.sign_up_day, i.name, i.registration_date
+FROM copang_main.member AS m LEFT OUTER JOIN copang_main.item AS i
+ON m.sign_up_day < i.registration_date
+ORDER BY m.sign_up_day ASC;
+```
+
+
+
 ## 1.6. 서브쿼리와 뷰를 활용한 유연한 데이터 분석
+
+### 서브쿼리(== inner query)
+
+- SQL 문 안에 부품처럼 들어있는 SELECT 문
+- SELECT 절, WHERE 절, FROM 절, HAVING 절 등에서 사용할 수 있음
+  - FROM 절에 서브쿼리 쓰려면 alias를 꼭 써줘야 함. 안쓰면 derived table에는 alias 붙이라고 error 냄
+  - Oracle DBMS에서는 derived table을 inline view 라고 부르기도 함
+- 일반적으로는 JOIN이 SUBQUERY보다 성능이 좋다. DB 엔진이 JOIN에 최적화가 더 잘되어 있다고 한다. 하지만 MySQL의 경우 5.6 버전에서 서브쿼리의 성능이 많이 향상되었다고 한다
+- 서브쿼리와 조인이 비슷한 역할을 하는 경우가 있는데, 실행 순서를 생각해봤을 때 서브쿼리를 활용하면 가독성이 좀더 좋아지는 경우도 있다
+
+```sql
+-- 기본 예시
+SELECT i.id, i.name, AVG(star) AS avg_star
+FROM item AS i LEFT OUTER JOIN review AS r
+ON r.item_id = i.id
+GROUP BY i.id, i.name
+HAVING avg_star < (SELECT AVG(star) FROM review)
+ORDER BY avg_star DESC;
+
+-- WHERE 절 사용 예시
+SELECT * FROM item
+WHERE id IN(
+SELECT item_id
+FROM review
+GROUP BY item_id HAVING COUNT(*) >= 3
+);
+
+-- 서브쿼리를 써서 조인보다 가독성이 좋아진 경우
+SELECT
+	email,
+	CONCAT(height, 'cm', ', ', weight, 'kg') AS '키와 몸무게',  -- CONCAT(): 문자열 잇는 함수
+	weight / ((height/100) * (height/100)) AS BMI,
+CASE
+	WHEN weight IS NULL OR height is NULL THEN '비만 여부 알 수 없음'
+	WHEN weight / ((height/100) * (height/100)) >= 25 THEN '과체중 또는 비만'
+	WHEN weight / ((height/100) * (height/100)) >= 18.5
+		AND weight / ((height/100) * (height/100)) < 25
+		THEN '정상'
+	ELSE '저체중'
+END
+FROM copang_main.member;
+
+SELECT
+	email,
+	CONCAT(height, 'cm', ', ', weight, 'kg') AS '키와 몸무게',  -- CONCAT(): 문자열 잇는 함수
+	BMI,
+CASE
+	WHEN weight IS NULL OR height is NULL THEN '비만 여부 알 수 없음'
+	WHEN BMI >= 25 THEN '과체중 또는 비만'
+	WHEN BMI >= 18.5
+		AND BMI < 25
+		THEN '정상'
+	ELSE '저체중'
+END
+FROM
+(SELECT *, weight / ((height/100) * (height/100)) AS BMI FROM copang_main.member) AS subquery_for_BMI;
+```
+
+
+
+### ANY(SOME), ALL
+
+- 서브쿼리 앞에 IN 말고도 ANY(SOME), ALL을 붙여서 사용할 수도 있다
+- 단어 뜻 그대로 서브쿼리 결과 중 하나라도 만족하는 경우 or 모두 만족해야 하는 경우를 나타낼 때 쓰인다
+
+```sql
+SELECT * FROM FOR_TEST.codeit_theater
+	WHERE view_count > ANY(SELECT view_count FROM FOR_TEST.codeit_theater WHERE category = 'ACTION')
+		AND category != 'ACTION'
+		
+SELECT * FROM FOR_TEST.codeit_theater
+	WHERE view_count > SOME(SELECT view_count FROM FOR_TEST.codeit_theater WHERE category = 'ACTION')
+		AND category != 'ACTION'
+		
+SELECT * FROM FOR_TEST.codeit_theater
+	WHERE view_count > ALL(SELECT view_count FROM FOR_TEST.codeit_theater WHERE category = 'ACTION')
+		AND category != 'ACTION'
+```
+
+
+
+### 서브 쿼리 종류 정리(리턴 형식에 따라)
+
+- 단일 값을 리턴하는 서브쿼리(== 스칼라 서브쿼리)
+  - `SELECT MAX(age) FROM member;`
+- 하나의 column에 여러 row를 리턴하는 서브쿼리
+  - 이런 서브쿼리는 IN, ANY(SOME), ALL 등의 키워드와 함께 사용한다
+  - `SELECT SUBSTRING(address, 1, 2) FROM member;`
+- 여러 column, 여러 row를 리턴하는 서브쿼리(마치 하나의 테이블 처럼)를 리턴하는 서브쿼리
+  - derived table 이라고도 불림. 이러한 테이블에는 alias를 반드시 붙여줘야 한다는 규칙이 있다
+  - `SELECT * FROM member;`
+
+
+
+### 서브 쿼리 종류 정리(상관 관계에 따라)
+
+- 비상관 서브쿼리
+  - 앞에서 계속 봤던 서브쿼리
+  - 서브쿼리만 따로 빼서 실행 가능한 서브쿼리
+- 상관 서브쿼리
+  - 서브쿼리가 outer query와 상관되어진 상태로 쓰여진 서브쿼리
+  - 따로 실행 불가
+  - EXIST, NOT EXIST 키워드와 함께 쓰이기도 한다
+
+```sql
+-- 상관 서브쿼리 예시. EXIST 사용
+SELECT * FROM item
+	WHERE EXISTS (SELECT * FROM review WHERE review.item_id = item.id);  -- 서브쿼리에 outer query에 있는 item 테이블을 사용했다
+	
+-- 상관 서브쿼리 예시. EXIST 사용 X
+SELECT *,
+(SELECT MIN(height)
+FROM member AS m2 WHERE birthday IS NOT NULL AND height IS NOT NULL
+AND YEAR(m1.birthday) = YEAR(m2.birthday)) AS min_height_in_the_year
+FROM member AS m1
+ORDER BY min_height_in_the_year ASC;
+```
+
+
+
+### 뷰(== 가상 테이블)
+
+- 조인 등의 작업을 해서 만든 '결과 테이블'이 가상으로 저장된 형태
+- 뷰를 사용하면 매번 긴 SQL을 입력해서 얻어내야하는 결과 테이블을 쉽게 재사용할 수 있다
+- 뷰는 테이블 형식으로 보여지지만 실제 데이터가 물리적으로 컴퓨터에 저장되는 것은 아님
+  - 요즘에는 자주 사용되는 뷰인 경우에는 따로 물리적으로 저장해놓는 기능도 있지만 원래 개념적으로 그런 것은 아니므로 넘어감
+  - 뷰는 해당 뷰가 사용될 때마다 AS 이후의 SQL문을 그대그때 실행해주는 기능임
+- 뷰의 장점
+  1. 사용자에게 높은 편의성을 제공해줌
+  2. 각 직무별 데이터 수요에 알맞은, 다양한 구조의 데이터 분석 기반을 구축해둘 수 있음
+     - 같은 테이블을 다룰 경우에도 직무에 따라 상황에 따라 필요한 데이터가 다를 수 있다. 이 때, 회사 입장에서 기존의 데이터 구조를 건드리지 않고 효과적으로 각자에게 필요한 데이터 구조를 사용할 수 있다
+  3. 데이터 보안에 좋음
+     - 예를 들어 직원 테이블에 주민등록번호, 연봉 등 민감한 정보가 있더라도 데이터 분석가에게 이러한 컬럼이 없는 뷰를 제공하면 된다
+     - 데이터 분석가에게는 보통 이렇게 뷰로 데이터가 제공되고, 필요한 정보가 있으면 따로 신청하도록 되어 있는 경우가 많다
+     - 테이블에 아무나 접근할 수 없게 해서 보안 정책을 잘 유지할 수 있다
+
+```sql
+-- VIEW 만들기
+CREATE VIEW three_tables_joined AS  -- 이 아래 있는 SQL 문의 결과를 VIEW로 저장하는 것
+SELECT i.id, i.name, AVG(star) AS avg_star, COUNT(*) AS count_star
+FROM item AS i LEFT OUTER JOIN review AS r ON r.item_id = i.id
+	LEFT OUTER JOIN member AS m ON r.mem_id = m.id
+WHERE m.gender = 'f'
+GROUP BY i.id, i.name
+HAVING COUNT(*) >= 2
+ORDER BY AVG(star) DESC, COUNT(*) DESC;
+
+-- VIEW 사용하기
+-- VIEW를 사용하지 않았으면 three_talbes_joined가 언급된 부분에 실제 SQL문을 작성해서 서브쿼리 중첩으로 직접 해야하는 것
+SELECT * FROM copang_main.three_tables_joined
+WHERE avg_star = (
+	SELECT MAX(avg_star) FROM copang_main.three_tables_joined
+) AND count_star = (
+	SELECT MAX(count_star) FROM copang_main.three_tables_joined
+);
+```
+
+
+
+### 실무에서 첫 번째로 해야할 일
+
+1. 어떤 데이터베이스들이 있는지 파악
+   - `SHOW DATABASES;`
+2. 각 데이터베이스 안에 어떤 테이블들이 있는지 파악
+   - `SHOW FULL TABLES IN 데이터베이스이름;`
+   - 한 데이터베이스 안에 있는 테이블과 뷰를 확인할 수 있다
+3. 각 테이블의 컬럼 구조는 어떻게 되는지 파악
+   - `DESCRIBE 테이블이름`
+   - 테이블의 간단한 정보를 볼 수 있다. 컬럼의 이름, 데이터 타입, Not Null 유무, PK 여부 등
+4. 테이블들 간의 Foreign Key 관계 파악
+   - 각 DBMS 마다 SQL문을 작성해서 Foreign Key를 알아낼 수 있다
+   - 그런데 실제로 Foreign Key 관계가 성립한다고 해도 관리자가 Foreign Key로 설정해 두지 않는 경우도 있다. 실수일 수도 있고, 성능 때문에 일부러 그런 것일 수도 있다. 따라서 이런 경우도 있다는 것을 염두에 두고 설계자의 설명을 듣거나 직접 데이터의 관계와 흐름을 파악해야 한다
 
 
 
 
 
 # 2. SQL로 하는 데이터 관리
+
+- 데이터 베이스의 데이터는 '저장' -> '조회' -> '갱신' -> '삭제' 단계를 거친다
+- 앞선 토픽에서 조회 관련된 부분을 자세히 다뤘고 이번 토픽에서는 나머지 '저장', '갱신', '삭제' 관련 SQL을 다룬다
+
+
+
+## 2.1. 데이터베이스와 테이블 구축
+
+### 데이터베이스 생성
+
+- `CREATE DATABASE course_rating;`
+- `CREATE DATABASE IF NOT EXISTS course_rating;`
+- `USE course_rating;`
+  - 사용할 데이터베이스 지정
+
+
+
+
+
+## 2.2. 테이블 다루기
+
+
+
+## 2.3. Foreign Key 제대로 사용하기
 
 
 
