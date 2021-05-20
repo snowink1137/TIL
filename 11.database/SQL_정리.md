@@ -785,7 +785,7 @@ WHERE avg_star = (
 
 
 
-### 테이블 생성
+### 테이블 생성 예시
 
 ```sql
 CREATE TABLE `course_rating`.`student` (
@@ -809,17 +809,163 @@ CREATE TABLE `course_rating`.`student` (
 
 
 
+### 테이블에 row 추가하기 예시
+
+```sql
+INSERT INTO food_menu (menu, price, ingredient)
+VALUES ('라볶이', 5000, '라면, 떡, 양파..');
+
+-- 여러 개 한꺼번에
+INSERT INTO food_menu (menu, price, ingredient) VALUES 
+('라볶이', 5000, '라면, 떡, 양파..'), ('치즈김밥', 3000, '치즈, 김, 단무지..'), ('돈까스', 8000, '국내산 돼지고기, 양배추..'), ('오므라이스', 7000, '계란, 당근..');
+```
 
 
 
+### 테이블의 row 갱신하기 예시
+
+```sql
+UPDATE final_exam_result SET score = 100 WHERE id = 1;
+
+-- 기존 값 기반으로 갱신하기
+UPDATE final_exam_result SET score = score + 3;  -- WHERE 안 썼으므로 모든 row를 갱신한다
+```
+
+
+
+### 테이블의 row 삭제하기 예시
+
+```sql
+DELETE FROM student WHERE id = 4;  -- WHERE 안쓰면 모든 row가 삭제됨
+```
+
+
+
+### 물리 삭제 vs 논리 삭제
+
+- 앞에서 했던 삭제는 물리 삭제 방식이다
+- 논리 삭제는 `is_cancelled` 같은 컬럼을 따로 만들어 둬서 삭제 표시만 하는 것을 말한다. 따라서 삭제기는 하지만 SQL은 UPDATE를 사용해야 한다
+  - ∴ 삭제를 해도 저장 용량은 줄어들지 않는다
+- 데이터를 조회할 때 `SELECT * FROM xxx WHERE is_cancelled !='Y'; ` 이런 식으로 해야하기 때문에 번거로울 수 있지만, 다시 복구해야할 수도 있고 또 다양하게 활용할 수 있으므로 논리 삭제를 활용한다
+- 데이터 보관 정책에 따라 논리 삭제 후 일정 기간이 지나면 물리 삭제를 한다던지 하는 경우도 있다
 
 
 
 ## 2.2. 테이블 다루기
 
+### 테이블 컬럼 구조 변경
+
+```sql
+-- 컬럼 추가
+ALTER TABLE student ADD gender CHAR(1) NULL;
+
+-- 컬럼 이름 바꾸기
+ALTER TABLE student
+	RENAME COLUMN student_number TO registration_number;
+
+-- 컬럼 삭제
+ALTER TABLE student DROP COLUMN admission_date;
+
+-- 컬럼 데이터 타입 변경
+ALTER TABLE student MODIFY major INT;  -- 타입이 바꿔지지 않는 컬럼 있으면 error 내줌
+
+-- 컬럼 속성 변경
+ALTER TABLE student MODIFY name VARCHAR(35) NOT NULL;  -- 원래의 데이터 타입도 같이 써줘야 함. 동시에 바꿀 수도 있음
+ALTER TABLE student MODIFY registration_number INT NOT NULL;
+ALTER TABLE student MODIFY major INT NOT NULL DEFAULT 101;
+```
+
+- CHANGE로 RENAME COLUMN(이름 변경)과 MODIFY(컬럼 속성 변경) 동시에 할 수도 있음
+  - `ALTER TABLE 테이블명 CHANGE 예전이름 새이름 새로운속성1 새로운속성2 ... `
+- 아래 처럼 여러 작업 동시에 수행할 수도 있음
+
+```sql
+ALTER TABLE player_info
+	RENAME COLUMN id TO registration_number,
+	MODIFY name VARCHAR(20) NOT NULL,
+	DROP COLUMN position,
+	ADD height DOUBLE NOT NULL,
+	ADD weight DOUBLE NOT NULL;
+```
+
+
+
+### DATETIME, TIMESTAMP 타입의 컬럼에 값 넣기
+
+```sql
+-- 1. NOW() 함수 활용하기
+INSERT INTO post (title, content, upload_time, recent_modified_time)
+VALUES ("xxxx", "yyyy", NOW(), NOW());
+
+UPDATE post
+	SET content = 'zzzz', recent_modified_time = NOW()
+	WHERE id = 1;
+	
+-- 2. 컬럼 속성 활용하기
+ALTER TABLE post
+	MODIFY upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+	MODIFY recent_modified_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+```
+
+
+
+### Primary Key와 Unique 속성의 차이
+
+- Unique는 NULL을 허용할 수 있다
+
+
+
+### CONSTRAINT(== 제약사항) 컬럼 속성
+
+```sql
+-- CONTSTRAINT 속성 만들기
+ALTER TABLE student
+	ADD CONSTRAINT st_rule CHECK (registration_number < 30000000);
+
+-- CONTSTRAINT 속성 삭제
+ALTER TABLE student DROP CONSTRAINT st_rule;
+
+-- 제약사항 2개도 가능
+ALTER TABLE student
+	ADD CONSTRAINT st_rule
+	CHECK (email LIKE '%@%' AND gender IN ('m', 'f'));
+```
+
+
+
+### 테이블 이름 변경, 복사본 만들기, 삭제 등 테이블 조작
+
+```sql
+-- 이름 변경
+RENAME TABLE student TO undergraduate;
+
+-- 테이블 복사
+CREATE TABLE copy_of_undergraduate AS SELECT * from undergraduate;
+
+-- 테이블 삭제
+DROP TABLE copy_of_undergraduate;
+
+-- 테이블 컬럼 구조만 복사하기
+CREATE TABLE copy_of_undergraduate LIKE undergraduate;
+
+-- 테이블 컬럼 구조만 복사한 후 나중에 데이터도 복사 하고 싶을 때
+INSERT INTO copy_of_undergraduate SELECT * FROM undergraduate;  -- 전부 다 복사하기
+INSERT INTO copy_of_undergraduate SELECT * FROM undergraduate WHERE major = 101;  -- 일부만 복사하기
+```
+
+
+
+### TRUNCATE
+
+- 기존 테이블의 데이터를 전부 다 날리고 같은 테이블에서 다시 시작하고 싶을 때 쓴다
+- `DELETE FROM 테이블명`과 실행 결과가 같다
+  - 내부적으로 이루어지는 동작에 차이가 있다고 한다. 일단은 둘을 혼용해서 쓸 수 있다는 것을 기억하라고 함
+
 
 
 ## 2.3. Foreign Key 제대로 사용하기
+
+
 
 
 
