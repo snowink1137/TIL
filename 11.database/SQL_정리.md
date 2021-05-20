@@ -781,7 +781,35 @@ WHERE avg_star = (
 - `CREATE DATABASE course_rating;`
 - `CREATE DATABASE IF NOT EXISTS course_rating;`
 - `USE course_rating;`
-  - 사용할 데이터베이스 지정
+  - 사용할 데이터베이스를 지정하는 SQL
+
+
+
+### 테이블 생성
+
+```sql
+CREATE TABLE `course_rating`.`student` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(20) NULL,
+  `student_number` INT NULL,
+  `major` VARCHAR(15) NULL,
+  `email` VARCHAR(50) NULL,
+  `phone` VARCHAR(15) NULL,
+  `admission_date` DATE NULL,
+  PRIMARY KEY (`id`));
+```
+
+
+
+### 백틱과 따옴표
+
+- Esc 키 아래에 있는 \` 기호를 백틱(backtick)이라고 부른다
+- DBMS에서는 데이터베이스, 테이블, 컬럼 등의 구성요소를 object(객체)라고 한다. object의 이름을 identifier(식별자)라고 하는데 MySQL에서 백틱은 해당 단어가 identifier라는 것을 표시하는 기호이다
+- 홑따옴표나 쌍따옴표는 문자열이라는 것을 표시하기 위해서 쓴다
+
+
+
+
 
 
 
