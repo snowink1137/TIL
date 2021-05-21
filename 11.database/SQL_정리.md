@@ -965,13 +965,135 @@ INSERT INTO copy_of_undergraduate SELECT * FROM undergraduate WHERE major = 101;
 
 ## 2.3. Foreign Key 제대로 사용하기
 
+### 참조 무결성
+
+- Foreign Key가 있는 테이블을 자식 테이블(chile table) 혹은 참조하는 테이블(referencing table)이라 부름
+- Foreign Key에 의해 참조당하는 테이블을 부모 테이블(parent table) 혹은 참조당하는 테이블(referencing table)이라 부름
+- Foreign Key 설정 해놓으면, 자식 테이블에 Foreign Key 컬럼에 데이터를 추가할 때 부모 테이블에 해당 PK가 있는지 확인한다. 따라서 **참조 무결성(Referential Integrity)**를 지킬 수 있다
 
 
 
+### Foreign Key 설정하기
+
+```sql
+-- 이미 생성된 테이블에 Foreign Key 설정하기
+ALTER TABLE `course_rating`.`review`
+ADD CONSTRAINT `fk_review_table`  -- 이름 안 정해도 되긴 하지만 어차피 MySQL이 알아서 짓는다
+	FOREIGN KEY (`course_id`)
+	REFERENCES `course_rating`.`course` (`id`)
+	ON DELETE RESTRICT
+	ON DELETE RESTRICT;
+	
+-- 테이블 생성하면서 Foreign Key 설정하기. 크게 다를 것은 없다
+CREATE TABLE `review` (
+	`id` int NOT NULL AUTO_INCREMENT,
+    `course_id` int DEFAULT NULL,
+    `star` int DEFAULT NULL,
+    `comment` varchar(500) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `fk_review_table_idx` (`course_id`),
+    CONSTRAINT `fk_review_table` FOREIGN KEY (`course_id`) REFERENCES `course_rating`.`course` (`id`) ON DELETE RESTRICT ON DELETE RESTRICT;
+)
+```
+
+
+
+### 부모 테이블의 row가 삭제될 때의 정책
+
+- 부모 테이블의 row가 삭제되면 자식 테이블의 참조 무결성이 깨지게 된다. 따라서 이런 상황에서 어떻게 대응할지 정책을 정해놓는 것이다
+- RESTRICT 정책
+  - 자신을 참조하고 있는 자식 테이블의 row가 있다면, 부모 테이블의 row 삭제 불가. 자식 테이블의 row를 먼저 지운 후 부모 테이블 row 삭제 가능
+- CASCADE 정책
+  - '폭포수처럼 떨어지다. 연쇄 작용을 일으키다'
+  - 부모 테이블의 row를 삭제하면, 자신을 참조하고 있는 자식 테이블의 row도 함께 삭제
+- SET NULL 정책
+  - 부모 테이블의 row를 삭제하면, 자신을 참조하고 있는 자식 테이블을 삭제하지는 않고 Foreign Key 컬럼을 NULL로 만듦
+
+
+
+### 부모 테이블의 row의 PK가 갱신될 때의 정책
+
+- 갱신될 때도 삭제될 때 정책의 논리가 적용된다
+  - RESTRICT는 갱신 못하게, CASCADE는 갱신된 id로 자식 테이블도 수정, SET NULL은 부모는 갱신되면서 자식 테이블 Foreign Key는 NULL로 바꾼다
+- ON DELETE와 ON UPDATE를 통해 삭제될 때와 갱신될 때의 정책을 다르게 가져갈 수도 있다
+
+
+
+### 논리적 Foreign Key vs 물리적 Foreign Key
+
+- 논리적으로 Foreign Key 관계가 성립하면 논리적 Foreign Key라고 부른다
+- 물리적 Foreign Key는 논리적 Foreign Key 관계를 DBMS에 실제로 Foreign Key로 설정해서 두 테이블의 참조 무결성을 보장할 수 있도록 만드는 것이다
+- 데이터베이스를 여러 테이블로 설계하다보면 자연스럽게 논리적 Foreign Key가 생긴다. 하지만 아래와 같은 이유로 모든 논리적 Foreign Key를 물리적 Foreign Key로 만들지는 않는다
+  1. 성능 문제
+     - 물리적 Foreign Key가 설정된 경우, INSERT, UPDATE 문 등을 실행할 때 참조 무결성을 깨뜨리는 변화인지 검증해야하기 때문
+     - 따라서 실무에서는 물리적 Foreign Key로 설정하지 않고 쓰다가, 참조 무결성을 어기는 데이터들을 정기적으로 확인해서 처리하는 방식을 택하기도 한다
+  2. 이미 레거시 데이터의 참조 무결성이 깨진 경우
+     - 실무에서는 그동안 쌓아왔던 데이터가 많을 텐데, 그런 상황에서 참조 무결성을 어기는 row들의 수가 많아서 함부로 삭제하기 어려운 경우가 있다. 데이터도 자산이고 이러한 현실적인 이유로 그냥 서비스를 운영하기도 한다
+     - 하지만 참조 무결성이 확실하게 보장되어야 하는 서비스(ex: 은행, 학적 관리)에서는 이런 일이 생겨서는 안된다
+
+
+
+### Foreign Key 삭제
+
+```sql
+-- 해당 테이블 만드는 SQL 출력
+SHOW CREATE TABLE stock;
+-- 결과
+CREATE TABLE `stock` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `item_id` int DEFAULT NULL,
+  `inventory_count` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_stock_item_idx` (`item_id`),
+  CONSTRAINT `fk_stock_item` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+-- Foreign Key 확인 후 삭제
+ALTER TABLE stock
+	DROP FOREIGN KEY fk_stock_item;
+```
+
+
+
+### 스키마(Schema)
+
+- 데이터베이스에 관한 모든 설계 사항
+- 스키마를 짜는 것을 데이터베이스 모델링 혹은 데이터베이스 디자인이라고 함
+- 개념적 스키마(Conceptual Schema) vs 물리적 스키마(Physical Schema)
+  - 맨 처음 서술한 내용이 개념적 스키마임
+  - 물리적 스키마는 데이터를 실제로 저장 장치에 어떤 방식으로 저장할지를 결정하는 스키마
+    - 저장 스키마(Storage Schema) 혹은 내부 스키마(Internal Schema)로 불리기도 함
+    - 일반 개발자나 사용자가 다룰 일은 거의 없고 DBMS를 만드는 개발자들이 다루는 개념이다
+    - 따라서 이 부분에서 각 DBMS 만의 장단점, 특성이 드러난다
+- DBMS마다 스키마라는 단어를 조금씩 다르게 사용하기도 한다. 실습에서 썼던 MySQL에서는 데이터베이스를 스키마라고 부른다. Oracle에서는 사용자가 만든 객체(테이블, 뷰 등)의 집합을 의미한다. 크게 보면 설계와 비슷한 의미로 사용되는 것으로 이해할 수 있을 것 같다
 
 
 
 # 3. 데이터베이스 모델링
 
+## 3.1. 데이터 모델링이란?
 
+- 데이터를 "어떻게" 저장할지 계획하는 일
+- 하나의 테이블에 몽땅 다 저장할 수도 있고 여러 테이블에 나눠서 읽을 때 합쳐서 읽도록 저장할 수도 있다
+  - 개념적 구조를 정하는 것 -> **논리적 모델링**
+- 컬럼의 이름, 데이터 타입, 제약 조건 등 여러 특성을 설정하는 것
+  - 데이터베이스 구축에 필요한 것을 정하는 것 -> **물리적 모델링**
+- 성능 좋고 쉽게 확장 가능한 데이터베이스를 만드는 것이 중요하다
+- 모델링에 정답은 없지만 어느 정도 가이드 라인은 있다
+
+
+
+
+
+
+
+## 3.2. 논리적 모델링1
+
+
+
+## 3.3. 논리적 모델링2 - 정규화
+
+
+
+## 3.4. 물리적 모델링
 
