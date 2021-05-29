@@ -59,5 +59,8 @@
     - 엣지에서 데이터를 처리하고 AWS로 데이터를 마이그레이션한다
   - snowcone < snowball < snowmobile
   - snowball에서 Glacier로 데이터를 직접 이동할 수는 없다. 먼저 S3를 거친 후 Glacier로 보내야 한다
-- 
+- AMI
+  - Amazon Machine Image
+  - AMI는 리전 별로 관리된다. 따라서 다른 리전에서 사용하려면 복사를 먼저 한 후 사용해야 한다
+  - AMI에는 네트워크 액세스 제어나 공유 기능이 없다
 
