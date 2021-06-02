@@ -33,6 +33,7 @@
   - 네트워크 ACL을 여러 서브넷과 연결할 수 있다. 하지만 서브넷은 한 번에 하나의 네트워크 ACL에만 연결할 수 있다
   - 네트워크 ACL에는 별개의 인바운드 및 아웃바운드 규칙이 있다. 각 규칙은 트래픽을 허용하거나 거부할 수 있다
   - 네트워크 ACL은 상태 비저장이다. 즉, 허용되는 인바운드 트래픽에 대한 응답이라도 아웃바운드 트래픽에 대한 규칙을 따른다
+    - 보안 그룹은 상태 저장이다
   - 네트워크 ACL 규칙은 규칙 번호에 따라 가장 **낮은** 규칙에서 높은 규칙까지 평가되며 규칙이 적용되는 트래픽이 있으면 즉시 실행된다
 - Amazon EBS 볼륨
   - 인스턴스의 수명과는 독립적으로 유지될 수 있는 오프인스턴스 스토리지이다
@@ -49,8 +50,13 @@
     - https://www.partitionwizard.com/partitionmanager/raid-0-vs-raid-1.html
 - ACL vs 보안 그룹
   - ![         트래픽은 보안 그룹과 네트워크 ACL을 통해 제어됨       ](AWS_SAA_시험.assets/security-diagram.png)
+  - 네트워크 ACL과 보안그룹은 방화벽과 같은 역할을 하며 인바운드 트래픽과 아웃바운드 트래픽 보안정책을 설정할 수 있다
+  - 먼저 보안그룹은 Stateful(상태 저장) 한 방식으로 동작하는 보안 그룹은 모든 허용을 차단하도록 기본 설정되어있으며 필요한 설정은 허용해주어야 한다
+  - 네트워크 ACL은 Stateless하게(상태 비저장) 작동하며 모든 트래픽을 기본 설정되어있기 때문에 불필요한 트래픽을 막도록 적용해야 한다
+  - 서브넷 단위로 적용되며 리소스 별로는 설정할 수 없다. 네트워크 ACL과 보안 그룹이 충돌한다면 보안 그룹이 더 높은 우선순위를 갖는다
   - 출처
     - https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/VPC_Security.html
+    - https://swiftymind.tistory.com/132
 - AWS Snow Family
   - ![AWS Snow Family](AWS_SAA_시험.assets/aws-snow-family-snowcone-snowball-snowmobile.png)
   - AWS Snow Family는 까다로운 비데이터 센터 환경 및 네트워크 연결이 일관되지 않은 위치에서 작업을 실행해야하는 고객을 지원한다
@@ -151,3 +157,95 @@
   - 함수 구성, 배포, 실행에도 할당량이 적용된다. 이는 변경할 수 없다. 대표적인 할당량은 아래와 같다
     - 메모리 할당: 128MB ~ 10,240 MB, 1MB씩 증분됨
     - 제한 시간: 900초 (15 minutes)
+  
+- AWS 네트워크 정리
+
+  ![img](AWS_SAA_시험.assets/img.png)
+
+  - VPC
+
+    - 사용자에게 제공하는 가상 네트워크 사설 망
+    - 리전 단위로 설정한다
+
+  - Subnet
+
+    - VPC 내에서 더 작은 범위로 나눈 것
+    - 리전 내 가용영역 단위로 설정한다
+    - 인터넷 게이트웨이를 통해 public access가 가능하면 public subnet 아니라면 private subnet
+
+  - Routing Table
+
+    - 네트워크 이동에 대한 이정표
+    - 서브넷 단위로 설정한다. custom route table을 설정하지 않으면 vpc 내 기본 라우팅 테이블을 따름
+      - ex) Subnet에 존재하는 인스턴스에 요청을 보낼 때는 target을 local로 잡고, 인터넷으로 나가는 요청을 보낼 때에는 target을 인터넷 게이트웨이로 잡는다. vpn 영역으로 요청을 보낼 경우에는 Virtual private gateway로 잡는다
+
+  - Internet Gateway
+
+    - 인터넷과 연결해주는 중간 매개체
+    - 라우팅 테이블에서 상위부터 매칭되는 IP에 대한 타깃을 찾고, 없으면 가장 마지막 igw ip를 찾게 하도록 설정한다
+    - vpc와 연결가능한 internet gateway는 1개이고, internet gateway는 managed service로서 확장성, 가용성, 중복성을 보장하도록 설계 되었으며 ipv4와 ipv6모두 지원합니다
+
+  - NAT Gateway
+
+    - private subnet이 인터넷과 연결하기 위한 아웃바운드 instance
+    - 따라서 public subnet에 존재하는 instance
+    - private network가 외부에서 요청되는 인바운드는 필요 없더라도 인스턴스의 펌웨어나 혹은 주기적인 업데이트가 필요하여 아웃바운드 트래픽만 허용되야할 경우가 있다. 또한 WAS나 DB를 private subnet에 두는 경우가 있다. 이때 public subnet에서 동작하는 NAT 게이트웨이는 private subnet에서 외부로 요청하는 아웃바운드 트래픽을 받아 인터넷 게이트웨이와 연결한다
+    - internet gateway와 마찬가지로 NAT gateway도 managed service입니다
+
+    ![image-20210602212855018](AWS_SAA_시험.assets/image-20210602212855018.png)
+
+  - Elastic IP
+
+    - Elastic IP를 통해서 Public subnet에 있는 인스턴스들에게 고정 public ip를 할당할 수 있습니다
+    - ec2장애 발생 시에 다른 ec2 인스턴스로 연결이 가능하고, region당 기본 5개의 Elastic IP가 할당이 가능합니다. 하지만 이는 soft limit으로 열려있는 부분이라 case open을 하여 확장할 수 있습니다
+
+    ![image-20210602212835412](AWS_SAA_시험.assets/image-20210602212835412.png)
+
+  - AWS Direct Connect
+
+    - 전용회선을 연결하는 방법으로 aws와 직접 연결하는 방법이 아니라, DX location을 통해 aws와 연결하는 방식입니다. 국내에는 가산에 KINX, 평촌에 LG U+가 있습니다. DX location과 aws는 이미 연결이 되어있기 때문에 DX location까지만 전용회선을 구성하시면 됩니다
+
+    ![img](AWS_SAA_시험.assets/image.png)
+
+  - VPC Peering
+
+    - VPC간의 연결을 지원해주는 VPC Peering에 대해서 알아보겠습니다. 완전히 격리된 vpc간에 네트워크 연결을 하는 옵션이고, 다른 account 뿐 아니라 다른 리전의 vpc도 연결이 가능합니다
+    - vpc간에는 ip주소가 중복될 수 없고, routing table을 통해 통제가 가능하고, 단, transit routing은 제공되지 않습니다. 한 vpc에서 다른 vpc로 peering 요청을 하면 다른 vpc가 peering 승낙을 해야합니다. 그 후에 vpc routing table에 peering된 routing table 정보를 업데이트하면 vpc에 있는 리소스들이 연결이 가능해집니다
+
+    ![image-20210602212757153](AWS_SAA_시험.assets/image-20210602212757153.png)
+
+  - VPC Endpoints - Gateway Type
+
+    - vpc 내에 있는 자원과 aws 서비스와의 연결을 위해 vpc endpoint를 사용할 수 있습니다. endpoint는 gateway type과 interface type으로 나눌 수 있습니다
+    - Gateway type은 인터넷을 경유하지 않고, vpc 내에 있는 ec2 인스턴스와 S3, DynamoDB 를 연결할 수 있는 옵션입니다. VPC Endpoint 생성시 routing policy가 추가되어지고, routing table, VPC Endpoint policy, S3 bucket policy 등으로 접근 제어를 할 수 있습니다
+
+    ![image-20210602213154067](AWS_SAA_시험.assets/image-20210602213154067.png)
+
+  - VPC Endpoints - Interface Type
+
+    - VPC 내의 자원과 aws내의 자원을 private하게 연결할 수 있는 interface type입니다. private link를 통해서 vpc에서 다른 vpc로 접근하는 방법입니다
+
+    ![image-20210602213328476](AWS_SAA_시험.assets/image-20210602213328476.png)
+
+    ![image-20210602213344449](AWS_SAA_시험.assets/image-20210602213344449.png)
+
+    ![image-20210602213354329](AWS_SAA_시험.assets/image-20210602213354329.png)
+
+  - AWS Transit Gateway
+
+    - AWS Transit Gateway는 중앙 허브를 통해 VPC와 온프레미스 네트워크를 연결합니다. 복잡한 피어링 관계를 제거하여 네트워크를 간소화합니다. 클라우드 라우터 역할을 하므로 새로운 연결을 한 번만 추가하면 됩니다
+    - 글로벌 확장 시 리전 간 피어링을 사용하면 [AWS 글로벌 네트워크](https://aws.amazon.com/ko/about-aws/global-infrastructure/)에서 AWS Transit Gateway를 하나로 연결할 수 있습니다.. 데이터는 자동으로 암호화되고 퍼블릭 인터넷을 통하지 않습니다. 중앙 위치에 있으므로 [AWS Transit Gateway 네트워크 관리자](https://aws.amazon.com/ko/transit-gateway/network-manager/)를 사용하여 전체 네트워크를 보고 SD-WAN(소프트웨어 정의 광역 네트워크) 디바이스에 연결할 수 있습니다
+
+    ![AWS Transit Gateway - Amazon Web Services](AWS_SAA_시험.assets/tgw-before.7f287b3bf00bbc4fbdeadef3c8d5910374aec963.png)
+
+    - 위와 같이 VPC 피어링 및 VPN을 사용하여 복잡한 VPC 및 온프레미스 연결에서, 아래와 같이 네트워크 연결이 간편해질 수 있다
+
+    ![AWS Transit Gateway - Amazon Web Services](AWS_SAA_시험.assets/tgw-after.d85d3e2cb67fd2ed1a3be645d443e9f5910409fd.png)
+
+  - 출처
+
+    - https://swiftymind.tistory.com/132
+    - https://velog.io/@makeitcloud/AWS-AWS-Builders-online-Networking-%EC%A0%95%EB%A6%AC%ED%95%98%EA%B8%B0-1-Amazon-VPC-ELBDirect-ConnectVPN
+    - https://aws.amazon.com/ko/transit-gateway/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc
+
+- 
