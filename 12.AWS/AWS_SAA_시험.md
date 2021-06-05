@@ -92,8 +92,10 @@
 - Network load balancer(NLB) vs Application load balancer(ALB)
   - ALB
     - Layer7(HTTP/HTTPS traffic)
+    - Application Load Balancer는 요청 수준(7계층)에서 작동하여 트래픽을 대상으로 라우팅합니다. HTTP 및 HTTPS 트래픽의 고급 로드 밸런싱에 이상적인 Application Load Balancer 장치는 마이크로 서비스 및 컨테이너 기반 애플리케이션을 비롯한 최신 애플리케이션 아키텍처를 제공하는 데 적합한 고급 요청 라우팅을 제공합니다. 하지만 Application Load Balancer는 지정된 사용 사례에서 언급된 짧은 지연 시간 및 높은 처리량 시나리오에 적합하지 않습니다
   - NLB
     - Layer4(TLS/TCP/UDP traffic)
+    - 초당 수백만 개의 요청을 처리할 수 있습니다
   - ALB는 Layer7 계층 로드 밸런서이므로 HTTP 요청 헤더의 내용을 검사하여 요청을 라우팅할 위치를 결정한다. 따라서 ALB는 콘텐츠 기반 라우팅을 수행한다
   - NLB는 네트워크 및 TCP 계층 변수만을 기반으로 결정을 내리고 응용프로그램을 인식하지 않는다. 애플리케이션이 제대로 콘텐츠를 제공하는지 확인하지 않고, 단순히 ICMP 핑이나 TCP 핸드 셰이크가 정상적이면 정상이라고 판단한다. 반면에 ALB는 HTTP GET과 같은 방식으로 가용성을 확인한다
   - 로드 밸런서는 트래픽을 다른 AWS 리전으로 분산하지 않는다. 따라서 리전 단위로 로드 밸런싱하고 싶으면 Route 53을 사용해야한다
@@ -410,3 +412,129 @@
 - AWS Kinesis 서비스
 
   - Kinesis Data Streams, Kinesis Data Firehose, Kinesis Data Analytics 기능으로 구성된 실시간 데이터 스트림 수집, 처리 및 분석 서비스
+  
+  | 구분                                  | Data Streams                                                 | Data Firehose                                                | Data Analytics                                               | Video Streams                                                |
+  | ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | short definition                      | 확장 가능하고 내구성있는 실시간 데이터 스트리밍 서비스입니다. | 스트리밍 데이터를 캡처, 변환 및 데이터 레이크, 데이터 저장소 및 분석 서비스로 전달합니다. | Apache Flink를 사용하여 스트리밍 데이터를 실시간으로 변환하고 분석합니다. | 분석, 기계 학습, 재생 및 기타 처리를 위해 연결된 디바이스에서 AWS로 비디오를 스트리밍합니다. |
+  | Data sources                          | Kinesis API를 호출하여 데이터를 전송할 수있는 모든 데이터 원본 (서버, 모바일 장치, IoT 장치 등). | Kinesis API를 호출하여 데이터를 전송할 수있는 모든 데이터 원본 (서버, 모바일 장치, IoT 장치 등). | Amazon MSK, Amazon Kinesis Data Streams, 서버, 모바일 장치, IoT 장치 등 | Kinesis Video Streams SDK를 지원하는 모든 스트리밍 디바이스. |
+  | Data consumers(여기에 차이가 좀 있음) | Kinesis 데이터 분석, Amazon EMR, Amazon EC2, AWS Lambda      | Amazon S3, Amazon Redshift, Amazon Elasticsearch Service, 일반 HTTP 엔드 포인트, Datadog, New Relic, MongoDB 및 Splunk | 분석 결과는 다른 Kinesis 스트림, Kinesis Data Firehose 전송 스트림 또는 Lambda 함수로 전송 될 수 있습니다. | Amazon Rekognition, Amazon SageMaker, MxNet, TensorFlow, HLS 기반 미디어 재생, 사용자 지정 미디어 처리 애플리케이션 |
+  | Use cases                             | – 로그 및 이벤트 데이터 수집<br />– 실시간 분석<br />– 모바일 데이터 캡처<br />– 게임 데이터 피드 | – IoT 분석<br />– 클릭 스트림 분석<br />– 로그 분석<br />– 보안 모니터링 | – 스트리밍 ETL<br />– 실시간 분석<br />– 상태 저장 이벤트 처리 | – 스마트 기술<br />– 비디오 관련 AI / ML<br />– 비디오 처리  |
+  - Amazon Kinesis Data Streams를 사용하면 특수 요구에 맞춰 스트리밍 데이터를 처리 또는 분석하는 사용자 지정 애플리케이션을 구축할 수 있습니다. 수십 만개의 소스에서 클릭 스트림, 애플리케이션 로그, 소셜 미디어와 같은 다양한 유형의 데이터를 Amazon Kinesis 데이터 스트림에 지속적으로 추가할 수 있습니다. 그러면 몇 초 안에 Amazon Kinesis 애플리케이션에서는 스트림의 해당 데이터를 읽고 처리할 수 있습니다
+  - Amazon Kinesis Data Streams에서는 향상된 팬아웃이라는 기능을 사용하는 소비자를 만들 수 있습니다. 이 기능을 사용하면 소비자가 샤드당 1초에 최대 2MB 데이터의 처리량으로 스트림으로부터 레코드를 수신할 수 있습니다. 이 처리량은 전용이므로, 향상된 팬아웃을 사용하는 소비자는 스트림으로부터 데이터를 수신하는 다른 소비자와 경쟁할 필요가 없습니다. Kinesis Data Streams는 향상된 팬아웃을 사용하는 소비자에게 스트림의 데이터 레코드를 푸시합니다. 따라서 이러한 소비자는 데이터를 폴링할 필요가 없습니다
+    - 스트림당 최대 20명의 소비자를 등록하여 향상된 팬아웃을 사용할 수 있습니다
+  - 다음 다이어그램은 향상된 팬아웃 아키텍처를 보여 줍니다. Amazon Kinesis Client Library(KCL) 버전 2.0 이상을 사용하여 소비자를 빌드하는 경우 KCL은 향상된 팬아웃을 사용하여 스트림의 모든 샤드로부터 데이터를 수신하도록 소비자를 설정합니다. API를 사용하여 향상된 팬아웃을 사용하는 소비자를 빌드하는 경우에는 개별 샤드를 구독할 수 있습니다
+  
+  ![img](AWS_SAA_시험.assets/xiz0U597qihzLOBSGef7HfW2-8sRTHMYXeR7kOwTpC1PilhJrpDrAQd4Jm2XfYANWqLOacRcaF1K_FhqgH-wzuSr9yy8zPPYGT2mSHa9JqeyRENF2S0K9nkU-4nMMapZwir_4b1b)
+  
+  - 이 다이어그램은 다음을 보여 줍니다
+    - 두 개의 샤드를 포함하는 스트림
+    - 향상된 팬아웃을 사용하여 소비자 X 스트림과 소비자 Y 스트림으로부터 데이터를 수신하는 소비자 2개. 각 소비자는 스트림의 모든 샤드와 모든 레코드를 구독합니다. KCL 버전 2.0 이상을 사용하여 소비자를 빌드하는 경우, KCL은 이러한 소비자를 스트림의 모든 샤드에 자동으로 등록합니다. 반면에 API를 사용하여 소비자를 빌드하는 경우에는 개별 샤드를 구독할 수 있습니다
+    - 소비자가 스트림으로부터 데이터를 수신하기 위해 사용하는 향상된 팬아웃 파이프를 나타내는 화살표. 향상된 팬아웃 파이프는 다른 파이프 또는 총 소비자 수와 상관없이 샤드당 최대 2MB/sec의 데이터를 제공합니다
+  
+  - 출처
+    - https://tutorialsdojo.com/amazon-kinesis-data-streams-vs-data-firehose-vs-data-analytics-vs-video-streams/
+    - https://ap-northeast-2.console.aws.amazon.com/kinesis/home?region=ap-northeast-2#/home
+    - https://aws.amazon.com/ko/kinesis/
+  
+- AWS Cognito
+
+  - Amazon Cognito 는 웹 및 모바일 앱에 대한 인증, 권한 부여 및 사용자 관리를 제공합니다. 사용자는 사용자 이름과 암호를 사용하여 직접 로그인하거나 Facebook, Amazon, Google 또는 Apple 같은 타사를 통해 로그인할 수 있습니다
+  - Amazon Cognito의 두 가지 주요 구성 요소는 사용자 풀과 자격 증명 풀입니다. 사용자 풀은 앱 사용자의 가입 및 로그인 옵션을 제공하는 사용자 디렉터리입니다. 자격 증명 풀을 통해 기타 AWS 서비스에 대한 사용자 액세스 권한을 부여할 수 있습니다. 자격 증명 풀과 사용자 풀을 별도로 또는 함께 사용할 수 있습니다
+
+  ![       Amazon Cognito 개요     ](AWS_SAA_시험.assets/scenario-cup-cib2.png)
+
+  - 출처
+    - https://docs.aws.amazon.com/ko_kr/cognito/latest/developerguide/what-is-amazon-cognito.html
+
+- AWS SSO
+
+  - AWS SSO는 여러 AWS 계정 및 비즈니스 애플리케이션에 대한 액세스를 중앙에서 손쉽게 관리하고 사용자에게 Single Sign-On 액세스를 제공하여 할당된 모든 계정 및 애플리케이션을 한 곳에서 액세스하도록 할 수 있는 AWS 서비스입니다. AWS SSO를 사용하면 AWS Organizations의 모든 내 계정에 대한 SSO 액세스와 사용자 권한을 중앙에서 손쉽게 관리할 수 있습니다. AWS SSO로 AWS SSO의 자격 증명 저장소에서 사용자 자격 증명을 생성 및 관리하거나 Microsoft Active Directory, Okta Universal Directory 및 Azure AD(Azure Active Directory)를 비롯한 기존 자격 증명 소스에 쉽게 연결할 수 있습니다
+  - 사용자 지정 스크립트 작성이나 범용 SSO 솔루션에 대한 투자 없이 직원들에게 AWS 계정 및 비즈니스 클라우드 애플리케이션에 대한 액세스 권한을 부여하여 빠르게 생산성을 발휘하도록 지원하려면 AWS SSO가 필요합니다. SSO 액세스 설정 및 관리에 따르는 복잡성과 비용을 줄이기 위해서도 AWS SSO가 필요합니다. AWS SSO는 직원들이 AWS SSO 사용자 포털에서 AWS 계정과 애플리케이션에 액세스할 수 있는 곳으로, 이러한 애플리케이션이 어디서 구축 또는 호스팅되었는지는 문제가 되지 않습니다
+  - AWS SSO는 관리하는 AWS 계정과 비즈니스 애플리케이션이 많고, 이러한 클라우드 서비스에 대한 사용자 액세스를 중앙에서 관리하려 하며, 새로운 암호를 외울 필요 없이 이러한 계정과 애플리케이션에 액세스할 수 있는 단일 위치를 직원들에게 제공하려는 관리자를 위한 솔루션입니다
+  - 출처
+    - https://aws.amazon.com/ko/single-sign-on/faqs/
+
+- AWS Security Token Service(AWS STS)
+
+  - AWS Security Token Service(AWS STS)를 사용하면 AWS 리소스에 대한 액세스를 제어할 수 있는 임시 보안 자격 증명을 생성하여 신뢰받는 사용자에게 제공할 수 있습니다. 임시 보안 자격 증명은 다음과 같은 차이점을 제외하고는 IAM 사용자가 사용할 수 있는 장기 액세스 키 자격 증명과 거의 동일한 효력을 지닙니다
+  - 임시 보안 자격 증명은 그 이름이 암시하듯 *단기적*입니다. 이 자격 증명은 몇 분에서 몇 시간까지 지속되도록 구성할 수 있습니다. 자격 증명이 만료된 후 AWS는 더는 그 자격 증명을 인식하지 못하거나 그 자격 증명을 사용한 API 요청으로부터 이루어지는 어떤 종류의 액세스도 허용하지 않습니다
+  - 임시 보안 자격 증명은 사용자와 함께 저장되지 않지만 동적으로 생성되어 요청시 사용자에게 제공됩니다. 임시 보안 자격 증명이 만료되었을 때(심지어는 만료 전이라도) 사용자는 새 자격 증명을 요청할 수 있습니다. 단, 자격 증명을 요청하는 해당 사용자에게 그렇게 할 수 있는 권한이 있어야 합니다
+  - 애플리케이션으로 장기 AWS 보안 자격 증명을 배포 또는 포함할 필요가 없습니다
+  - 임시 보안 자격 증명은 수명이 제한되어 있어서, 더 이상 필요하지 않을 때 교체하거나 명시적으로 취소할 필요가 없습니다. 임시 보안 자격 증명이 만료된 후에는 다시 사용할 수 없습니다. 그 자격 증명에 대해 유효 기간을 최대 한계까지 지정할 수 있습니다
+  - 출처
+    - https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_credentials_temp.html
+
+- Auto Scaling 그룹과 ELB
+
+  - Auto Scaling 그룹의 기본 상태 검사는 EC2 상태 확인만 해당합니다. 한 인스턴스에서 이러한 상태 검사에 실패할 경우 Auto Scaling 그룹은 해당 인스턴스를 비정상으로 간주하여 교체합니다
+  - 하나 이상의 대상 그룹(Application Load Balancer 및 Network Load Balancer), 하나 이상의 로드 밸런서(Classic Load Balancer) 또는 둘 다를 Auto Scaling 그룹에 연결할 수 있습니다. 그러나 기본적으로 그룹은 인스턴스를 비정상으로 간주하지 않고 Elastic Load Balancing(ELB) 상태 확인에 실패할 경우 인스턴스를 교체합니다
+  - ELB 상태 확인을 사용하도록 Auto Scaling 그룹을 구성하면 EC2 상태 확인 또는 ELB 상태 확인에 실패할 경우 인스턴스를 비정상으로 간주합니다. 여러 로드 밸런서 대상 그룹 또는 Classic Load Balancer를 그룹에 연결할 경우 인스턴스를 정상으로 간주하려면 모두 해당 인스턴스가 정상이라고 보고해야 합니다. 그 중 하나가 인스턴스를 비정상으로 보고하면 다른 곳에서 정상으로 보고하더라도 Auto Scaling 그룹은 인스턴스를 교체합니다
+
+- Amazon S3 수명 주기
+
+  ![img](AWS_SAA_시험.assets/FeZOW98VD4ErnRuxJFrUbs9DiCahasIXfTns_7Rlfa6DJsM_otbCBm-kSAorKbzHYDKG0uEWYGo9ayITDcYJOx226YsSHF_FGAdhOp49UVHXQB7W6OOILc6550kDgZsHltoEB-_b)
+
+  ![img](AWS_SAA_시험.assets/gNmh9sIBClNb1OMBBEkwOfzfi5E3Ah_I1CtKPFzvTcBXA6sgvBbeD5trN7IGCQsEOJNuVEFpBjwmNac6BTK0pgnNbWomLNzEcCP3qehSu25_Rwlwvn-M6IkGn4XAwErzpy51lhtW)
+
+- AWS CloudTrail 이벤트
+
+  - CloudTrail의 이벤트는 AWS 계정의 활동 기록입니다. 이 활동은 CloudTrail에서 모니터링할 수 있는 사용자, 역할 또는 서비스가 수행하는 작업일 수 있습니다. CloudTrail 이벤트는 AWS Management Console, AWS SDK, 명령줄 도구 및 기타 AWS 서비스를 통해 수행된 API 및 비 API 계정 활동 기록을 모두 제공합니다. CloudTrail에 기록할 수 있는 이벤트에는 관리 이벤트와 데이터 이벤트의 두 가지 유형이 있습니다. 기본적으로 추적에서는 로그 관리 이벤트를 기록하지만 데이터 이벤트는 기록하지 않습니다
+    - 데이터 이벤트는 S3, DynamoDB 등과 같은 곳에 저장된 데이터 CRUD 관련 API 활동 기록을 의미하는 것으로 보인다
+  - 트레일은 모든 리전 또는 단일 리전에 적용할 수 있습니다. 작업 중인 AWS 파티션의 모든 리전에 적용되는 추적을 만드는 것이 가장 좋습니다. 이 설정은 CloudTrail 콘솔에서 추적을 생성할 때의 기본 설정입니다
+  - 대부분의 서비스의 경우 작업이 발생한 영역에 이벤트가 기록됩니다. AWS IAM(Identity and Access Management), AWS STS, Amazon CloudFront, Route 53 등과 같은 글로벌 서비스의 경우 글로벌 서비스를 포함하는 모든 트레일에 이벤트가 제공되며 미국 동부(N.Virginia) 리전에서 발생한 것으로 기록됩니다
+  - 이 시나리오에서는 모든 리전에서 모든 AWS 리소스의 모든 활동을 추적할 수 있는 안전하고 지속적인 로깅 솔루션이 필요합니다. CloudTrail은 다중 리전 추적이 활성화된 이 사례에 사용할 수 있지만, IAM, CloudFront, AWS WAF, Route 53 등과 같은 글로벌 서비스에는 적용되지 않습니다. 요구 사항을 충족하려면 AWS CLI 명령에 `--include-global-service-events` 매개 변수를 추가해야 합니다
+
+- AWS Config
+
+  - AWS Config는 AWS 리소스 구성을 측정, 감사 및 평가할 수 있는 서비스입니다. Config는 AWS 리소스 구성을 지속적으로 모니터링 및 기록하고, 원하는 구성을 기준으로 기록된 구성을 자동으로 평가해 줍니다. Config를 사용하면 AWS 리소스 간 구성 및 관계 변화를 검토하고, 자세한 리소스 구성 기록을 분석하고, 내부 지침에 지정되어 있는 구성을 기준으로 전반적인 규정 준수 여부를 확인할 수 있습니다. 이에 따라 규정 준수 감사, 보안 분석, 변경 관리 및 운영 문제 해결 작업을 간소화할 수 있습니다. 아키텍처 모범 사례에 대한 의견은 제공하지 않습니다
+
+- AWS Systems Manager
+
+  - AWS Systems Manager는 AWS 인프라에 대한 가시성과 제어를 제공합니다. Systems Manager는 통합된 사용자 인터페이스를 제공하므로 여러 AWS 서비스의 운영 데이터를 보고 AWS 리소스 전체에서 운영 작업을 자동화할 수 있습니다. Systems Manager를 사용하면 Amazon EC2 인스턴스, Amazon S3 버킷 또는 Amazon RDS 인스턴스와 같은 리소스를 애플리케이션별로 그룹화하고, 모니터링과 문제 해결을 위해 운영 데이터를 보고, 리소스 그룹에 조치를 취할 수 있습니다. Systems Manager는 리소스 및 애플리케이션 관리를 간소화하고, 운영 문제를 탐지 및 해결하는 시간을 단축하며, 인프라를 대규모로 안전하게 운영 및 관리할 수 있게 해줍니다. 아키텍처 모범 사례에 대한 피드백을 제공하지 않습니다
+
+- Amazon S3 일관성
+
+  - Amazon S3은 모든 리전의 덮어쓰기 PUT 및 DELETE에 대한 최종 일관성을 제공합니다
+  - 단일 키에 대한 업데이트는 원자성입니다. 예를 들어 기존 키에 대해 PUT할 경우 이후의 읽기가 기존 데이터 또는 업데이트된 데이터를 반환할 수 있지만 절대로 손상된 데이터 또는 부분 데이터를 반환하지 않습니다
+  - Amazon S3에서는 AWS 데이터 센터 내의 여러 서버로 데이터를 복제함으로써 고가용성을 구현합니다. PUT 요청이 성공하면 데이터가 안전하게 저장됩니다. 그러나 변경 사항에 대한 정보를 Amazon S3로 복제해야 하는데 이 작업에는 일정 시간이 걸릴 수 있으므로 다음 동작을 관찰할 수 있습니다
+    - 프로세스가 Amazon S3로 새 객체를 쓰고 해당 버킷 내에 바로 키를 나열합니다. 변경 사항이 완전히 전파될 때까지 객체가 목록에 나타나지 않을 수 있습니다
+    - 프로세스가 기존 객체를 대체하고 바로 읽기를 시도합니다. 변경 사항이 완전히 전파될 때까지 Amazon S3에서 이전 데이터를 반환할 수 있습니다
+    - 프로세스가 기존 객체를 삭제하고 바로 읽기를 시도합니다. 삭제가 완전히 전파될 때까지 Amazon S3에서 삭제된 데이터를 반환할 수 있습니다
+    - 프로세스가 기존 객체를 삭제하고 해당 버킷 내에 바로 키를 나열합니다. 삭제가 완전히 전파될 때까지 Amazon S3에서 삭제된 객체를 나열할 수 있습니다
+  - Amazon S3는 현재 동시 업데이트에 대한 객체 잠금을 지원하지 않습니다. 두 PUT 요청을 동시에 같은 키에 대해 실행할 경우 타임스탬프가 최신인 요청이 우선 적용됩니다. 이것이 문제가 되는 경우 객체 잠금 메커니즘을 애플리케이션에 구축해 넣어야 합니다
+
+- CloudFront에서 프라이빗 콘텐츠 안전하게 제공하기
+
+  - 인터넷을 통해 콘텐츠를 배포하는 많은 기업에서는 유료 사용자 등 일부 사용자용으로 제작된 각종 문서, 비즈니스 데이터, 미디어 스트림 또는 콘텐츠에 대한 액세스를 제한하고자 합니다. CloudFront를 통해 이러한 프라이빗 콘텐츠를 안전하게 제공하려면 다음과 같이 하십시오
+    - 사용자가 특별한 CloudFront 서명된 URL 또는 서명된 쿠키를 사용하여 프라이빗 콘텐츠에 액세스하도록 합니다
+    - 사용자가 오리진 서버에서 직접 콘텐츠에 액세스하는 URL(예: Amazon S3 또는 프라이빗 HTTP 서버)이 아닌 CloudFront URL을 사용하여 콘텐츠에 액세스해야 합니다. 반드시 CloudFront URL을 사용해야 하는 것은 아니지만, 서명된 URL 또는 서명된 쿠키에 지정한 제약 조건을 사용자가 우회하지 못하도록 하려면 사용하는 것이 좋습니다
+  - 사용자가 CloudFront를 통해 액세스할 수는 있지만 Amazon S3 URL을 사용하여 직접 액세스할 수는 없도록 Amazon S3 버킷의 콘텐츠를 선택적으로 보호할 수 있습니다. 이렇게 하면 CloudFront를 우회하고 Amazon S3 URL을 사용하여 액세스 제한 콘텐츠에 접근하는 사람을 막을 수 있습니다. 서명된 URL을 사용하기 위해 꼭 필요한 단계는 아니지만 이렇게 하는 것이 좋습니다. 사용자가 CloudFront URL을 통해 콘텐츠에 액세스하도록 요구하려면 다음 작업을 수행합니다
+    - 원본 액세스 ID라는 특수 CloudFront 사용자를 만들어 CloudFront 배포와 연결합니다
+    - 버킷의 파일을 읽을 수 있는 원본 액세스 ID 권한을 부여합니다
+    - 나머지 모든 사람으로부터 Amazon S3 URL로 파일을 읽을 수 있는 권한을 제거합니다
+
+- S3 Glacier Select
+
+  - S3 Glacier Select로 간단한 구조화 쿼리 언어(SQL) 문을 S3 Glacier의 데이터에서 직접 사용하여 필터링 작업을 수행할 수 있습니다. S3 Glacier 아카이브 객체에 대해 SQL 쿼리를 제공하면 S3 Glacier Select가 쿼리를 실행하고 출력 결과를 Amazon S3에 작성합니다. S3 Glacier Select를 사용하면 Amazon S3 같이 더 자주 사용하는 계층으로 데이터를 복원할 필요 없이 S3 Glacier에 저장된 데이터에서 쿼리 및 사용자 지정 분석을 실행할 수 있습니다
+  - 작업을 시작할 때 다음 중 한 가지를 지정하여 액세스 시간과 비용 요건을 기준으로 아카이브를 가져올 수 있습니다
+    - 신속 — 아카이브의 하위 집합에 대한 긴급 요청이 간헐적으로 필요한 경우 신속 가져오기를 통해 빠르게 데이터에 액세스할 수 있습니다. 매우 큰 아카이브(250MB+)를 제외한 모든 경우, 신속 가져오기를 사용하여 액세스된 데이터는 일반적으로 1~5분 안에 사용할 수 있게 됩니다. 프로비저닝된 용량을 통해 필요할 때 신속 검색에 대한 검색 용량이 보장됩니다
+    - 표준 — 표준 가져오기를 사용하면 몇 시간 내에 아카이브에 액세스할 수 있습니다. 표준 검색은 보통 3~5시간 안에 완료됩니다. 검색 요청 시 검색 옵션을 지정하지 않을 경우 기본 옵션이 됩니다
+    - 벌크 — 벌크 가져오기는 S3 Glacier에서 가장 저렴한 가져오기 옵션으로서 심지어 페타바이트 규모의 대용량 데이터까지도 1일 동안 가져올 때 사용할 수 있습니다. 벌크 검색은 보통 5~12시간 안에 완료됩니다
+  - 프로비저닝된 용량 구입을 통해 필요할 때 신속 검색에 대한 검색 용량이 보장됩니다. 각 용량 단위로 5분마다 신속 검색 3회를 수행할 수 있고, 최대 150MB/s의 검색 처리량이 제공됩니다
+
+- Amazon EMR
+
+  - Amazon EMR은 [Apache Spark](https://aws.amazon.com/ko/emr/features/spark/), [Apache Hive](https://aws.amazon.com/ko/emr/features/hive/), [Apache HBase](https://aws.amazon.com/ko/emr/features/hbase/), [Apache Flink](https://aws.amazon.com/blogs/big-data/use-apache-flink-on-amazon-emr/), [Apache Hudi](https://aws.amazon.com/ko/emr/features/hudi/) 및 [Presto](https://aws.amazon.com/ko/emr/features/presto/)와 같은 오픈 소스 도구를 사용하여 방대한 양의 데이터를 처리하기 위한 업계 최고의 클라우드 빅 데이터 플랫폼입니다. Amazon EMR은 프로비저닝 용량 및 클러스터 조정 등의 시간이 소요되는 작업을 자동화하여 빅데이터 환경을 쉽게 설치, 운영, 확장하게 해줍니다. EMR을 사용하면 기존 온프레미스 솔루션의 [50%도 안 되는 비용](https://pages.awscloud.com/Gated-IDC-The-Economic-Benefits-of-Migrating-Apache-Spark-and-Hadoop-to-Amazon-EMR.html)으로 표준 Apache Spark보다 [3배 이상 빠르게](https://aws.amazon.com/blogs/big-data/amazon-emr-introduces-emr-runtime-for-apache-spark/) 페타바이트 규모의 분석을 실행할 수 있습니다. Amazon EC2 instance, Amazon Elastic Kubernetes Service (EKS) cluster, 또는 AWS Outposts 기반 EMR에서 워크로드를 실행할 수 있습니다
+  - Amazon EMR을 통해 로그 분석을 자동으로 제공 할 수 있으며, 이는 맞춤형 로그 분석 애플리케이션을 구축하고 EC2에서 호스팅하는 것보다 경제적입니다
+
+- AWS Outposts
+
+  - AWS Outposts는 일관된 하이브리드 환경을 위해 동일한 AWS 인프라, AWS 서비스, API 및 도구를 모든 데이터 센터, 코로케이션 공간, 온프레미스 시설에 제공하는 완전관리형 서비스입니다. AWS Outposts는 온프레미스 시스템에 대한 빠른 액세스, 로컬 데이터 처리, 데이터 레지던시, 로컬 시스템과 상호 종속된 애플리케이션 마이그레이션이 필요한 워크로드에 이상적입니다
+  - AWS 컴퓨팅, 스토리지, 데이터베이스 및 기타 서비스는 Outposts에서 로컬로 실행되며, 리전에서 제공되는 모든 AWS 서비스에 액세스하여 익숙한 AWS 서비스 및 도구를 사용해서 온프레미스 애플리케이션을 구축, 관리 및 확장할 수 있습니다
+  - AWS Outposts의 VMware 변형도 곧 제공될 예정입니다. VMware Cloud on AWS Outposts는 온프레미스 AWS Outposts 인프라에서 실행되는 완전관리형 VMware 소프트웨어 정의 데이터 센터(SDDC)를 제공합니다
+  - AWS Outposts는 AWS에서 완전히 관리하고 지원합니다. Outpost는 AWS에서 제공, 설치, 모니터링, 패치 및 업데이트합니다. Outposts를 사용하면 IT 인프라 관리에 필요한 시간, 리소스, 운영 위험 및 유지 관리와 관련된 가동 중단 시간을 줄일 수 있습니다
+
+
+
+# 연습 테스트 3
+
