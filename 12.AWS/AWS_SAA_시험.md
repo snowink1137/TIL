@@ -769,5 +769,182 @@
   - DB 인스턴스 를 파라미터 그룹과 연결하여 DB 엔진 구성을 관리합니다
   - DB 파라미터 그룹은 하나 이상의 DB 인스턴스에 적용되는 엔진 구성 값의 컨테이너 역할을 합니다
 
-- 
+
+
+
+# 연습 테스트 4
+
+- Amazon Redshift
+
+  - Amazon Redshift는 속도가 빠른 완전관리형 클라우드 데이터 웨어하우스로, 모든 데이터를 표준 SQL 및 기존 BI(비즈니스 인텔리전스) 도구를 사용하여 간편하고 비용 효율적으로 분석할 수 있습니다
+  - Amazon Redshift를 사용하면 정교한 쿼리 최적화, 고성능 스토리지의 열 형식 스토리지, 대량 병렬 쿼리 실행 기능을 사용하여 테라바이트에서 페타바이트 규모의 정형 데이터에 복잡한 분석 쿼리를 실행할 수 있습니다. 대부분 결과가 몇 초 내에 반환됩니다
+  - 또한, Amazon Redshift에는 Amazon Redshift Spectrum이 포함되어 있어 Amazon S3 데이터 레이크에 있는 엑사바이트 규모의 비정형 데이터에 대해 직접 SQL 쿼리를 실행할 수 있습니다. 로드하거나 변환할 필요가 없으며, Avro, CSV, Grok, Amazon Ion, JSON, ORC, Parquet, RCFile, RegexSerDe, Sequence, Text 및 TSV를 비롯한 오픈 데이터 형식을 사용할 수 있습니다. Redshift Spectrum은 검색하는 데이터에 따라 쿼리 컴퓨팅 용량을 자동으로 확장하므로, 데이터 세트의 크기와 관계없이 Amazon S3에 대한 쿼리를 빠르게 실행할 수 있습니다
+
+- 지원되는 VPC 피어링 구성 예시
+
+  - VPC 1개에 속한 서브넷 2개로 피어링되는 VPC 2개
+
+    ![                     서브넷 2개로 피어링되는 VPC 2개                 ](AWS_SAA_시험.assets/two-vpcs-to-two-subnets-one-vpc-diagram.png)
+
+    | 라우팅 테이블    | 대상 주소     | 대상         |
+    | :--------------- | :------------ | :----------- |
+    | VPA A의 서브넷 X | 172.16.0.0/16 | 로컬         |
+    |                  | 10.0.0.0/16   | pcx-aaaabbbb |
+    | VPA A의 서브넷 Y | 172.16.0.0/16 | 로컬         |
+    |                  | 10.0.0.0/16   | pcx-aaaacccc |
+    | VPC B            | 10.0.0.0/16   | 로컬         |
+    |                  | 172.16.0.0/24 | pcx-aaaabbbb |
+    | VPC C            | 10.0.0.0/16   | 로컬         |
+    |                  | 172.16.1.0/24 | pcx-aaaacccc |
+
+  - VPC 2개의 특정 서브넷으로 피어링되는 VPC 1개
+
+    ![           서브넷 2개와 피어링되는 VPC 1개         ](AWS_SAA_시험.assets/one-to-two-vpcs-specific-subnets-diagram.png)
+
+    | 라우팅 테이블    | 대상 주소     | 대상         |
+    | :--------------- | :------------ | :----------- |
+    | VPC A            | 172.16.0.0/16 | 로컬         |
+    |                  | 10.0.0.0/24   | pcx-aaaabbbb |
+    |                  | 10.0.1.0/24   | pcx-aaaacccc |
+    | VPA B의 서브넷 A | 10.0.0.0/16   | 로컬         |
+    |                  | 172.16.0.0/24 | pcx-aaaabbbb |
+    | VPA C의 서브넷 B | 10.0.0.0/16   | 로컬         |
+    |                  | 172.16.0.0/24 | pcx-aaaacccc |
+
+  - 응답 트래픽을 위한 라우팅
+
+    ![             피어링의 잘못된 응답 라우팅           ](AWS_SAA_시험.assets/peering-incorrect-response-routing-diagram.png)
+
+    | 라우팅 테이블    | 대상 주소     | 대상         |
+    | :--------------- | :------------ | :----------- |
+    | VPA B의 서브넷 B | 10.0.0.0/16   | 로컬         |
+    |                  | 172.16.0.0/24 | pcx-aaaabbbb |
+    | VPC A            | 172.16.0.0/24 | 로컬         |
+    |                  | 10.0.0.0/16   | pcx-aaaacccc |
+
+    라우팅 테이블이 위와 같이 되어 있고 VPC C에 같은 아이피를 갖는 인스턴스가 있으면 그림처럼 응답 트래픽이 엉뚱하게 전달될 수 있다. VPC A의 라우팅 테이블을 아래와 같이 좀더 구체적으로 지정하면 이런 상황을 피할 수 있다
+
+    | 대상 주소     | 대상         |
+    | :------------ | :----------- |
+    | 172.16.0.0/16 | 로컬         |
+    | 10.0.1.0/24   | pcx-aaaabbbb |
+    | 10.0.0.0/24   | pcx-aaaacccc |
+
+    혹은
+
+    | 대상 주소     | 대상         |
+    | :------------ | :----------- |
+    | 172.16.0.0/16 | 로컬         |
+    | 10.0.1.66/32  | pcx-aaaabbbb |
+    | 10.0.0.0/16   | pcx-aaaacccc |
+
+  - VPC 2개의 인스턴스로 피어링되는 VPC 1개의 인스턴스
+
+    ![                     VPC 2개의 인스턴스로 피어링되는 VPC의 인스턴스                 ](AWS_SAA_시험.assets/one-to-two-vpcs-instances-diagram.png)
+
+    | 라우팅 테이블 | 대상 주소      | 대상         |
+    | :------------ | :------------- | :----------- |
+    | VPC A         | 172.16.0.0/16  | 로컬         |
+    |               | 10.0.0.44/32   | pcx-aaaabbbb |
+    |               | 10.0.0.55/32   | pcx-aaaacccc |
+    | VPC B         | 10.0.0.0/16    | 로컬         |
+    |               | 172.16.0.88/32 | pcx-aaaabbbb |
+    | VPC C         | 10.0.0.0/16    | 로컬         |
+    |               | 172.16.0.99/32 | pcx-aaaacccc |
+
+  - 가장 긴 접두사 일치 항목을 사용하여 VPC 2개와 피어링되는 VPC 1개
+
+    ![                     가장 긴 접두사 일치 항목을 사용하여 피어링                 ](AWS_SAA_시험.assets/one-to-two-vpcs-lpm-diagram.png)
+
+    | 라우팅 테이블 | 대상 주소     | 대상         |
+    | :------------ | :------------ | :----------- |
+    | VPC A         | 172.16.0.0/16 | 로컬         |
+    |               | 10.0.0.77/32  | pcx-aaaabbbb |
+    |               | 10.0.0.0/16   | pcx-aaaacccc |
+    | VPC B         | 10.0.0.0/16   | 로컬         |
+    |               | 172.16.0.0/16 | pcx-aaaabbbb |
+    | VPC C         | 10.0.0.0/16   | 로컬         |
+    |               | 172.16.0.0/16 | pcx-aaaacccc |
+
+  - 여러 VPC 구성
+
+    ![                     여러 피어링 구성                 ](AWS_SAA_시험.assets/multiple-configurations-diagram.png)
+
+    | 라우팅 테이블    | 대상 주소      | 대상          |
+    | :--------------- | :------------- | :------------ |
+    | VPC A            | 172.16.0.0/16  | 로컬          |
+    |                  | 10.0.0.0/16    | pcx-aaaabbbb  |
+    |                  | 192.168.0.0/24 | pcx-aaaacccc  |
+    |                  | 10.2.0.0/16    | pcx-aaaadddd  |
+    |                  | 10.3.0.0/16    | pcx-aaaaeeee  |
+    |                  | 172.17.0.0/16  | pcx-aaaaffff  |
+    |                  | 10.4.0.0/16    | pcx-aaaagggg  |
+    | VPC B            | 10.0.0.0/16    | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-aaaabbbb  |
+    | VPA C의 서브넷 A | 192.168.0.0/16 | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-aaaacccc  |
+    | VPA C의 서브넷 B | 192.168.0.0/16 | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-ccccmmmm  |
+    | VPC D            | 10.2.0.0/16    | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-aaaadddd  |
+    | VPC E            | 10.3.0.0/16    | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-aaaaeeee  |
+    | VPC F            | 172.17.0.0/16  | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-aaaaaffff |
+    | VPC G            | 10.4.0.0/16    | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-aaaagggg  |
+    | VPC M            | 172.16.0.0/16  | 로컬          |
+    |                  | 192.168.1.0/24 | pcx-ccccmmmm  |
+    |                  | 10.0.0.0/16    | pcx-mmmmnnnn  |
+    |                  | 192.168.0.0/24 | pcx-mmmmpppp  |
+    | VPC N            | 10.0.0.0/16    | 로컬          |
+    |                  | 172.16.0.0/16  | pcx-mmmmnnnn  |
+    |                  | 192.168.0.0/16 | pcx-nnnnpppp  |
+    | VPC P            | 192.168.0.0/16 | 로컬          |
+    |                  | 10.0.0.0/16    | pcx-nnnnpppp  |
+    |                  | 172.16.0.0/16  | pcx-mmmmpppp  |
+
+- 지원되지 않는 VPC 피어링 구성 예시
+
+  - 겹치는 CIDR 블록
+
+    ![                 일치하는 IPv4 CIDR 블록이 있는 VPC             ](AWS_SAA_시험.assets/overlapping-cidrs-diagram.png)
+
+    ![                 중첩된 IPv4 CIDR 블록이 있는 VPC             ](AWS_SAA_시험.assets/overlapping-multiple-cidrs-diagram.png)
+
+    
+
+    ![                 일치하는 IPv4 CIDR 블록이 있는 VPC             ](AWS_SAA_시험.assets/overlapping-cidrs-ipv6-diagram.png)
+
+  - 전이적 피어링
+
+    ![                 전이적 피어링             ](AWS_SAA_시험.assets/transitive-peering-diagram.png)
+
+    VPC A와 VPC B 사이(`pcx-aaaabbbb`), VPC A와 VPC C 사이(`pcx-aaaacccc`)에 VPC 피어링 연결이 있습니다. VPC B와 VPC C 사이에 VPC 피어링 연결이 없습니다. VPC A를 통해 VPC B에서 VPC C로 직접 패킷을 라우팅할 수 없습니다.
+
+    VPC B와 VPC C 사이에서 패킷을 직접 라우팅하려면, (패킷에 겹치는 CIDR 블록이 없는 경우에 한해) 두 VPC 사이에 별개의 VPC 피어링 연결을 생성할 수 있습니다.
+
+    VPC 피어링을 사용하는 대신 네트워크 전송 허브 역할을 수행하는 AWS Transit Gateway를 사용하여 VPC 및 온프레미스 네트워크를 상호 연결할 수 있습니다.
+
+  - 게이트웨이 또는 프라이빗 연결을 통한 엣지 간 라우팅
+
+    - 피어링 관계에서 어느 한 VPC에 다음 연결 중 하나가 있는 경우, 그 연결로 피어링 관계를 확장할 수 없습니다
+
+      - 회사 네트워크에 대한 VPN 연결 또는 AWS Direct Connect 연결
+
+        ![                 Site-to-Site VPN 연결을 통한 엣지 간 라우팅             ](AWS_SAA_시험.assets/edge-to-edge-vpn-diagram.png)
+
+      - 인터넷 게이트웨이를 통한 인터넷 연결
+
+        ![                 인터넷 게이트웨이를 통한 엣지 간 라우팅             ](AWS_SAA_시험.assets/edge-to-edge-igw-diagram.png)
+
+      - 프라이빗 서브넷에서 NAT 디바이스를 통한 인터넷 연결
+
+      - AWS 서비스에 대한 게이트웨이 VPC 엔드포인트(예: Amazon S3에 대한 엔드포인트)
+
+        ![     			VPC 엔드포인트를 통한 엣지 간 라우팅     		](AWS_SAA_시험.assets/edge-to-edge-s3-diagram.png)
+
+      - (IPv6) ClassicLink 연결. 연결된 EC2-Classic 인스턴스와 VPC 피어링 연결의 다른 쪽에 있는 VPC의 인스턴스 사이에 IPv4 통신이 가능하도록 할 수 있습니다. 그러나 EC2-Classic에서는 IPv6가 지원되지 않으므로 IPv6 통신을 위해 이 연결을 확장할 수 없습니다
+
+- 5번부터 ㄱㄱ
 
