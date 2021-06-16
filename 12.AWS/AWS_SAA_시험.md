@@ -946,5 +946,26 @@
 
       - (IPv6) ClassicLink 연결. 연결된 EC2-Classic 인스턴스와 VPC 피어링 연결의 다른 쪽에 있는 VPC의 인스턴스 사이에 IPv4 통신이 가능하도록 할 수 있습니다. 그러나 EC2-Classic에서는 IPv6가 지원되지 않으므로 IPv6 통신을 위해 이 연결을 확장할 수 없습니다
 
-- 5번부터 ㄱㄱ
+- AWS WAF
+
+  - AWS WAF는 Amazon CloudFront 배포, Amazon API Gateway REST API 또는 Application Load Balancer에 전달되는 HTTP 및 HTTPS 요청을 모니터링할 수 있게 해주는 웹 애플리케이션 방화벽입니다. AWS WAF는 콘텐츠에 대한 액세스를 제어할 수 있게도 해줍니다. 요청이 허용되는 IP 주소나 쿼리 문자열의 값으로부터 지정하는 조건 등 지정하는 조건에 따라, API 게이트웨이, CloudFront 또는 Application Load Balancer는 요청된 콘텐츠나 HTTP 403 상태 코드(금지됨)로 요청에 응답합니다. 요청이 차단될 때 사용자 지정 오류 페이지를 반환하도록 CloudFront를 구성할 수 있습니다
+  - 모든 규칙 그룹과 모든 웹 ACL에서 규칙은 웹 요청을 검사하는 방법과 웹 요청이 검사 기준과 일치할 때 수행할 작업을 정의합니다
+
+  ![Figure 1: Defense in depth deployment on AWS WAF](AWS_SAA_시험.assets/Defense-in-depth-WAFb-Figure-1.png)
+
+  - 웹 ACL의 규칙을 사용하여 다음과 같은 기준에 따라 웹 요청을 차단하거나 허용합니다
+    - 악성일 가능성이 있는 스크립트입니다. 공격자는 웹 애플리케이션의 취약성을 악용할 수 있는 스크립트를 포함시킵니다. 이것은 XXS(교차 사이트 스크립팅)이라고 알려져 있습니다
+    - 요청이 시작되는 IP 주소 또는 주소 범위입니다
+    - 요청이 시작되는 국가 또는 지리적 위치입니다
+    - 쿼리 문자열과 같은 요청에서 지정된 부분의 길이입니다
+    - 악성일 가능성이 있는 SQL 코드입니다. 공격자는 악성 SQL 코드를 웹 요청에 포함시켜서 데이터베이스에서 데이터를 추출하려고 시도합니다. 이것은 SQL 명령어 주입이라고 알려져 있습니다
+    - 요청에 나타나는 문자열입니다. 예를 들어 User-Agent 헤더에 나타나는 값 또는 쿼리 문자열에 나타나는 텍스트 문자열입니다. 정규식을 사용하여 이러한 문자열을 지정할 수도 있습니다
+  - 출처
+    - https://aws.amazon.com/ko/blogs/security/deploying-defense-in-depth-using-aws-managed-rules-for-aws-waf-part-2/
+
+- Amazon Kinesis는 기본적으로 최대 24시간 동안 데이터를 저장합니다. 데이터 보존 기간 연장을 활성화하여 데이터 보존 기간을 최대 7일까지 연장할 수 있습니다
+
+- 기본적으로 각 워크플로우 실행은 Amazon SWF에서 최대 1년간 실행될 수 있습니다. 즉, 워크플로우에서 수동 작업이 필요한 작업이 있을 수 있으며 이를 유휴 상태로 만들 수 있습니다. 그 결과 일부 주문은 거의 4주 동안 막힙니다
+
+- 10번부터 ㄱㄱ
 
