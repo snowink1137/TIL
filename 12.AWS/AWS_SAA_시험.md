@@ -1,5 +1,5 @@
-> AWS SAA 시험을 준비하면서, 기억해둘 내용을 저장해 놓는 문서
->
+AWS SAA 시험을 준비하면서, 기억해둘 내용을 저장해 놓는 문서
+
 > udemy 연습 테스트 및 해설 활용
 
 
@@ -263,6 +263,16 @@
       2. 소비자가 대기열에서 수신
       3. 대기열에서 삭제
     - 메시지는 다음과 같은 것으로 간주됩니다. 생성자가 대기열로 보내지만 소비자가 대기열에서 아직 수신하지 않은 경우(즉, 상태 1과 2 사이), 저장된 메시지 수에는 할당량이 없습니다. 소비자가 대기열에서 수신했지만 대기열에서 아직 삭제되지 않은 경우(즉, 상태 2와 3 사이), 이동 중인 메시지 수에는 할당량이 있습니다
+  - SQS 대기열의 개별 항목에 우선순위를 설정할 수 없다. 하지만 대기열을 여러 개로 분리한 후, 애플리케이션에서 우선 순위 로직을 짜는 방식으로 우선 순위를 적용할 수는 있다
+  - FIFO 대기열 vs 표준 대기열 스펙
+    - FIFO 대기열
+      - 높은 처리량: 기본적으로 FIFO 대기열은 초당 최대 300개의 메시지(초당 300개의 전송, 수신 또는 삭제 작업)를 지원합니다. 작업당 최대 10개 메시지를 일괄 처리할 경우, FIFO 대기열은 초당 3000개의 메시지까지 지원할 수 있습니다. 한도 증가를 요청하려면 지원 요청을 제출하십시오
+      - 정확히 한 번 처리: 메시지가 한 번 전달되고 소비자가 이를 처리 및 삭제할 때까지 유지됩니다. 중복 메시지는 대기열에 올라가지 않습니다
+      - 선입선출 전달: 메시지가 전송되고 수신되는 순서가 엄격하게 지켜집니다
+    - 표준 대기열
+      - 무제한 처리량: 표준 대기열은 API 작업당 거의 무제한의 초당 트랜잭션(TPS)을 지원합니다
+      - 최소한 한 번 전달: 메시지가 최소한 한 번 전달되고, 가끔 2개 이상의 메시지 복사본이 전달될 수 있습니다
+      - 최선 노력 순서: 가끔 메시지가 전송된 순서와 다르게 전달될 수 있습니다
   - 출처
     - https://aws.amazon.com/ko/sqs/
     - https://docs.aws.amazon.com/ko_kr/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
@@ -278,6 +288,25 @@
 
   - Amazon API Gateway는 어떤 규모에서든 개발자가 API를 손쉽게 게시, 유지 관리, 모니터링 및 보호할 수 있도록 지원하는 완전관리형 서비스입니다. AWS Management Console에서 몇 번의 클릭으로 애플리케이션이 백엔드 서비스(Amazon Elastic Compute Cloud(Amazon EC2), Amazon Elastic Container Service(Amazon ECS) 또는 AWS Elastic Beanstalk에서 실행되는 애플리케이션, AWS Lambda에서 실행되는 코드, 기타 웹 애플리케이션 등)의 데이터, 비즈니스 로직 또는 기능에 액세스할 수 있도록 "현관문" 역할을 하는 API를 생성할 수 있습니다
   - Amazon API Gateway는 트래픽 관리, 권한 부여 및 액세스 제어, 모니터링, API 버전 관리를 비롯해 최대 수십만 건의 동시 API 호출을 수락 및 처리하는 데 관련된 모든 작업을 처리합니다. Amazon API Gateway에는 최소 요금이나 시작 비용이 없습니다. HTTP API와 REST API의 경우 수신한 API 호출과 전송한 데이터 양에 대해서만 요금을 지불하면 됩니다. WebSocket API의 경우 전송하고 수신한 메시지와 사용자/디바이스가 WebSocket API에 연결한 시간에 대해서만 요금을 지불하면 됩니다
+  - API Gateway는 최대 수십 만 개의 동시 API 호출을 수락하고 처리하는 데 관련된 모든 작업을 처리합니다. 여기에는 트래픽 관리, 권한 부여 및 액세스 제어, 모니터링, API 버전 관리가 포함됩니다
+  - API Gateway은 다음과 같은 RESTful API를 생성합니다
+    -  HTTP 기반
+    - 상태 비저장 클라이언트-서버 통신을 활성화합니다
+    - 표준 HTTP 메서드(예: GET, POST, PUT, PATCH, DELETE)를 구현합니다
+  - API Gateway는 다음과 같은 WebSocket API를 생성합니다
+    - 클라이언트와 서버 간에 상태를 저장하는 전이중 통신을 지원하는 WebSocket 프로토콜 준수
+    - 수신 메시지를 메시지 콘텐츠에 따라 라우팅
+  - Amazon API Gateway는 다음과 같은 기능을 제공합니다
+    - 상태 저장(WebSocket) 및 상태 비저장(HTTP 및 REST) API에 대한 지원
+    - 강력하고 유연한 인증 메커니즘(예: AWS Identity and Access Management 정책, Lambda 권한 부여자 함수, Amazon Cognito 사용자 풀 등)
+    - API를 게시하기 위한 개발자 포털
+    - 변경 사항을 안전하게 롤아웃하기 위한 Canary 릴리스 배포
+    - API 사용 및 API 변경에 대한 CloudTrail 로깅 및 모니터링
+    - 경보 설정 기능을 포함한 CloudWatch 액세스 로깅 및 실행 로깅
+    - AWS CloudFormation 템플릿을 사용하여 API 생성을 활성화할 수 있는 기능
+    - 사용자 지정 도메인 이름 지원
+    - 일반적인 웹 익스플로잇으로부터 API를 보호하기 위해 AWS WAF와 통합
+    - 성능 지연 시간 파악 및 학습을 위해 AWS X-Ray와 통합
 
 - CloudFront는 엣지 로케이션을 사용하여 사용자에게 더 빠르게 컨텐츠를 제공하지만 DynamoDB와 호환되지 않으므로 DynamoDB 테이블을 CloudFront와 통합 할 수 없습니다
 
@@ -1122,3 +1151,145 @@
 
 # 연습 테스트 5
 
+- CloudWatch Monitoring Scripts
+
+  - CloudWatch 에이전트를 사용하여 Amazon EC2 인스턴스 및 온프레미스 서버에서 시스템 지표 및 로그 파일을 수집할 수 있습니다. 이 에이전트는 Windows Server와 Linux를 모두 지원하며 CPU당 코어와 같은 하위 리소스 지표를 포함하여 수집할 지표를 선택할 수 있습니다
+  - 그러나 메모리 사용률, 디스크 공간 사용률 및 사용자 지정 지표를 설정하여 수집 할 수 있는 많은 다른 지표와 같이 CloudWatch에서 쉽게 사용할 수 없는 특정 지표가 있습니다. Perl로 작성된 CloudWatch Monitoring Scripts를 사용하여 사용자 지정 지표를 준비해야 합니다. CloudWatch Agent를 설치하여 Amazon EC2 인스턴스에서 더 많은 시스템 수준 지표를 수집할 수도 있습니다. 설정할 수 있는 맞춤 측정 항목 목록은 다음과 같습니다
+    - 메모리 활용
+    - 디스크 스왑 활용
+    - 디스크 공간 활용
+    - 페이지 파일 활용
+    - 로그 수집
+
+- AWS SDK
+
+  - AWS SDK는 Amazon 클라우드 서비스를 사용하여 실행되는 애플리케이션을 생성할 수 있는 프로그래밍 도구 집합입니다
+
+- ECS vs EKS 그리고 Fargate
+
+  - 기존에는 ECS를 생성 할 때, EC2 인스턴스 위에서 컨테이너를 만들었다면 Fargate는 문서 그대로 설명한다면 클러스터를 더 이상 관리 할 필요 없이 컨테이너를 실행할 수 있게 한다. 즉, 간단하게 말하면 ECS를 Serverless 환경처럼 사용할 수 있게하는 것이다
+
+  ![img](AWS_SAA_시험.assets/998266465C5C7DA408)
+
+  - AWS의 컨테이너 서비스는 크게 ECS와 EKS로 나뉜다
+
+  ![img](AWS_SAA_시험.assets/99DAB6425C5C7EAB07)
+
+  - 그렇지만 AWS의 컨테이너 서비스인 ECS와 EKS를 비교할 때, 같은 비교군으로 종종 등장하는 이유는 그림 3에서 볼 수 있듯이 Fargate가 제 3 영역에 있기 때문이다. AWS의 Roadmap상 Fargate를 ECS 뿐만 아니라 EKS에도 지원할 예정이라고 하기 때문에 ECS든 EKS는 Fargate는 단순히 리소스 관련한 Control Plane은 AWS에 위임하는 것이다
+
+  ![img](AWS_SAA_시험.assets/998264405C5CCB1F2D)
+
+  - EKS와 ECS의 로드 밸런싱을 보면 그림 4와 같다. 그림 상에는 EKS는 Classic LB만 가능한 것처럼 보이지만 ALB 및 NLB도 지원하다. (ECS도 마찬가지로 모든 타입의 ELB를 지원한다.) ECS와 다르게 EKS는 ELB가 있음에도 불구하고 구조상 내부에 Proxy를 두어 Pods에 로드를 분산시킨다
+  - 언뜻보면 EKS가 Node에 상관없이 로드가 분산되어 좋아보이나 만일 Traffic이 많아진다면 Node간의 네트워크 latency도 점점 늘어나게 된다. (Bottleneck의 원인이 될 수 있다.) 반면에 ECS는 ALB 하나만 사용하기 때문에 더 효율적일 수 있다
+
+  ![img](AWS_SAA_시험.assets/99B5F2455C5CD02729)
+
+  - EKS와 ECS는 내부적으로 VPC를 사용한다. 그런데 VPC를 구성할 때 ENI 할당 방식이 조금 다르다(그림 참조). EKS에서는 단일 Pod 마다 IP를 할당 받을 수 있고 여러 개의 Pod를 묶어서 IP를 할당 받을 수 있다. 반면에 ECS는 Task 당 ENI를 할당 받을 수 있다 그런데 보통 AWS에서는 일반적으로 인스턴스 당 15까지 ENI를 사용 할 수 있다. 인스턴스 관점에서 보자면 EKS는 인스턴스당 Pod를 최대 750개까지 만들 수 있는 반면에 ECS는 15개까지 Pod를 만들 수 있다. 때문에 개발하는 서비스가 컨테이너를 사용하는 갯수가 많으면 많을 수록 EKS가 보다 효율적일 수 있다(다만, ENI를 공유한다는 것은 관련 네트워크 속성 또한 공유한다는 것이다.)
+  - 출처
+    - https://timewizhan.tistory.com/entry/AWS-ECS-vs-EKS
+
+- ECS 동적 포트 매핑
+
+  -  Application Load Balancer는 **애플리케이션 계층(HTTP/HTTPS) - L7 에서 라우팅 결정**을 내리고, **경로 기반 라우팅 (Path-based routing)** 을 지원하며, 클러스터의 각 컨테이너 인스턴스 상의 **하나 이상의 포트**로 요청을 라우팅할 수 있습니다
+
+  - Application Load Balancer는 동적 호스트 포트 매핑을 지원합니다. 예를 들어, 작업의 컨테이너 정의가 NGINX 컨테이너 포트로 포트 80을 지정하고, 호스트 포트로 포트 0을 지정하면 컨테이너 인스턴스의 임시 포트 범위(예: 최신 Amazon ECS-optimized AMI에서 32768 ~ 61000)에서 호스트 포트가 동적으로 선택됩니다. 작업이 시작되면 NGINX 컨테이너가 인스턴스 ID-포트 조합으로 Application Load Balancer에 등록되고, 트래픽은 해당 컨테이너에 해당하는 인스턴스 ID와 포트에 분산됩니다. 이 동적 매핑을 통해 동일한 컨테이너 인스턴스에서 단일 서비스의 다중 작업이 가능합니다
+
+  - 동적 포트 매핑 기능을 사용하지 않으면 아래와 같이 수동으로 호스트의 포트를 정해줘야 한다
+
+    ![image-20210620172922164](AWS_SAA_시험.assets/image-20210620172922164.png)
+
+  - 동적 포트 매핑 기능을 사용하면 알아서 호스트의 포트를 정해서 각 task에 매핑해준다
+
+  ![image-20210620173319983](AWS_SAA_시험.assets/image-20210620173319983.png)
+
+  - 출처
+    - https://m.blog.naver.com/ijoos/221563298433
+    - https://ohgym.tistory.com/69
+
+- Amazon DLM(Amazon Data Lifecycle Manager)을 사용하여 EBS 스냅샷 생성을 자동화할 수 있다
+
+- Amazon Athena
+
+  - Amazon Athena는 표준 SQL을 사용해 Amazon S3에 저장된 데이터를 간편하게 분석할 수 있는 대화식 쿼리 서비스입니다. Athena는 서버리스 서비스이므로 설정하거나 관리할 인프라가 없으며 데이터 분석을 즉시 시작할 수 있습니다. Athena로 데이터를 로드할 필요 없이 S3에 저장된 데이터를 직접 사용하면 됩니다. 시작하려면 Athena Management Console에 로그인하여 스키마를 정의한 후 쿼리를 시작하십시오
+  - Amazon Athena는 표준 SQL을 완벽 지원하는 Presto를 사용하며, CSV, JSON, ORC, Apache Parquet, Avro 등 다양한 표준 데이터 형식과 호환됩니다. Amazon Athena는 무엇보다도 신속한 임의 쿼리 작업에 적합하며, Amazon QuickSight와 통합하여 손쉽게 시각화할 수 있을 뿐만 아니라 라지 조인, 창 함수 및 어레이를 포함해 복잡한 분석을 처리할 수도 있습니다
+
+- S3 서버 측 암호화는 저장된 데이터를 보호하기 위한 것입니다. 서버 측 암호화는 객체 메타데이터가 아니라 객체 데이터만 암호화합니다
+
+- Aurora 읽기 전용 복제본 페일 오버 기준
+
+  - Aurora는 15개까지 읽기 복제본을 만들 수 있고, 이를 통해 읽기 처리량을 높을 수 있을 뿐 아니라 장애 복구에도 도움이 됩니다. 각 복제본은 기본 인스턴스와 스토리지를 공유하고, 경량의 세부적인 복제가 거의 동시적으로 일어나기 때문에 10에서 20 밀리초 단위 내에 이루어집니다
+  - 각 읽기 복제본은 티어(0-15)를 제공할 수 있습니다. 장애 복구 시 Amazon RDS는 가장 우선 순위의 티어(낮은 숫자)를 기반으로 장애 복구를 시작하고, 2개 이상의 읽기 복제본이 같은 우선 순위일때는 이전 기본 인스턴스와 같은 용량을 우선 선택합니다. 둘 이상의 Aurora 복제본이 동일한 우선 순위 및 크기를 공유하는 경우 Amazon RDS는 동일한 프로모션 계층에서 임의 복제본을 승격합니다
+
+- Microsoft SQL Server SSL 보안 관련
+
+  - SQL Server DB 인스턴스를 생성할 때 Amazon RDS는 인스턴스의 SSL 인증서를 만듭니다. SSL 인증서에는 스푸핑 공격으로부터 보호해주는 SSL 인증서를 위한 일반 이름(CN)으로 DB 인스턴스 엔드포인트가 포함되어 있습니다
+  - SSL을 사용하여 SQL Server DB 인스턴스에 연결하는 방법은 두 가지입니다
+    - 모든 연결에 대해 SSL 지정 – 이것은 클라이언트에 투명하게 발생하며, 클라이언트는 SSL 사용을 위해 작업을 수행할 필요가 없습니다
+    - 특정 연결 암호화 – 이것은 특정 클라이언트 컴퓨터로부터 SSL 연결을 설정하며, 연결 암호화를 위해 클라이언트에서 작업을 수행해야 합니다
+  - DB 인스턴스에 대한 모든 연결에서 SSL을 사용하도록 지정할 수 있습니다. 연결이 SSL을 사용하도록 지정하면 클라이언트에 투명하게 발생하며, 클라이언트는 SSL 사용을 위해 작업을 수행할 필요가 없습니다
+  - SSL을 지정하려면 rds.force_ssl 파라미터를 사용하십시오. 기본적으로 rds.force_ssl 파라미터는 0 (off)로 설정됩니다. 연결이 SSL을 사용하도록 지정하려면 rds.force_ssl 파라미터를 1 (on)로 설정하십시오. rds.force_ssl 파라미터는 정적이기 때문에 값을 변경하면 DB 인스턴스를 재부팅해야만 변경 사항이 적용됩니다
+  - TDE (투명한 데이터 암호화)는 주로 전송 중인 데이터가 아니라 Microsoft SQL Server를 실행하는 DB 인스턴스에서 저장된 데이터를 암호화하는 데 사용됩니다
+  - IAM 데이터베이스 인증은 MySQL 및 PostgreSQL 데이터베이스 엔진에서만 지원됩니다. IAM 데이터베이스 인증을 사용하면 DB 인스턴스에 연결할 때 비밀번호를 사용할 필요가 없지만 대신 인증 토큰을 사용합니다
+
+- Kinesis Agent와 Kinesis Data Streams 및 Kinesis Firehose
+
+  - Amazon Kinesis Data Firehose는 스트리밍 데이터를 데이터 레이크, 데이터 스토어 및 분석 도구에 가장 쉽고 안정적으로 로드하는 방법입니다. 스트리밍 데이터를 캡처하고 변환한 후 Amazon S3, Amazon Redshift, Amazon Elasticsearch Service 및 Splunk로 로드하여 이미 사용하고 있는 기존 비즈니스 인텔리전스 도구 및 대시보드를 통해 거의 실시간으로 분석할 수 있습니다. Amazon Kinesis Firehose는 완전관리형 서비스로서 데이터 처리량에 대응하여 자동으로 확장되며 지속적인 관리가 필요 없습니다. 또한, 데이터를 로드하기 전에 배치 처리, 압축, 변환 및 암호화하여 대상 스토리지의 사용량을 최소화하고 보안을 강화할 수 있습니다
+  - Kinesis Agent는 Kinesis Data Streams 또는 Kinesis Firehose에 데이터를 수집하고 전송하는 쉬운 방법을 제공하는 독립형 Java 소프트웨어 애플리케이션입니다
+  - Kinesis 에이전트는 간편하게 데이터를 수집하여 Kinesis Data Streams로 전송할 수 있는 독립형 Java 소프트웨어 애플리케이션입니다. 에이전트가 파일 집합을 지속적으로 모니터링하고 새로운 데이터를 스트림에 보냅니다. 에이전트는 파일 로테이션, 검사를 처리하고 실패할 경우 다시 시도하며 적시에 안정적이고 단순한 방식으로 모든 데이터를 전달할 뿐 아니라 또한 Amazon CloudWatch 측정치를 내보내 스트리밍 프로세스를 효과적으로 모니터링하고 문제를 해결하도록 지원합니다
+  - 웹 서버, 로그 서버, 데이터베이스 서버 등 Linux 기반 서버 환경에 에이전트를 설치할 수 있습니다. 에이전트를 설치한 후 모니터링할 파일과 데이터의 스트림을 지정하여 에이전트를 구성하십시오. 에이전트가 구성되면 파일에서 일관되게 데이터를 수집하고, 안정적으로 스트림에 전송합니다
+  - Kinesis 데이터 스트림이 Firehose 전송 스트림의 소스로 구성되면 Firehose의 PutRecord 및 PutRecordBatch 작업이 비활성화되고 Kinesis Agent가 Firehose 전송 스트림에 직접 쓸 수 없습니다. 대신 Kinesis Data Streams PutRecord 및 PutRecords 작업을 통해 Kinesis 데이터 스트림에 데이터를 추가해야 합니다
+
+- AWS Site-to-Site VPN는 프라이빗 서브넷에서 연결한다. 따라서 퍼블릭 서브넷만 있고 AWS 사이트간 VPN 액세스 권한이 있는 VPC 구성은 지원하지 않는다
+
+- EC2 볼륨 연결
+
+  - 인스턴스를 시작하면 인스턴스 부팅에 사용된 이미지가 루트 디바이스 볼륨에 저장됩니다. Amazon EC2가 출시되었던 시점에서는 Amazon EC2 인스턴스 스토어가 모든 AMI를 지원했으므로 AMI에서 시작한 인스턴스의 루트 디바이스는 Amazon S3에 저장된 템플릿으로부터 생성된 인스턴스 스토어 볼륨이었습니다. Amazon EBS가 출시된 후에는 Amazon EBS의 지원을 받는 AMI가 도입되었습니다. 따라서 AMI에서 시작한 인스턴스의 루트 디바이스는 Amazon EBS 스냅샷으로부터 생성된 Amazon EBS 볼륨입니다
+  - 인스턴스 스토어는 인스턴스에 블록 수준의 임시 스토리지를 제공합니다. 스토리지는 호스트 컴퓨터에 물리적으로 연결된 디스크에 위치합니다. 인스턴스 스토어는 버퍼, 캐시, 스크래치 데이터 및 기타 임시 콘텐츠와 같이 자주 변경되는 정보의 임시 스토리지나 로드가 분산된 웹 서버 풀과 같은 여러 인스턴스상에서 복제되는 데이터에 가장 적합합니다
+  - 사용자는 Amazon EC2 인스턴스 스토어가 지원하는 AMI와 Amazon EBS에서 지원하는 AMI 중에서 선택할 수 있습니다. 시작 속도가 더 빠르고 영구 스토리지를 사용하는 Amazon EBS 지원 AMI를 사용하는 것이 좋습니다
+  - Amazon EBS는 크게 SSD, HDD 볼륨 유형을 제공한다
+    - 처리량에 최적화된 HDD (st1), Cold HDD (sc1) 두 유형은 부트 볼륨이 될 수 없다
+
+- EC2 최대 절전 모드
+
+  - 인스턴스를 최대 절전 모드로 전환하면 운영 체제에서 최대 절전 모드(디스크 일시 중단)를 수행하도록 신호를 보냅니다. 최대 절전 모드는 인스턴스 메모리(RAM)의 내용을 Amazon EBS 루트 볼륨에 저장합니다. 인스턴스의 Amazon EBS 루트 볼륨과 연결된 모든 Amazon EBS 데이터 볼륨을 유지합니다
+  - 인스턴스를 다시 시작할 때 다음과 같은 과정이 진행된다
+    - • Amazon EBS 루트 볼륨이 이전 상태로 복원됩니다
+    - RAM 내용이 다시 로드됩니다
+    - 이전에 인스턴스에서 실행되었던 프로세스가 재개됩니다
+    - 이전에 연결된 데이터 볼륨이 다시 연결되고, 인스턴스는 해당 인스턴스 ID를 유지합니다
+
+- CloudWatch 경보를 설정하여 인스턴스의 상태를 모니터링합니다. 인스턴스 상태 확인에 실패한 경우 EC2 재부팅 CloudWatch 경보 작업을 사용하여 인스턴스를 재부팅 할 수 있습니다
+
+- IAM 역할을 사용하여 소유한 서로 다른 AWS 계정에 있는 리소스에 대한 액세스를 위임할 수 있습니다. 한 계정의 리소스를 다른 계정의 사용자와 공유할 수 있습니다. 이러한 방식으로 교차 계정 액세스를 설정하면 각 계정에 개별 IAM 사용자를 만들 필요가 없습니다. 또한 사용자가 서로 다른 AWS 계정에 있는 리소스에 액세스하기 위해 한 계정에서 로그아웃하고 다른 계정으로 로그인할 필요가 없습니다
+
+- 가용 영역 이름 관련
+
+  - 가용 영역은 리전 코드와 식별 문자의 조합으로 표시됩니다(예: us-east-1a). 리소스가 리전의 가용 영역에 걸쳐 배포될 수 있도록 AWS는 각 AWS 계정의 이름에 가용 영역을 **독립적으로** 매핑합니다. 예를 들어 AWS 계정의 us-east-1a 가용 영역은 다른 AWS 계정에 대한 us-east-1a 가용 영역과 위치가 동일하지 않을 수 있습니다
+  - 계정에 대해 가용 영역을 조정하려면 가용 영역에 대한 고유하고 일관된 식별자인 AZ ID를 사용해야 합니다. 예를 들어, use1-az1은 us-east-1 리전의 AZ ID이고, 모든 AWS 계정에서 위치가 동일합니다
+
+- IAM 권한 경계
+
+  - AWS에서는 IAM 엔터티(사용자 또는 역할)에 대한 권한 경계를 지원합니다. 권한 경계는 관리형 정책을 사용하여 자격 증명 기반 정책을 통해 IAM 엔터티에 부여할 수 있는 최대 권한을 설정하는 고급 기능입니다. 엔터티의 권한 경계는 자격 증명 기반 정책 및 관련 권한 경계 모두에서 허용되는 작업만 수행하도록 허용합니다
+  - AWS 관리형 정책 또는 고객 관리형 정책을 사용하여 IAM 엔터티(사용자 또는 역할) 경계를 설정할 수 있습니다. 이 정책은 사용자 또는 역할에 대해 최대 권한을 제한합니다
+
+- AWS WAF vs AWS Shield vs AWS Firewall Manager
+
+  - AWS Shield는 AWS에서 실행되는 웹 애플리케이션을 DDoS(Distributed Denial of Service) 공격으로부터 보호하는 관리형 서비스입니다. AWS Shield Standard는 추가 비용 없이 모든 AWS 고객에게 자동으로 활성화됩니다. AWS Shield Advanced는 선택이 가능한 유료 서비스입니다. AWS Shield Advanced는 Amazon EC2, Elastic Load Balancing(ELB), Amazon CloudFront, AWS Global Accelerator 및 Route 53에서 실행되는 애플리케이션을 목표로 하는 더 정교하고 더 큰 규모의 공격에 대해 추가적인 보호를 제공합니다
+  - AWS WAF 는 Amazon CloudFront 배포판, Amazon API Gateway REST API, Application Load Balancer 또는 AWS AppSync GraphQL API로 전달되는 HTTP 및 HTTPS 요청을 모니터링할 수 있게 해주는 웹 애플리케이션 방화벽입니다. 또한 AWS WAF를 사용하여 콘텐츠에 대한 액세스를 제어할 수 있습니다. 요청이 시작되는 IP 주소 또는 쿼리 문자열의 값과 같이 사용자가 지정하는 조건에 따라 Amazon CloudFront, Amazon API Gateway, Application Load Balancer 또는 AWS AppSync 는 요청된 콘텐츠 또는 HTTP 403 상태 코드 (사용 권한 없음) 로 요청에 응답합니다. 요청이 차단될 때 사용자 지정 오류 페이지를 반환하도록 CloudFront 구성할 수 있습니다
+  - AWS WAF는 SQL 주입 또는 사이트 간 스크립팅과 같은 VPC에 대한 일반적인 공격 패턴을 차단하는 데 도움이 될 수 있지만, 이만으로는 DDoS 공격을 견딜 수 없습니다. 이 시나리오에서는 AWS Shield를 사용하는 것이 좋습니다
+  - AWS Firewall Manager 는 여러 계정과 리소스에서 AWS WAF 규칙, AWS Shield Advanced 보호, Amazon VPC 보안 그룹에 대한 관리 및 유지 관리 작업을 간소화합니다
+
+- AWS Auto Scaling 수명 주기 후크
+
+  - 수명 주기 후크를 사용하면 Auto Scaling 그룹에서 인스턴스를 시작하거나 종료할 때 인스턴스를 일시 중지하여 사용자 지정 작업을 수행할 수 있습니다. 인스턴스가 일시 중지되는 경우, complete-lifecycle-action 명령 또는 CompleteLifecycleAction 작업을 사용하여 수명 주기 작업을 완료할 때까지 혹은 제한 시간이 끝날 때까지(기본 1시간) 대기 상태로 유지됩니다
+  - 예를 들어 새로 시작된 인스턴스가 시작 시퀀스를 완료하고 수명 주기 후크가 인스턴스를 일시 중지한다고 가정해 보겠습니다. 인스턴스가 대기 상태에 있는 동안 인스턴스에 소프트웨어를 설치하거나 구성하여 트래픽 수신을 시작하기 전에 인스턴스가 준비를 마치도록 합니다. 수명 주기 후크 사용의 또 다른 예로, 축소 이벤트가 발생하는 경우 종료 인스턴스가 먼저 로드 밸런서에서 등록 취소됩니다(Auto Scaling 그룹이 탄력적 로드 밸런싱과 함께 사용되는 경우). 그러면 인스턴스가 종료되기 전에 수명 주기 후크가 인스턴스를 일시 중지합니다. 예를 들어, 인스턴스가 대기 상태에 있는 동안 인스턴스가 완전히 종료되기 전에 인스턴스에 연결하여 로그 또는 다른 데이터를 다운로드할 수 있습니다
+
+- Amazon S3 웹 사이트 엔드포인트 형식
+
+  - 리전에 따라 Amazon S3 웹 사이트 엔드포인트는 다음 두 형식 중 하나를 따릅니다
+    - s3-website 대시(-) 리전
+      - ex) http://bucket-name.s3-website-Region.amazonaws.com
+    - s3-website 점(.) 리전
+      - ex) http://bucket-name.s3-website.Region.amazonaws.com
+
+- 45번부터 ㄱㄱ
