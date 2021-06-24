@@ -164,23 +164,23 @@ AWS SAA 시험을 준비하면서, 기억해둘 내용을 저장해 놓는 문�
   
 - AWS 네트워크 정리
 
-  ![img](AWS_SAA_시험.assets/img.png)
+  ![image-20210624184219365](AWS_SAA_시험.assets/image-20210624184219365.png)
 
   - VPC
 
     - 사용자에게 제공하는 가상 네트워크 사설 망
-    - 리전 단위로 설정한다
+    - **리전 단위**로 설정한다
 
   - Subnet
 
     - VPC 내에서 더 작은 범위로 나눈 것
-    - 리전 내 가용영역 단위로 설정한다
+    - 리전 내 **가용영역 단위**로 설정한다
     - 인터넷 게이트웨이를 통해 public access가 가능하면 public subnet 아니라면 private subnet
 
   - Routing Table
 
     - 네트워크 이동에 대한 이정표
-    - 서브넷 단위로 설정한다. custom route table을 설정하지 않으면 vpc 내 기본 라우팅 테이블을 따름
+    - **서브넷 단위**로 설정한다. custom route table을 설정하지 않으면 vpc 내 기본 라우팅 테이블을 따름
       - ex) Subnet에 존재하는 인스턴스에 요청을 보낼 때는 target을 local로 잡고, 인터넷으로 나가는 요청을 보낼 때에는 target을 인터넷 게이트웨이로 잡는다. vpn 영역으로 요청을 보낼 경우에는 Virtual private gateway로 잡는다
 
   - Internet Gateway
@@ -318,8 +318,9 @@ AWS SAA 시험을 준비하면서, 기억해둘 내용을 저장해 놓는 문�
 
   - DNS는 Domain Name System의 약자로 naver.com 같은 문자열 주소를 IP 주소로 해석해주는 네트워크 서비스를 말한다. 예시는 아래와 같다
 
-  | naver.com              | 192.168.0.1        |
+  | Domain                 | IP                 |
   | ---------------------- | ------------------ |
+  | naver.com              | 192.168.0.1        |
   | dev.plusblog.co.kr     | 172,17.0.1         |
   | develop.plusblog.co.kr | dev.plusblog.co.kr |
 
@@ -410,7 +411,7 @@ AWS SAA 시험을 준비하면서, 기억해둘 내용을 저장해 놓는 문�
   - Amazon Kinesis Data Streams를 사용하여 대규모 데이터 레코드 스트림을 실시간으로 수집하고 처리할 수 있습니다. Kinesis Data Streams 애플리케이션이라고 알려진 데이터 처리 애플리케이션을 생성할 수 있습니다. 일반적인 Kinesis Data Streams 애플리케이션은 데이터가 기록될 때 데이터 스트림에서 데이터를 읽습니다. 이러한 애플리케이션은 Kinesis Client Library를 사용하며 Amazon EC2 인스턴스에서 실행될 수 있습니다. 처리된 레코드를 대시보드로 보내거나, 알림을 생성하는 데 사용하거나, 요금 및 광고 전략을 동적으로 변경하거나, 다른 여러 AWS 제품에 데이터를 보낼 수 있습니다
   - 위 다이어그램은 Kinesis Data Streams의 상위 수준 아키텍처를 보여줍니다. 생산자가 계속해서 Kinesis Data Streams에 데이터를 푸시하고 소비자가 실시간으로 데이터를 처리합니다. 소비자(예: Amazon EC2에서 실행하는 사용자 지정 애플리케이션 또는 Amazon Kinesis Data Firehose 전송 스트림)는 Amazon DynamoDB, Amazon Redshift 또는 Amazon S3와 같은 AWS 서비스를 사용하여 결과를 저장할 수 있습니다
 
-- VPC 엔드 포인트을 사용하면 인터넷 게이트웨이, NAT 장치, VPN 연결 또는 AWS Direct Connect 연결 없이도 AWS PrivateLink로 구동되는 지원되는 AWS 서비스 및 VPC 엔드 포인트 서비스에 VPC를 프라이빗으로 연결할 수 있습니다. VPC의 인스턴스에는 서비스의 리소스와 통신하는 데 퍼블릭 IP 주소가 필요하지 않으며 VPC와 다른 서비스 간의 트래픽이 Amazon 네트워크를 떠나지 않습니다
+- VPC 엔드 포인트를 사용하면 인터넷 게이트웨이, NAT 장치, VPN 연결 또는 AWS Direct Connect 연결 없이도 AWS PrivateLink로 구동되는 지원되는 AWS 서비스 및 VPC 엔드 포인트 서비스에 VPC를 프라이빗으로 연결할 수 있습니다. VPC의 인스턴스에는 서비스의 리소스와 통신하는 데 퍼블릭 IP 주소가 필요하지 않으며 VPC와 다른 서비스 간의 트래픽이 Amazon 네트워크를 떠나지 않습니다
 
 - ALB (Application Load Balancer)는 요청 수준 (계층 7)에서 작동하고 트래픽을 대상 (EC2 인스턴스, 컨테이너, IP 주소 및 Lambda)으로 라우팅합니다. HTTP 및 HTTPS 트래픽의 고급 로드 밸런싱에 이상적인 Application Load Balancer는 마이크로 서비스 및 컨테이너 기반 애플리케이션을 포함한 최신 애플리케이션 아키텍처를 제공하는 고급 요청 라우팅을 제공합니다. ALB는 계층 7 인 HTTP 트래픽만 지원하지만 SSH 프로토콜은 TCP를 기반으로 하며 계층 4입니다. 따라서 Application Load Balancer가 작동하지 않습니다
 
