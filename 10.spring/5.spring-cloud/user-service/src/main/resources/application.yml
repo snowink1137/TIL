@@ -15,9 +15,11 @@ spring:
       settings:
         web-allow-others: true
       path: /h2-console
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password: 1234
 
 eureka:
   instance:
@@ -35,7 +37,7 @@ greeting:
 
 logging:
   level:
-    com.example.userservice: debug
+    com.example.userservice.client: debug
 
 #token:
 #  expiration_time: 86400000
