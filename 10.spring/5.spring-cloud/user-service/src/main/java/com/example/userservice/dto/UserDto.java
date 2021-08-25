@@ -13,7 +13,7 @@ public class UserDto {
     private String name;
     private String pwd;
     private String userId;
-    private Date createAt;
+    private Date createdAt;
 
     private String encryptedPwd;
 
