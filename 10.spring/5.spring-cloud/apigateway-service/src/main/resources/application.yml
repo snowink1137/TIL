@@ -95,10 +95,10 @@ spring:
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order-service/actuator/**
-            - Method=GET
+            - Method=GET, POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
 
 #token:
 #  secret: user_token
