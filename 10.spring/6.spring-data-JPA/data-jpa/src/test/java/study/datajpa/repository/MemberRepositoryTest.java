@@ -2,6 +2,8 @@ package study.datajpa.repository;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +34,9 @@ class MemberRepositoryTest {
 
     @Autowired
     TeamRepository teamRepository;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void testMember() {
@@ -197,6 +202,27 @@ class MemberRepositoryTest {
         // page를 유지하면서 외부에 api로 반환하려면? 엔티티를 그대로 반환하는 것은 좋지 않다. 엔티티 스펙이 바뀌면 api 스펙도 다 바뀌니까
         // 이런 경우에 아래와 같이 변환해서 api json으로 반환하면 page 객체 성격을 유지하면서 내보낼 수 있다
         Page<MemberDto> toMap = page.map(member -> new MemberDto(member.getId(), member.getUsername(), null));
+
+    }
+
+    @Test
+    public void bulkUpdate() {
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        // when
+        int resultCount = memberRepository.bulkAgePlus(20);
+//        em.flush();
+//        em.clear();
+
+        Member member5 = memberRepository.findMemberByUsername("member5");
+        System.out.println("member5 = " + member5);
+
+        // then
+        assertThat(resultCount).isEqualTo(3);
 
     }
 
