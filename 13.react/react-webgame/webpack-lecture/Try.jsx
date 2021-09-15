@@ -1,13 +1,12 @@
-import React, {Component} from "react";
+import React, {PureComponent} from "react";
 
-class Try extends Component {
+class Try extends PureComponent {
     render() {
+        console.log('퓨어 렌더링')
         return (
             <li>
-                <b>{this.props.value.fruit}</b> - {this.props.value.taste} [{this.props.index}]
-                <div>컨텐츠1</div>
-                <div>컨텐츠2</div>
-                <div>컨텐츠3</div>
+                <div>{this.props.tryInfo.try}</div>
+                <div>{this.props.tryInfo.result}</div>
             </li>
         )
     }
