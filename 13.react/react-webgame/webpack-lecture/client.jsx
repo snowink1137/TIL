@@ -1,17 +1,18 @@
 const React = require('react');
 const ReactDom = require('react-dom');
 
-const WordRelay = require('./WordRelay');
-const WordRelayHooks = require('./WordRelayHooks');
-import NumberBaseball from "./NumberBaseball";
-import NumberBaseballHooks from "./NumberBaseballHooks";
-import RenderTest from "./RenderTest";
-import ResponseCheck from "./ResponseCheck";
-import ResponseCheckHooks from "./ResponseCheckHooks";
-import RSP from "./RSP";
-import RSPHooks from "./RSPHooks";
-import Lotto from "./Lotto";
-import LottoHooks from "./LottoHooks";
+const WordRelay = require('./끝말잇기/WordRelay');
+const WordRelayHooks = require('./끝말잇기/WordRelayHooks');
+import NumberBaseball from "./숫자야구/NumberBaseball";
+import NumberBaseballHooks from "./숫자야구/NumberBaseballHooks";
+import RenderTest from "./반응속도체크/RenderTest";
+import ResponseCheck from "./반응속도체크/ResponseCheck";
+import ResponseCheckHooks from "./반응속도체크/ResponseCheckHooks";
+import RSP from "./가위바위보/RSP";
+import RSPHooks from "./가위바위보/RSPHooks";
+import Lotto from "./로또/Lotto";
+import LottoHooks from "./로또/LottoHooks";
+import TicTacToe from "./틱택토/TicTacToe";
 
 // ReactDom.render(<WordRelay/>, document.querySelector('#root'));
 // ReactDom.render(<WordRelayHooks/>, document.querySelector('#root'));
@@ -23,4 +24,5 @@ import LottoHooks from "./LottoHooks";
 // ReactDom.render(<RSP/>, document.querySelector('#root'));
 // ReactDom.render(<RSPHooks/>, document.querySelector('#root'));
 // ReactDom.render(<Lotto/>, document.querySelector('#root'));
-ReactDom.render(<LottoHooks/>, document.querySelector('#root'));
+// ReactDom.render(<LottoHooks/>, document.querySelector('#root'));
+ReactDom.render(<TicTacToe/>, document.querySelector('#root'));
