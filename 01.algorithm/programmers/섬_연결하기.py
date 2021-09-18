@@ -5,7 +5,9 @@ def solution(n, costs):
 
     parent = [i for i in range(n)]
     for cost in costs:
-        if parent[cost[0]] == parent[cost[1]]:
+        parent1 = find_parent(parent, cost[0])
+        parent2 = find_parent(parent, cost[1])
+        if parent1 == parent2:
             continue
 
         union_parent(parent, cost[0], cost[1])
@@ -26,12 +28,12 @@ def union_parent(parent, target1, target2):
     parent1 = find_parent(parent, target1)
     parent2 = find_parent(parent, target2)
 
-    if (parent1 < parent2):
-        parent[target2] = parent1
+    if parent1 < parent2:
+        parent[parent2] = parent1
     else:
-        parent[target1] = parent2
+        parent[parent1] = parent2
 
 
-n = 6
-costs = [[0, 1, 5], [0, 3, 2], [0, 4, 3], [1, 4, 1], [3, 4, 10], [1, 2, 2], [2, 5, 3], [4, 5, 4]]
+n = 5
+costs = [[0, 1, 5], [1, 2, 3], [2, 3, 3], [3, 1, 2], [3, 0, 4], [2, 4, 6], [4, 0, 7]]
 print(solution(n, costs))
