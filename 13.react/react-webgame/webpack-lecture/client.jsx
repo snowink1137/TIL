@@ -14,6 +14,8 @@ import Lotto from "./로또/Lotto";
 import LottoHooks from "./로또/LottoHooks";
 import TicTacToe from "./틱택토/TicTacToe";
 import MineSearch from "./지뢰찾기/MineSearch";
+import Games from "./react-router/Games";
+
 
 // ReactDom.render(<WordRelay/>, document.querySelector('#root'));
 // ReactDom.render(<WordRelayHooks/>, document.querySelector('#root'));
@@ -27,4 +29,5 @@ import MineSearch from "./지뢰찾기/MineSearch";
 // ReactDom.render(<Lotto/>, document.querySelector('#root'));
 // ReactDom.render(<LottoHooks/>, document.querySelector('#root'));
 // ReactDom.render(<TicTacToe/>, document.querySelector('#root'));
-ReactDom.render(<MineSearch/>, document.querySelector('#root'));
+// ReactDom.render(<MineSearch/>, document.querySelector('#root'));
+ReactDom.render(<Games/>, document.querySelector('#root'));
