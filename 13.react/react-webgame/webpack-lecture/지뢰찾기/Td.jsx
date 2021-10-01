@@ -102,7 +102,14 @@ const Td = memo(({rowIndex, cellIndex}) => {
             onClick={onClickTd}
             onContextMenu={onRightClickTd}
         >{getTdText(tableData[rowIndex][cellIndex])}</td>
-    ), [tableData[rowIndex][cellIndex]]);
+    ), [tableData[rowIndex][cellIndex], halted]);
+    // return (
+    //     <td
+    //         style={getTdStyle(tableData[rowIndex][cellIndex])}
+    //         onClick={onClickTd}
+    //         onContextMenu={onRightClickTd}
+    //     >{getTdText(tableData[rowIndex][cellIndex])}</td>
+    // );
 });
 
 export default Td;

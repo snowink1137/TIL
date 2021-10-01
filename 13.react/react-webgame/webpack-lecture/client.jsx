@@ -29,5 +29,5 @@ import Games from "./react-router/Games";
 // ReactDom.render(<Lotto/>, document.querySelector('#root'));
 // ReactDom.render(<LottoHooks/>, document.querySelector('#root'));
 // ReactDom.render(<TicTacToe/>, document.querySelector('#root'));
-// ReactDom.render(<MineSearch/>, document.querySelector('#root'));
-ReactDom.render(<Games/>, document.querySelector('#root'));
+ReactDom.render(<MineSearch/>, document.querySelector('#root'));
+// ReactDom.render(<Games/>, document.querySelector('#root'));
