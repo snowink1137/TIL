@@ -17,7 +17,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     // 생성자가 하나만 있을 때는 굳이 @Autowired 안써도 스프링이 알아서 주입해줌
-    // lombok의 @AllArgsConstructor dlsk @RequiredArgsConstructor를 쓰면 생성자 코드마저 안써도 됨
+    // lombok의 @AllArgsConstructor 혹은 @RequiredArgsConstructor를 쓰면 생성자 코드마저 안써도 됨
     @Autowired
     public MemberService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
@@ -26,7 +26,6 @@ public class MemberService {
     // 회원 가입
     @Transactional
     public Long join(Member member) {
-
         validateDuplicateMember(member);
         memberRepository.save(member);
         return member.getId();
