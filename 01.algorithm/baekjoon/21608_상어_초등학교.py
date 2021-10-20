@@ -52,7 +52,17 @@ def check_like(student, seated_student, likes, empty_seats, matrix):
     if not candidates:
         return list(empty_seats)
 
-    return candidates
+    candidates_dict = defaultdict(int)
+    for candidate in candidates:
+        candidates_dict[candidate] += 1
+
+    cnt_max = max(candidates_dict.values())
+    new_candidates = []
+    for k, v in candidates_dict.items():
+        if v == cnt_max:
+            new_candidates.append(k)
+
+    return new_candidates
 
 
 def check_empty(candidates, matrix):
