@@ -120,12 +120,14 @@ def explode(queue):
 
 
 def increase(queue):
+    global N
+
     new_queue = deque()
 
     cnt = 0
     buffer = 0
     while queue:
-        q = queue.pop()
+        q = queue.popleft()
 
         if buffer == 0:
             buffer = q
@@ -137,13 +139,26 @@ def increase(queue):
             continue
 
         if buffer != q:
+            if len(new_queue) > N * N - 2:
+                break
             new_queue.append(cnt)
+
+            if len(new_queue) > N * N - 2:
+                break
+
             new_queue.append(buffer)
-            buffer = 0
-            cnt = 0
+            buffer = q
+            cnt = 1
 
     if buffer != 0:
+        if len(new_queue) > N*N-2:
+            return new_queue
+
         new_queue.append(cnt)
+
+        if len(new_queue) > N*N-2:
+            return new_queue
+
         new_queue.append(buffer)
 
     return new_queue
@@ -153,16 +168,16 @@ for command in commands:
     d, s = command[0], command[1]
     destroyed_area = magic(matrix, d, s)
 
-    answer += score(matrix, destroyed_area)
+    # answer += score(matrix, destroyed_area)
 
     while destroyed_area:
         matrix = move(queue, destroyed_area)
         destroyed_area = explode(queue)
-        # answer += score(matrix, destroyed_area)
+        answer += score(matrix, destroyed_area)
 
     queue = increase(queue)
     matrix = move(queue, destroyed_area)
 
 print(answer)
 
-# 큐, 이차원 배열, 서로 매핑되는 맵을 미리 만들어서 하면 될 것 같다. 큐랑 이차원 배열을 계속 생성해야하는 게 좀 걸리긴 하는데.. 일단 고고
+
